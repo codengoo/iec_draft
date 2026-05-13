@@ -1,0 +1,28 @@
+{
+  "Nav": {
+    "search": "Search"
+  },
+  "Search": {
+    "title": "Search",
+    "noResults": "No results found.",
+    "placeholder": "Search..."
+  },
+  "Posts": {
+    "title": "Posts"
+  },
+  "NotFound": {
+    "title": "404",
+    "description": "This page could not be found.",
+    "goHome": "Go home"
+  },
+  "JobBoard": {
+    "searchPlaceholder": "Search jobs...",
+    "department": "Department",
+    "location": "Location",
+    "allDepartments": "All departments",
+    "allLocations": "All locations",
+    "applyNow": "Apply Now",
+    "viewLinkedIn": "View on LinkedIn",
+    "noJobs": "No job openings at this time."
+  }
+}

@@ -4,9 +4,10 @@ import React from 'react'
 
 import type { Header as HeaderType } from '@/payload-types'
 
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { CMSLink } from '@/components/Link'
-import Link from 'next/link'
 import { IconSearch } from '@tabler/icons-react'
+import Link from 'next/link'
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
   const navItems = data?.navItems || []
@@ -20,6 +21,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
         <span className="sr-only">Search</span>
         <IconSearch size={20} className="text-primary" />
       </Link>
+      <LanguageSwitcher />
     </nav>
   )
 }

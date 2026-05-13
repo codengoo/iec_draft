@@ -1,0 +1,28 @@
+{
+  "Nav": {
+    "search": "Tìm kiếm"
+  },
+  "Search": {
+    "title": "Tìm kiếm",
+    "noResults": "Không tìm thấy kết quả.",
+    "placeholder": "Tìm kiếm..."
+  },
+  "Posts": {
+    "title": "Bài viết"
+  },
+  "NotFound": {
+    "title": "404",
+    "description": "Không tìm thấy trang này.",
+    "goHome": "Về trang chủ"
+  },
+  "JobBoard": {
+    "searchPlaceholder": "Tìm việc làm...",
+    "department": "Bộ phận",
+    "location": "Địa điểm",
+    "allDepartments": "Tất cả bộ phận",
+    "allLocations": "Tất cả địa điểm",
+    "applyNow": "Ứng tuyển",
+    "viewLinkedIn": "Xem trên LinkedIn",
+    "noJobs": "Hiện chưa có vị trí tuyển dụng."
+  }
+}

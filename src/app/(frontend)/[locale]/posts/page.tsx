@@ -4,8 +4,8 @@ import { CollectionArchive } from '@/components/CollectionArchive'
 import { PageRange } from '@/components/PageRange'
 import { Pagination } from '@/components/Pagination'
 import configPromise from '@payload-config'
+import { getTranslations } from 'next-intl/server'
 import { getPayload } from 'payload'
-import React from 'react'
 import PageClient from './page.client'
 
 export const dynamic = 'force-static'
@@ -13,6 +13,7 @@ export const revalidate = 600
 
 export default async function Page() {
   const payload = await getPayload({ config: configPromise })
+  const t = await getTranslations('Posts')
 
   const posts = await payload.find({
     collection: 'posts',
@@ -32,7 +33,7 @@ export default async function Page() {
       <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
-          <h1>Posts</h1>
+          <h1>{t('title')}</h1>
         </div>
       </div>
 
