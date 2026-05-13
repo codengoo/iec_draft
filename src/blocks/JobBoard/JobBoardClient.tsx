@@ -144,6 +144,7 @@ export function JobBoardClient({
               value={query}
               onValueChange={setQuery}
               variant="underlined"
+              color="primary"
               startContent={<IconSearch size={16} className="text-gray-400 shrink-0" />}
             />
           </div>
@@ -154,6 +155,7 @@ export function JobBoardClient({
           <div className="min-w-44">
             <Select
               placeholder="All Departments"
+              color="primary"
               selectedKeys={department ? new Set([department]) : new Set()}
               onSelectionChange={(keys) => {
                 const val = Array.from(keys)[0] as string
@@ -172,6 +174,7 @@ export function JobBoardClient({
           <div className="min-w-40">
             <Select
               placeholder="All Locations"
+              color="primary"
               selectedKeys={location ? new Set([location]) : new Set()}
               onSelectionChange={(keys) => {
                 const val = Array.from(keys)[0] as string
