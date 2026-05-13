@@ -1,6 +1,7 @@
 import React from 'react'
 
 import { HeaderThemeProvider } from './HeaderTheme'
+import { HeroUIWrapper } from './HeroUI'
 import { ThemeProvider } from './Theme'
 import { SmoothScrollProvider } from './SmoothScroll'
 
@@ -10,7 +11,9 @@ export const Providers: React.FC<{
   return (
     <ThemeProvider>
       <HeaderThemeProvider>
-        <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        <HeroUIWrapper>
+          <SmoothScrollProvider>{children}</SmoothScrollProvider>
+        </HeroUIWrapper>
       </HeaderThemeProvider>
     </ThemeProvider>
   )

@@ -1,18 +1,18 @@
 'use client'
 
-import React, { useMemo, useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { Button, Input, Select, SelectItem } from '@heroui/react'
 import {
-  IconSearch,
-  IconMapPin,
-  IconChevronDown,
-  IconCode,
-  IconBrush,
-  IconStack2,
-  IconBriefcase,
   IconArrowRight,
   IconBrandLinkedin,
+  IconBriefcase,
+  IconBrush,
+  IconCode,
+  IconMapPin,
+  IconSearch,
+  IconStack2,
 } from '@tabler/icons-react'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useMemo, useState } from 'react'
 
 export type JobItem = {
   id: string
@@ -89,44 +89,6 @@ function JobCard({ job, index }: { job: JobItem; index: number }) {
   )
 }
 
-function FilterDropdown({
-  label,
-  icon,
-  options,
-  value,
-  onChange,
-}: {
-  label: string
-  icon: React.ReactNode
-  options: string[]
-  value: string
-  onChange: (v: string) => void
-}) {
-  return (
-    <div className="relative">
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="appearance-none flex items-center gap-2 pl-9 pr-8 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-gray-700 cursor-pointer hover:border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400 transition-colors w-full"
-      >
-        <option value="">{label}</option>
-        {options.map((opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        ))}
-      </select>
-      <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
-        {icon}
-      </span>
-      <IconChevronDown
-        size={16}
-        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400"
-      />
-    </div>
-  )
-}
-
 export function JobBoardClient({
   jobs,
   heading,
@@ -137,8 +99,8 @@ export function JobBoardClient({
   subtitle?: string | null
 }) {
   const [query, setQuery] = useState('')
-  const [department, setDepartment] = useState('')
-  const [location, setLocation] = useState('')
+  const [department, setDepartment] = useState<string>('')
+  const [location, setLocation] = useState<string>('')
 
   const departments = useMemo(
     () => Array.from(new Set(jobs.map((j) => j.department).filter(Boolean))).sort(),
@@ -175,49 +137,71 @@ export function JobBoardClient({
 
         {/* Search + Filters bar */}
         <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-4 py-3 mb-8 flex flex-wrap gap-3 items-center">
-          {/* Search */}
-          <div className="relative flex-1 min-w-45">
-            <IconSearch
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-            />
-            <input
-              type="text"
+          {/* Search input */}
+          <div className="flex-1 min-w-52">
+            <Input
               placeholder="Search for roles..."
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 text-sm rounded-lg border border-transparent focus:border-blue-300 focus:ring-2 focus:ring-blue-500/20 focus:outline-none transition-colors bg-gray-50 text-gray-800 placeholder:text-gray-400"
+              onValueChange={setQuery}
+              variant="underlined"
+              startContent={<IconSearch size={16} className="text-gray-400 shrink-0" />}
             />
           </div>
 
           <div className="h-6 w-px bg-gray-200 hidden sm:block" />
 
           {/* Department filter */}
-          <FilterDropdown
-            label="All Departments"
-            icon={<IconStack2 size={16} />}
-            options={departments}
-            value={department}
-            onChange={setDepartment}
-          />
+          <div className="min-w-44">
+            <Select
+              placeholder="All Departments"
+              selectedKeys={department ? new Set([department]) : new Set()}
+              onSelectionChange={(keys) => {
+                const val = Array.from(keys)[0] as string
+                setDepartment(val ?? '')
+              }}
+              variant="underlined"
+              startContent={<IconStack2 size={16} className="text-gray-400 shrink-0" />}
+            >
+              {departments.map((dept) => (
+                <SelectItem key={dept}>{dept}</SelectItem>
+              ))}
+            </Select>
+          </div>
 
           {/* Location filter */}
-          <FilterDropdown
-            label="All Locations"
-            icon={<IconMapPin size={16} />}
-            options={locations}
-            value={location}
-            onChange={setLocation}
-          />
+          <div className="min-w-40">
+            <Select
+              placeholder="All Locations"
+              selectedKeys={location ? new Set([location]) : new Set()}
+              onSelectionChange={(keys) => {
+                const val = Array.from(keys)[0] as string
+                setLocation(val ?? '')
+              }}
+              variant="underlined"
+              startContent={<IconMapPin size={16} className="text-gray-400 shrink-0" />}
+            >
+              {locations.map((loc) => (
+                <SelectItem key={loc}>{loc}</SelectItem>
+              ))}
+            </Select>
+          </div>
 
-          {/* Search button */}
-          <button
-            type="button"
-            className="px-5 py-2.5 rounded-lg bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition-colors shrink-0"
-            onClick={() => {}}
-          >
-            Search
-          </button>
+          {/* Clear filters — only shown when active */}
+          {(department || location || query) && (
+            <Button
+              size="sm"
+              variant="flat"
+              radius="lg"
+              className="text-gray-500 bg-gray-100 hover:bg-gray-200 shrink-0"
+              onPress={() => {
+                setQuery('')
+                setDepartment('')
+                setLocation('')
+              }}
+            >
+              Clear
+            </Button>
+          )}
         </div>
 
         {/* Job grid */}

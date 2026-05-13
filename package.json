@@ -22,6 +22,9 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@heroui/react": "^2.8.10",
+    "@heroui/system": "^2.4.28",
+    "@heroui/theme": "^2.4.26",
     "@payloadcms/admin-bar": "3.84.1",
     "@payloadcms/db-mongodb": "3.84.1",
     "@payloadcms/live-preview-react": "3.84.1",
@@ -89,7 +92,8 @@
     "onlyBuiltDependencies": [
       "sharp",
       "esbuild",
-      "unrs-resolver"
+      "unrs-resolver",
+      "@heroui/shared-utils"
     ]
   }
 }
