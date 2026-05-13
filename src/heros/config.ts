@@ -7,13 +7,13 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { linkGroup } from '@/fields/linkGroup'
 import { Banner } from '@/blocks/Banner/config'
 import { CallToAction } from '@/blocks/CallToAction/config'
 import { Code } from '@/blocks/Code/config'
 import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
 import { PolicyTabs } from '@/blocks/PolicyTabs/config'
+import { linkGroup } from '@/fields/linkGroup'
 
 export const hero: Field = {
   name: 'hero',
