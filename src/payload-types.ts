@@ -73,6 +73,7 @@ export interface Config {
     categories: Category;
     users: User;
     jobs: Job;
+    social: Social;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -96,6 +97,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
+    social: SocialSelect<false> | SocialSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -875,6 +877,24 @@ export interface Form {
 export interface JobBoardBlock {
   heading?: string | null;
   subtitle?: string | null;
+  /**
+   * The card displayed at the bottom of the job list for open applications
+   */
+  noFitCard?: {
+    heading?: string | null;
+    subtitle?: string | null;
+    /**
+     * Link for the "Send Us Your CV" button
+     */
+    cvUrl?: string | null;
+    innovatorLabel?: string | null;
+    innovatorAvatars?:
+      | {
+          avatar: string | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'jobBoard';
@@ -901,6 +921,21 @@ export interface Job {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social".
+ */
+export interface Social {
+  id: string;
+  platform: 'linkedin' | 'facebook' | 'instagram' | 'youtube' | 'twitter' | 'tiktok' | 'discord';
+  url: string;
+  /**
+   * Lower numbers appear first
+   */
+  order?: number | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1115,6 +1150,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'jobs';
         value: string | Job;
+      } | null)
+    | ({
+        relationTo: 'social';
+        value: string | Social;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1381,6 +1420,20 @@ export interface FormBlockSelect<T extends boolean = true> {
 export interface JobBoardBlockSelect<T extends boolean = true> {
   heading?: T;
   subtitle?: T;
+  noFitCard?:
+    | T
+    | {
+        heading?: T;
+        subtitle?: T;
+        cvUrl?: T;
+        innovatorLabel?: T;
+        innovatorAvatars?:
+          | T
+          | {
+              avatar?: T;
+              id?: T;
+            };
+      };
   id?: T;
   blockName?: T;
 }
@@ -1567,6 +1620,17 @@ export interface JobsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "social_select".
+ */
+export interface SocialSelect<T extends boolean = true> {
+  platform?: T;
+  url?: T;
+  order?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
