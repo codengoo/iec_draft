@@ -20,50 +20,73 @@ function extractYouTubeId(url: string): string | null {
   return null
 }
 
-const headingContainerVariants: Variants = {
-  hidden: {},
-  visible: {
-    transition: { staggerChildren: 0.09, delayChildren: 0.2 },
-  },
+const charVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.01 } },
 }
 
-const headingWordVariants: Variants = {
-  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
-  visible: {
-    opacity: 1,
-    y: 0,
-    filter: 'blur(0px)',
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
-  },
+/** Typewriter effect: characters appear one by one */
+function TypewriterText({
+  text,
+  className,
+  style,
+  stagger,
+  startDelay = 0,
+}: {
+  text: string
+  className?: string
+  style?: React.CSSProperties
+  stagger: number
+  startDelay?: number
+}) {
+  const chars = text.split('')
+  return (
+    <motion.span
+      className={className}
+      style={style}
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: {},
+        visible: { transition: { staggerChildren: stagger, delayChildren: startDelay } },
+      }}
+    >
+      {chars.map((char, i) => (
+        <motion.span key={i} variants={charVariants} className="inline-block whitespace-pre">
+          {char}
+        </motion.span>
+      ))}
+    </motion.span>
+  )
 }
 
-/** Split heading so the last word renders on its own line with gradient */
+/** Split heading — rest words typewrite first, then gradient last word */
 function HeadingWithGradient({ text }: { text: string }) {
   const words = text.trim().split(/\s+/)
   const last = words[words.length - 1]
-  const rest = words.slice(0, -1)
+  const rest = words.slice(0, -1).join(' ')
+
+  // stagger per character: 0.055s → feels deliberate but not too slow
+  const charStagger = 0.055
+  const restCharCount = rest.length + 1 // +1 for the space/br pause
+  const lastStartDelay = restCharCount * charStagger + 0.15
 
   return (
-    <motion.h1
-      className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight uppercase mb-4"
-      variants={headingContainerVariants}
-      initial="hidden"
-      animate="visible"
-    >
-      {rest.map((word, i) => (
-        <motion.span key={i} variants={headingWordVariants} className="inline-block mr-[0.28em]">
-          {word}
-        </motion.span>
-      ))}
-      {rest.length > 0 && <br />}
-      <motion.span
-        variants={headingWordVariants}
-        className="inline-block bg-clip-text text-transparent text-6xl md:text-7xl lg:text-8xl"
+    <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight uppercase mb-4">
+      {rest && (
+        <>
+          <TypewriterText text={rest} stagger={charStagger} startDelay={0.25} />
+          <br />
+        </>
+      )}
+      <TypewriterText
+        text={last + '.'}
+        stagger={charStagger}
+        startDelay={rest ? lastStartDelay + 0.25 : 0.25}
+        className="bg-clip-text text-transparent text-6xl md:text-7xl lg:text-8xl"
         style={{ backgroundImage: 'linear-gradient(90deg, #2563EB 0%, #38BDF8 100%)' }}
-      >
-        {last + '.'}
-      </motion.span>
-    </motion.h1>
+      />
+    </h1>
   )
 }
 
@@ -120,6 +143,17 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
   const hasButtons = primaryButtonLabel || secondaryButtonLabel
   const hasPopupBtn = !!videoPopupUrl
 
+  // Calculate delays so each element animates after the previous finishes
+  const charStagger = 0.055
+  const headingWords = heading?.trim().split(/\s+/) ?? []
+  const headingRest = headingWords.slice(0, -1).join(' ')
+  const headingLast = headingWords[headingWords.length - 1] ?? ''
+  const restEndTime = 0.25 + headingRest.length * charStagger
+  const lastEndTime = (headingRest ? restEndTime + 0.4 : 0.25) + headingLast.length * charStagger
+  const subtitleDelay = lastEndTime + 0.35
+  const blocksDelay = subtitleDelay + 0.65
+  const buttonsDelay = blocksDelay + 0.5
+
   return (
     <>
       <div
@@ -159,7 +193,8 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
               // ① Bottom fade → white (chuyển tiếp sang section tiếp theo)
               'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.7) 78%, rgba(255,255,255,1) 100%)',
               // ② Sky-blue diagonal highlight từ góc trên-trái
-              'linear-gradient(60deg, rgba(56,189,248,0.22) 0%, rgba(56,189,248,0.08) 35%, transparent 60%)',
+              //   'linear-gradient(60deg, rgba(56,189,248,0.22) 0%, rgba(56,189,248,0.08) 35%, transparent 60%)',
+              'linear-gradient(60deg, rgba(37,99,235,0.5) 0%, rgba(56,189,248,0.08) 35%, transparent 60%)',
               // ③ White panel bên trái cho text đọc được
               'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.93) 28%, rgba(255,255,255,0.1) 62%, transparent 80%)',
             ].join(', '),
@@ -172,20 +207,35 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
             {heading && <HeadingWithGradient text={heading} />}
 
             {subtitle && (
-              <p className="text-sm md:text-base text-gray-600 mb-6 leading-relaxed max-w-md">
+              <motion.p
+                className="text-sm md:text-base text-gray-600 mb-6 leading-relaxed max-w-md"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: subtitleDelay, ease: 'easeOut' }}
+              >
                 {subtitle}
-              </p>
+              </motion.p>
             )}
 
             {overlayContent && Array.isArray(overlayContent) && overlayContent.length > 0 && (
-              <div className="mb-6">
+              <motion.div
+                className="mb-6"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.9, delay: blocksDelay, ease: 'easeOut' }}
+              >
                 <RenderVideoHeroBlocks blocks={overlayContent} />
-              </div>
+              </motion.div>
             )}
 
             {/* ── Buttons row ── */}
             {(hasButtons || hasPopupBtn) && (
-              <div className="flex flex-wrap items-center gap-3 mt-2">
+              <motion.div
+                className="flex flex-wrap items-center gap-3 mt-2"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: buttonsDelay, ease: 'easeOut' }}
+              >
                 {primaryButtonLabel && (
                   <a
                     href={primaryButtonUrl ?? '#'}
@@ -216,7 +266,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
                     </span>
                   </button>
                 )}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
