@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
+import { motion, type Variants } from 'framer-motion'
 import type { Page } from '@/payload-types'
 import { useHeaderTheme } from '@/providers/HeaderTheme'
 import { RenderVideoHeroBlocks } from './RenderVideoHeroBlocks'
@@ -19,27 +20,50 @@ function extractYouTubeId(url: string): string | null {
   return null
 }
 
+const headingContainerVariants: Variants = {
+  hidden: {},
+  visible: {
+    transition: { staggerChildren: 0.09, delayChildren: 0.2 },
+  },
+}
+
+const headingWordVariants: Variants = {
+  hidden: { opacity: 0, y: 28, filter: 'blur(8px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] },
+  },
+}
+
 /** Split heading so the last word renders on its own line with gradient */
 function HeadingWithGradient({ text }: { text: string }) {
   const words = text.trim().split(/\s+/)
   const last = words[words.length - 1]
-  const rest = words.slice(0, -1).join(' ')
+  const rest = words.slice(0, -1)
 
   return (
-    <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight uppercase mb-4">
-      {rest && (
-        <>
-          {rest}
-          <br />
-        </>
-      )}
-      <span
-        className="bg-clip-text text-transparent text-6xl md:text-7xl lg:text-8xl"
+    <motion.h1
+      className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-[1.05] tracking-tight uppercase mb-4"
+      variants={headingContainerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {rest.map((word, i) => (
+        <motion.span key={i} variants={headingWordVariants} className="inline-block mr-[0.28em]">
+          {word}
+        </motion.span>
+      ))}
+      {rest.length > 0 && <br />}
+      <motion.span
+        variants={headingWordVariants}
+        className="inline-block bg-clip-text text-transparent text-6xl md:text-7xl lg:text-8xl"
         style={{ backgroundImage: 'linear-gradient(90deg, #2563EB 0%, #38BDF8 100%)' }}
       >
         {last + '.'}
-      </span>
-    </h1>
+      </motion.span>
+    </motion.h1>
   )
 }
 
