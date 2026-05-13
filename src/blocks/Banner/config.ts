@@ -30,6 +30,7 @@ export const Banner: Block = {
         },
       }),
       label: false,
+      localized: true,
       required: true,
     },
   ],

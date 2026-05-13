@@ -18,6 +18,7 @@ export const PolicyTabs: Block = {
           name: 'tabName',
           type: 'text',
           label: 'Tab Name',
+          localized: true,
           required: true,
         },
         {
@@ -29,6 +30,7 @@ export const PolicyTabs: Block = {
               name: 'text',
               type: 'text',
               label: 'Item Text',
+              localized: true,
               required: true,
             },
           ],

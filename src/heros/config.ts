@@ -62,6 +62,7 @@ export const hero: Field = {
         },
       }),
       label: false,
+      localized: true,
     },
     linkGroup({
       overrides: {
@@ -115,6 +116,7 @@ export const hero: Field = {
       name: 'heading',
       type: 'text',
       label: 'Heading',
+      localized: true,
       admin: {
         description: 'Main heading displayed in the overlay area',
         condition: (_, { type } = {}) => type === 'videoHero',
@@ -124,6 +126,7 @@ export const hero: Field = {
       name: 'subtitle',
       type: 'textarea',
       label: 'Subtitle',
+      localized: true,
       admin: {
         description: 'Subtitle / description text below the heading',
         condition: (_, { type } = {}) => type === 'videoHero',
@@ -144,6 +147,7 @@ export const hero: Field = {
       name: 'primaryButtonLabel',
       type: 'text',
       label: 'Primary Button Label',
+      localized: true,
       admin: {
         condition: (_, { type } = {}) => type === 'videoHero',
       },
@@ -160,6 +164,7 @@ export const hero: Field = {
       name: 'secondaryButtonLabel',
       type: 'text',
       label: 'Secondary Button Label',
+      localized: true,
       admin: {
         condition: (_, { type } = {}) => type === 'videoHero',
       },

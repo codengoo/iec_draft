@@ -9,12 +9,14 @@ export const JobBoard: Block = {
       type: 'text',
       defaultValue: 'Current Openings',
       label: 'Heading',
+      localized: true,
     },
     {
       name: 'subtitle',
       type: 'text',
       defaultValue: 'Find the role that matches your expertise',
       label: 'Subtitle',
+      localized: true,
     },
   ],
 }

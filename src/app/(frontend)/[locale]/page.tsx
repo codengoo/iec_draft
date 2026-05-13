@@ -19,11 +19,12 @@ type Args = {
 
 export default async function HomePage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
+  const { locale } = await paramsPromise
   const url = '/'
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null
 
-  page = await queryHomePageBySlug()
+  page = await queryHomePageBySlug(locale)
 
   if (!page) {
     page = homeStatic
@@ -47,11 +48,12 @@ export default async function HomePage({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const page = await queryHomePageBySlug()
+  const { locale } = await paramsPromise
+  const page = await queryHomePageBySlug(locale)
   return generateMeta({ doc: page })
 }
 
-const queryHomePageBySlug = cache(async () => {
+const queryHomePageBySlug = cache(async (locale: string) => {
   const { isEnabled: draft } = await draftMode()
 
   const payload = await getPayload({ config: configPromise })
@@ -62,6 +64,7 @@ const queryHomePageBySlug = cache(async () => {
     limit: 1,
     pagination: false,
     overrideAccess: draft,
+    locale: locale as 'en' | 'vi',
     where: {
       slug: {
         equals: 'home',

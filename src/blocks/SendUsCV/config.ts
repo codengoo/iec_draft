@@ -13,6 +13,7 @@ export const SendUsCV: Block = {
       type: 'text',
       defaultValue: "Don't see a perfect fit?",
       label: 'Heading',
+      localized: true,
     },
     {
       name: 'subtitle',
@@ -20,6 +21,7 @@ export const SendUsCV: Block = {
       defaultValue:
         'We are always looking for passionate people to join us. Send us your CV and tell us how you can make a difference at IEC Games.',
       label: 'Subtitle',
+      localized: true,
     },
     {
       name: 'cvUrl',
@@ -34,6 +36,7 @@ export const SendUsCV: Block = {
       type: 'text',
       defaultValue: 'Join 100+ Innovators today',
       label: 'Innovator Label',
+      localized: true,
     },
     {
       name: 'innovatorAvatars',
