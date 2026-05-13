@@ -13,6 +13,7 @@ import { CallToAction } from '@/blocks/CallToAction/config'
 import { Code } from '@/blocks/Code/config'
 import { Content } from '@/blocks/Content/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { PolicyTabs } from '@/blocks/PolicyTabs/config'
 
 export const hero: Field = {
   name: 'hero',
@@ -111,14 +112,75 @@ export const hero: Field = {
       },
     },
     {
+      name: 'heading',
+      type: 'text',
+      label: 'Heading',
+      admin: {
+        description: 'Main heading displayed in the overlay area',
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
+      name: 'subtitle',
+      type: 'textarea',
+      label: 'Subtitle',
+      admin: {
+        description: 'Subtitle / description text below the heading',
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
       name: 'overlayContent',
       type: 'blocks',
       label: 'Overlay Content',
       admin: {
-        description: 'Content displayed inside the white overlay area (left 2/3 of the screen)',
+        description: 'Content displayed inside the overlay area (left 2/3 of the screen)',
         condition: (_, { type } = {}) => type === 'videoHero',
       },
-      blocks: [CallToAction, Content, MediaBlock, Banner, Code],
+      blocks: [CallToAction, Content, MediaBlock, Banner, Code, PolicyTabs],
+    },
+    // --- Video Hero buttons ---
+    {
+      name: 'primaryButtonLabel',
+      type: 'text',
+      label: 'Primary Button Label',
+      admin: {
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
+      name: 'primaryButtonUrl',
+      type: 'text',
+      label: 'Primary Button URL',
+      admin: {
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
+      name: 'secondaryButtonLabel',
+      type: 'text',
+      label: 'Secondary Button Label',
+      admin: {
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
+      name: 'secondaryButtonUrl',
+      type: 'text',
+      label: 'Secondary Button URL',
+      admin: {
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    {
+      name: 'videoPopupUrl',
+      type: 'text',
+      label: 'Video Popup URL',
+      admin: {
+        description:
+          'YouTube or direct video URL to open in a popup when the play button is clicked',
+        condition: (_, { type } = {}) => type === 'videoHero',
+      },
     },
   ],
   label: false,

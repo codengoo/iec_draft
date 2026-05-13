@@ -6,6 +6,7 @@ import { CallToActionBlock } from '@/blocks/CallToAction/Component'
 import { CodeBlock } from '@/blocks/Code/Component'
 import { ContentBlock } from '@/blocks/Content/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { PolicyTabsBlock } from '@/blocks/PolicyTabs/Component'
 
 type OverlayBlock = NonNullable<Page['hero']['overlayContent']>[0]
 
@@ -15,6 +16,7 @@ const blockComponents: Record<string, React.FC<any>> = {
   content: ContentBlock,
   cta: CallToActionBlock,
   mediaBlock: MediaBlock,
+  policyTabs: PolicyTabsBlock,
 }
 
 export const RenderVideoHeroBlocks: React.FC<{ blocks: OverlayBlock[] }> = ({ blocks }) => {

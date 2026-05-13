@@ -207,9 +207,27 @@ export interface Page {
      */
     youtubeUrl?: string | null;
     /**
-     * Content displayed inside the white overlay area (left 2/3 of the screen)
+     * Main heading displayed in the overlay area
      */
-    overlayContent?: (CallToActionBlock | ContentBlock | MediaBlock | BannerBlock | CodeBlock)[] | null;
+    heading?: string | null;
+    /**
+     * Subtitle / description text below the heading
+     */
+    subtitle?: string | null;
+    /**
+     * Content displayed inside the overlay area (left 2/3 of the screen)
+     */
+    overlayContent?:
+      | (CallToActionBlock | ContentBlock | MediaBlock | BannerBlock | CodeBlock | PolicyTabsBlock)[]
+      | null;
+    primaryButtonLabel?: string | null;
+    primaryButtonUrl?: string | null;
+    secondaryButtonLabel?: string | null;
+    secondaryButtonUrl?: string | null;
+    /**
+     * YouTube or direct video URL to open in a popup when the play button is clicked
+     */
+    videoPopupUrl?: string | null;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
@@ -592,6 +610,27 @@ export interface CodeBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'code';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PolicyTabsBlock".
+ */
+export interface PolicyTabsBlock {
+  tabs?:
+    | {
+        tabName: string;
+        items?:
+          | {
+              text: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'policyTabs';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1129,6 +1168,8 @@ export interface PagesSelect<T extends boolean = true> {
         videoSource?: T;
         videoFile?: T;
         youtubeUrl?: T;
+        heading?: T;
+        subtitle?: T;
         overlayContent?:
           | T
           | {
@@ -1137,7 +1178,13 @@ export interface PagesSelect<T extends boolean = true> {
               mediaBlock?: T | MediaBlockSelect<T>;
               banner?: T | BannerBlockSelect<T>;
               code?: T | CodeBlockSelect<T>;
+              policyTabs?: T | PolicyTabsBlockSelect<T>;
             };
+        primaryButtonLabel?: T;
+        primaryButtonUrl?: T;
+        secondaryButtonLabel?: T;
+        secondaryButtonUrl?: T;
+        videoPopupUrl?: T;
       };
   layout?:
     | T
@@ -1238,6 +1285,26 @@ export interface BannerBlockSelect<T extends boolean = true> {
 export interface CodeBlockSelect<T extends boolean = true> {
   language?: T;
   code?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "PolicyTabsBlock_select".
+ */
+export interface PolicyTabsBlockSelect<T extends boolean = true> {
+  tabs?:
+    | T
+    | {
+        tabName?: T;
+        items?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }
