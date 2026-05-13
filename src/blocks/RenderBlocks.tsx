@@ -8,6 +8,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { JobBoardBlock } from '@/blocks/JobBoard/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -16,6 +17,7 @@ const blockComponents = {
   formBlock: FormBlock,
   jobBoard: JobBoardBlock,
   mediaBlock: MediaBlock,
+  sendUsCV: SendUsCVBlock,
 }
 
 export const RenderBlocks: React.FC<{

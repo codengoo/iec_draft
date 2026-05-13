@@ -233,7 +233,7 @@ export interface Page {
      */
     videoPopupUrl?: string | null;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | JobBoardBlock)[];
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | JobBoardBlock | SendUsCVBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -877,27 +877,31 @@ export interface Form {
 export interface JobBoardBlock {
   heading?: string | null;
   subtitle?: string | null;
-  /**
-   * The card displayed at the bottom of the job list for open applications
-   */
-  noFitCard?: {
-    heading?: string | null;
-    subtitle?: string | null;
-    /**
-     * Link for the "Send Us Your CV" button
-     */
-    cvUrl?: string | null;
-    innovatorLabel?: string | null;
-    innovatorAvatars?:
-      | {
-          avatar: string | Media;
-          id?: string | null;
-        }[]
-      | null;
-  };
   id?: string | null;
   blockName?: string | null;
   blockType: 'jobBoard';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SendUsCVBlock".
+ */
+export interface SendUsCVBlock {
+  heading?: string | null;
+  subtitle?: string | null;
+  /**
+   * Link for the "Send Us Your CV" button
+   */
+  cvUrl?: string | null;
+  innovatorLabel?: string | null;
+  innovatorAvatars?:
+    | {
+        avatar: string | Media;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'sendUsCV';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1274,6 +1278,7 @@ export interface PagesSelect<T extends boolean = true> {
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
         jobBoard?: T | JobBoardBlockSelect<T>;
+        sendUsCV?: T | SendUsCVBlockSelect<T>;
       };
   meta?:
     | T
@@ -1420,19 +1425,23 @@ export interface FormBlockSelect<T extends boolean = true> {
 export interface JobBoardBlockSelect<T extends boolean = true> {
   heading?: T;
   subtitle?: T;
-  noFitCard?:
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SendUsCVBlock_select".
+ */
+export interface SendUsCVBlockSelect<T extends boolean = true> {
+  heading?: T;
+  subtitle?: T;
+  cvUrl?: T;
+  innovatorLabel?: T;
+  innovatorAvatars?:
     | T
     | {
-        heading?: T;
-        subtitle?: T;
-        cvUrl?: T;
-        innovatorLabel?: T;
-        innovatorAvatars?:
-          | T
-          | {
-              avatar?: T;
-              id?: T;
-            };
+        avatar?: T;
+        id?: T;
       };
   id?: T;
   blockName?: T;
