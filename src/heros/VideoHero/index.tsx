@@ -131,8 +131,14 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
         <div
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
-            background:
-              'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.93) 30%,  rgba(255,255,255,0) 100%)',
+            background: [
+              // ① Bottom fade → white (chuyển tiếp sang section tiếp theo)
+              'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.7) 78%, rgba(255,255,255,1) 100%)',
+              // ② Sky-blue diagonal highlight từ góc trên-trái
+              'linear-gradient(60deg, rgba(56,189,248,0.22) 0%, rgba(56,189,248,0.08) 35%, transparent 60%)',
+              // ③ White panel bên trái cho text đọc được
+              'linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.93) 28%, rgba(255,255,255,0.1) 62%, transparent 80%)',
+            ].join(', '),
           }}
         />
 
