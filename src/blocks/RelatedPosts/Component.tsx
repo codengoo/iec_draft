@@ -20,11 +20,11 @@ export const RelatedPosts: React.FC<RelatedPostsProps> = (props) => {
     <div className={clsx('lg:container', className)}>
       {introContent && <RichText data={introContent} enableGutter={false} />}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 items-stretch">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 md:gap-4 items-stretch">
         {docs?.map((doc, index) => {
           if (typeof doc === 'string') return null
 
-          return <Card key={index} doc={doc} relationTo="posts" showCategories />
+          return <Card key={index} compact doc={doc} relationTo="posts" showCategories />
         })}
       </div>
     </div>

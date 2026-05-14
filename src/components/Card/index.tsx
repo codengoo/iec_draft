@@ -25,13 +25,21 @@ function formatCardDate(timestamp: string): string {
 export const Card: React.FC<{
   alignItems?: 'center'
   className?: string
+  compact?: boolean
   doc?: CardPostData
   relationTo?: 'posts'
   showCategories?: boolean
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
-  const { className, doc, relationTo, showCategories, title: titleFromProps } = props
+  const {
+    className,
+    compact = false,
+    doc,
+    relationTo,
+    showCategories,
+    title: titleFromProps,
+  } = props
 
   const { slug, categories, tags, meta, title, publishedAt } = doc || {}
   const { image: metaImage } = meta || {}
@@ -75,7 +83,7 @@ export const Card: React.FC<{
         )}
       </div>
 
-      <CardBody className="flex flex-col gap-3 p-5">
+      <CardBody className={cn('flex flex-col', compact ? 'gap-1.5 p-3' : 'gap-3 p-5')}>
         {/* Category + Date row */}
         <div className="flex items-center justify-between gap-2">
           {showCategories && hasCategories && (
@@ -108,7 +116,12 @@ export const Card: React.FC<{
 
         {/* Title */}
         {titleToUse && (
-          <h3 className="font-bold text-lg leading-snug line-clamp-3 text-foreground transition-colors duration-300 group-hover:text-primary">
+          <h3
+            className={cn(
+              'font-bold leading-snug line-clamp-3 text-foreground transition-colors duration-300 group-hover:text-primary',
+              compact ? 'text-sm' : 'text-lg',
+            )}
+          >
             <Link href={href} ref={link.ref} className="relative inline">
               <span className="bg-[linear-gradient(currentColor,currentColor)] bg-size-[0%_2px] bg-bottom-left bg-no-repeat transition-[background-size] duration-500 ease-out group-hover:bg-size-[100%_2px]">
                 {titleToUse}
