@@ -22,7 +22,6 @@ export type JobItem = {
   location: string
   salaryLabel?: string | null
   linkedinUrl?: string | null
-  applyUrl?: string | null
 }
 
 function departmentIcon(dept: string) {

@@ -19,6 +19,7 @@ import {
 
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
+import { JobApplyModal } from '@/components/JobApplyModal'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { cn } from '@/utilities/ui'
 
@@ -46,8 +47,8 @@ export async function generateStaticParams() {
 }
 
 export default async function JobDetailPage({ params: paramsPromise }: Args) {
-  const { jobId } = await paramsPromise
-  const job = await queryJobById(jobId)
+  const { jobId, locale } = await paramsPromise
+  const job = await queryJobById({ id: jobId, locale })
 
   if (!job) notFound()
 
@@ -143,17 +144,31 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
               </dl>
 
               <div className="space-y-3">
-                {job.applyUrl && (
-                  <Button asChild className="w-full" size="lg">
-                    <a
-                      href={job.applyUrl}
-                      target={job.applyUrl.startsWith('http') ? '_blank' : undefined}
-                      rel={job.applyUrl.startsWith('http') ? 'noopener noreferrer' : undefined}
-                    >
-                      {t('applyNow')}
-                    </a>
-                  </Button>
-                )}
+                <JobApplyModal
+                  className="w-full"
+                  jobId={String(job.id)}
+                  jobTitle={job.title}
+                  labels={{
+                    triggerLabel: t('applyNow'),
+                    title: t('apply.title'),
+                    subtitle: t('apply.subtitle'),
+                    fullName: t('apply.fullName'),
+                    email: t('apply.email'),
+                    phone: t('apply.phone'),
+                    position: t('apply.position'),
+                    experience: t('apply.experience'),
+                    cv: t('apply.cv'),
+                    cvHint: t('apply.cvHint'),
+                    cvAttached: t('apply.cvAttached'),
+                    cvChange: t('apply.cvChange'),
+                    submit: t('apply.submit'),
+                    submitting: t('apply.submitting'),
+                    successTitle: t('apply.successTitle'),
+                    successBody: t('apply.successBody'),
+                    close: t('apply.close'),
+                    required: t('apply.required'),
+                  }}
+                />
                 {job.linkedinUrl && (
                   <Button asChild className="w-full" size="lg" variant="outline">
                     <a href={job.linkedinUrl} target="_blank" rel="noopener noreferrer">
@@ -176,8 +191,8 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { jobId } = await paramsPromise
-  const job = await queryJobById(jobId)
+  const { jobId, locale } = await paramsPromise
+  const job = await queryJobById({ id: jobId, locale })
   if (!job) return {}
 
   const description = job.description ?? `${job.department} · ${job.location}`
@@ -191,21 +206,24 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   }
 }
 
-const queryJobById = cache(async (id: string): Promise<Job | null> => {
-  if (!/^[a-f0-9]{24}$/i.test(id)) return null
-  const payload = await getPayload({ config: configPromise })
-  try {
-    const job = await payload.findByID({
-      collection: 'jobs',
-      id,
-      depth: 1,
-      overrideAccess: false,
-    })
-    return job ?? null
-  } catch {
-    return null
-  }
-})
+const queryJobById = cache(
+  async ({ id, locale }: { id: string; locale: string }): Promise<Job | null> => {
+    if (!/^[a-f0-9]{24}$/i.test(id)) return null
+    const payload = await getPayload({ config: configPromise })
+    try {
+      const job = await payload.findByID({
+        collection: 'jobs',
+        id,
+        depth: 1,
+        overrideAccess: false,
+        locale: locale as 'en' | 'vi',
+      })
+      return job ?? null
+    } catch {
+      return null
+    }
+  },
+)
 
 function SummaryRow({
   icon,

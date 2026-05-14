@@ -74,6 +74,7 @@ export interface Config {
     tags: Tag;
     users: User;
     jobs: Job;
+    'job-applications': JobApplication;
     social: Social;
     redirects: Redirect;
     forms: Form;
@@ -99,6 +100,7 @@ export interface Config {
     tags: TagsSelect<false> | TagsSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     jobs: JobsSelect<false> | JobsSelect<true>;
+    'job-applications': JobApplicationsSelect<false> | JobApplicationsSelect<true>;
     social: SocialSelect<false> | SocialSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -953,10 +955,6 @@ export interface Job {
   salaryLabel?: string | null;
   linkedinUrl?: string | null;
   /**
-   * External link or mailto: for the Apply Now CTA
-   */
-  applyUrl?: string | null;
-  /**
    * One-paragraph summary shown under the title on the detail page.
    */
   description?: string | null;
@@ -1008,6 +1006,34 @@ export interface Job {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications".
+ */
+export interface JobApplication {
+  id: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  /**
+   * The job this application was submitted for.
+   */
+  job: string | Job;
+  /**
+   * Snapshot of the job title at submission time (auto-filled).
+   */
+  position?: string | null;
+  experience?: string | null;
+  cv: string | Media;
+  status?: ('new' | 'reviewing' | 'contacted' | 'rejected' | 'hired') | null;
+  submittedAt?: string | null;
+  /**
+   * HR-only notes about this candidate.
+   */
+  internalNotes?: string | null;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1249,6 +1275,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'jobs';
         value: string | Job;
+      } | null)
+    | ({
+        relationTo: 'job-applications';
+        value: string | JobApplication;
       } | null)
     | ({
         relationTo: 'social';
@@ -1736,7 +1766,6 @@ export interface JobsSelect<T extends boolean = true> {
   workingHours?: T;
   salaryLabel?: T;
   linkedinUrl?: T;
-  applyUrl?: T;
   description?: T;
   jobDescription?: T;
   qualifications?: T;
@@ -1744,6 +1773,24 @@ export interface JobsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "job-applications_select".
+ */
+export interface JobApplicationsSelect<T extends boolean = true> {
+  fullName?: T;
+  email?: T;
+  phone?: T;
+  job?: T;
+  position?: T;
+  experience?: T;
+  cv?: T;
+  status?: T;
+  submittedAt?: T;
+  internalNotes?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -23,7 +23,6 @@ export const JobBoardBlock: React.FC<JobBoardBlockProps & { id?: string }> = asy
     location: doc.location,
     salaryLabel: doc.salaryLabel ?? null,
     linkedinUrl: doc.linkedinUrl ?? null,
-    applyUrl: doc.applyUrl ?? null,
   }))
 
   return <JobBoardClient jobs={jobs} heading={heading} subtitle={subtitle} />

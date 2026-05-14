@@ -48,6 +48,25 @@
       "partTime": "Bán thời gian",
       "contract": "Hợp đồng",
       "internship": "Thực tập"
+    },
+    "apply": {
+      "title": "Ứng tuyển vị trí",
+      "subtitle": "Điền thông tin và đính kèm CV của bạn.",
+      "fullName": "Họ và tên",
+      "email": "Email",
+      "phone": "Số điện thoại",
+      "position": "Vị trí ứng tuyển",
+      "experience": "Tóm tắt kinh nghiệm",
+      "cv": "Đính kèm CV (PDF hoặc Word)",
+      "cvHint": "PDF, DOC hoặc DOCX — tối đa 5 MB.",
+      "cvAttached": "Đã đính kèm",
+      "cvChange": "Đổi file",
+      "submit": "Gửi ứng tuyển",
+      "submitting": "Đang gửi…",
+      "successTitle": "Đã nhận hồ sơ",
+      "successBody": "Cảm ơn bạn đã ứng tuyển. Bộ phận HR sẽ xem xét CV và phản hồi trong vòng 5 ngày làm việc.",
+      "close": "Đóng",
+      "required": "bắt buộc"
     }
   }
 }

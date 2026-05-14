@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import { defaultLexical } from '@/fields/defaultLexical'
 import { Categories } from './collections/Categories'
+import { JobApplications } from './collections/JobApplications'
 import { Jobs } from './collections/Jobs'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
@@ -63,7 +64,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Tags, Users, Jobs, Social],
+  collections: [Pages, Posts, Media, Categories, Tags, Users, Jobs, JobApplications, Social],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   localization: {

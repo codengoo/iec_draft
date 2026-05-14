@@ -114,14 +114,6 @@ export const Jobs: CollectionConfig = {
               ],
             },
             {
-              name: 'applyUrl',
-              type: 'text',
-              label: 'Apply URL',
-              admin: {
-                description: 'External link or mailto: for the Apply Now CTA',
-              },
-            },
-            {
               name: 'description',
               type: 'textarea',
               label: 'Short Summary',

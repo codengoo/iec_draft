@@ -48,6 +48,25 @@
       "partTime": "Part-time",
       "contract": "Contract",
       "internship": "Internship"
+    },
+    "apply": {
+      "title": "Apply for this position",
+      "subtitle": "Tell us about yourself and attach your CV.",
+      "fullName": "Full name",
+      "email": "Email",
+      "phone": "Phone number",
+      "position": "Position",
+      "experience": "Experience summary",
+      "cv": "Attach CV (PDF or Word)",
+      "cvHint": "PDF, DOC, or DOCX — up to 5 MB.",
+      "cvAttached": "Attached",
+      "cvChange": "Change",
+      "submit": "Submit application",
+      "submitting": "Submitting…",
+      "successTitle": "Application received",
+      "successBody": "Thank you for applying. Our HR team will review your CV and get back to you within 5 working days.",
+      "close": "Close",
+      "required": "required"
     }
   }
 }
