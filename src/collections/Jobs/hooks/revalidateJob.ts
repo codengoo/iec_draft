@@ -12,8 +12,12 @@ export const revalidateJob: CollectionAfterChangeHook<Job> = ({
     const detailPath = `/career/${doc.id}`
     payload.logger.info(`Revalidating job at path: ${detailPath}`)
     setImmediate(() => {
-      revalidatePath(detailPath)
-      revalidatePath('/career')
+      try {
+        revalidatePath(detailPath)
+        revalidatePath('/career')
+      } catch {
+        // revalidatePath requires a Next.js request context; ignore when called outside it
+      }
     })
   }
   return doc
@@ -22,8 +26,12 @@ export const revalidateJob: CollectionAfterChangeHook<Job> = ({
 export const revalidateJobDelete: CollectionAfterDeleteHook<Job> = ({ doc, req: { context } }) => {
   if (!context.disableRevalidate) {
     setImmediate(() => {
-      revalidatePath(`/career/${doc?.id}`)
-      revalidatePath('/career')
+      try {
+        revalidatePath(`/career/${doc?.id}`)
+        revalidatePath('/career')
+      } catch {
+        // revalidatePath requires a Next.js request context; ignore when called outside it
+      }
     })
   }
   return doc

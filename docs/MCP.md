@@ -1,0 +1,567 @@
+# MCP Integration — IEC Web
+
+Model Context Protocol (MCP) server nhúng vào Next.js App Router, cho phép AI Agent gọi HTTP để tự động tạo, cập nhật và quản lý job description trong Payload CMS.
+
+---
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Architecture](#2-architecture)
+3. [Setup](#3-setup)
+4. [Authentication](#4-authentication)
+5. [Transport & Protocol](#5-transport--protocol)
+6. [Tools Reference](#6-tools-reference)
+7. [Localization](#7-localization)
+8. [Lexical Markdown Syntax](#8-lexical-markdown-syntax)
+9. [CORS & Remote Access](#9-cors--remote-access)
+10. [Testing with MCP Inspector](#10-testing-with-mcp-inspector)
+11. [AI Agent Configuration Examples](#11-ai-agent-configuration-examples)
+12. [Security Considerations](#12-security-considerations)
+13. [File Structure](#13-file-structure)
+
+---
+
+## 1. Overview
+
+The MCP server exposes **5 tools** that operate on the `jobs` Payload collection:
+
+| Tool | Action |
+|------|--------|
+| `jobs_list` | List jobs (with optional filters) |
+| `jobs_get` | Get a single job by ID |
+| `jobs_create` | Create and publish a new job |
+| `jobs_update` | Update fields of an existing job |
+| `jobs_delete` | Delete a job |
+
+**Key design decisions:**
+- **Embedded** in the existing Next.js app — no additional server to deploy.
+- **Payload Local API** is used directly (no HTTP round-trip to itself).
+- **Stateless per-request** — each HTTP call creates a fresh MCP server instance; no session state is persisted.
+- **Locale-aware** — all content tools accept a `locale` parameter (`en` | `vi`). The `jobs` collection has `localized: true` on content fields (`title`, `description`, `jobDescription`, `qualifications`, `benefits`).
+- **Plain text / markdown input** — richText fields accept ordinary text strings; the server converts them to Payload Lexical JSON automatically.
+
+---
+
+## 2. Architecture
+
+```
+AI Agent (Claude / GPT / custom)
+         │
+         │  POST https://your-site.com/api/mcp
+         │  Authorization: Bearer <MCP_API_KEY>
+         ▼
+┌─────────────────────────────────────────────────────────┐
+│  Next.js App Router                                     │
+│  src/app/(payload)/api/mcp/route.ts                     │
+│                                                         │
+│  1. Validate Bearer token (MCP_API_KEY)                 │
+│  2. Create McpServer + WebStandardStreamableHTTP        │
+│     Transport (per-request, stateless)                  │
+│  3. server.connect(transport)                           │
+│  4. transport.handleRequest(request) → Response         │
+└─────────────────────────────────────────────────────────┘
+         │
+         │  Payload Local API (in-process)
+         ▼
+┌────────────────────┐
+│  MongoDB            │
+│  jobs collection   │
+└────────────────────┘
+```
+
+### Source Files
+
+```
+src/
+├── mcp/
+│   ├── server.ts           ← McpServer factory (createMcpServer)
+│   ├── tools/
+│   │   └── jobs.ts         ← 5 tool definitions (registerJobTools)
+│   └── utils/
+│       └── lexical.ts      ← Plain text → Payload Lexical JSON converter
+└── app/(payload)/api/mcp/
+    └── route.ts            ← HTTP route handler (POST / GET / DELETE / OPTIONS)
+```
+
+---
+
+## 3. Setup
+
+### Environment Variables
+
+Add to `.env`:
+
+```env
+# MCP Server — API key for AI Agent access
+MCP_API_KEY=your-strong-random-secret-here
+```
+
+> Generate with: `openssl rand -base64 32`
+
+### No Additional Dependencies
+
+The only new package is `@modelcontextprotocol/sdk@1.29.0` (installed) and `zod@4.4.3` (installed). The MCP endpoint is active immediately after the app starts.
+
+---
+
+## 4. Authentication
+
+Every request to `/api/mcp` must include a valid Bearer token:
+
+```
+Authorization: Bearer <MCP_API_KEY>
+```
+
+Requests without the header or with an incorrect key receive:
+
+```json
+HTTP/1.1 401 Unauthorized
+
+{ "jsonrpc": "2.0", "error": { "code": -32001, "message": "Unauthorized" }, "id": null }
+```
+
+If `MCP_API_KEY` is not set in the environment, **all requests are denied** (fail-safe).
+
+---
+
+## 5. Transport & Protocol
+
+The endpoint implements the **MCP Streamable HTTP transport** (spec version `2025-06-18`).
+
+| Method | Purpose |
+|--------|---------|
+| `POST /api/mcp` | Send JSON-RPC messages (initialize, tool calls) |
+| `GET /api/mcp` | Open SSE stream for server-to-client notifications |
+| `DELETE /api/mcp` | Terminate a session (returns 405 — sessions are stateless) |
+| `OPTIONS /api/mcp` | CORS preflight |
+
+### Protocol Flow
+
+```
+AI Agent                        MCP Server (/api/mcp)
+   │                                    │
+   │── POST initialize ──────────────►  │
+   │◄── InitializeResult ──────────────  │  (lists capabilities + tools)
+   │                                    │
+   │── POST tools/call (jobs_create) ► │
+   │◄── CallToolResult ────────────────  │  (created job JSON)
+```
+
+The server is **stateless** — the `initialize` handshake and the tool call can be separate HTTP requests. Clients must send `initialize` before making tool calls.
+
+---
+
+## 6. Tools Reference
+
+All tools return `{ content: [{ type: "text", text: "..." }] }`.
+
+---
+
+### `jobs_list`
+
+List job postings with optional filters.
+
+**Input:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `locale` | `"en" \| "vi"` | `"en"` | Content locale to return |
+| `department` | `string?` | — | Filter by exact department name |
+| `location` | `string?` | — | Filter by location (partial match) |
+| `employmentType` | `"fullTime" \| "partTime" \| "contract" \| "internship"` | — | Filter by type |
+| `limit` | `number` | `20` | Max results (1–100) |
+
+**Output:** JSON with `total` count and `items` array (id, title, department, location, employmentType, workingHours, salaryLabel, description, updatedAt).
+
+**Example:**
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "jobs_list",
+    "arguments": { "locale": "vi", "department": "Engineering", "limit": 10 }
+  }
+}
+```
+
+---
+
+### `jobs_get`
+
+Get a single job by ID with all content fields.
+
+**Input:**
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `id` | `string` | required | Job document ID |
+| `locale` | `"en" \| "vi"` | `"en"` | Content locale to return |
+
+---
+
+### `jobs_create`
+
+Create and immediately publish a new job posting.
+
+**Input:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `locale` | `"en" \| "vi"` | no (default `"en"`) | Locale for this content |
+| `title` | `string` | **yes** | Job title |
+| `department` | `string` | **yes** | Department (not localized) |
+| `location` | `string` | **yes** | Location (not localized) |
+| `employmentType` | `"fullTime" \| "partTime" \| "contract" \| "internship"` | no | Default: `fullTime` |
+| `workingHours` | `string` | no | e.g. `"9AM – 6PM, Mon–Fri"` |
+| `salaryLabel` | `string` | no | e.g. `"Competitive"` or `"$80k–$120k"` |
+| `linkedinUrl` | `string` | no | LinkedIn posting URL |
+| `description` | `string` | no | Short one-paragraph summary (plain text) |
+| `jobDescription` | `string` | no | Full job description (plain text / markdown) |
+| `qualifications` | `string` | no | Candidate requirements (plain text / markdown) |
+| `benefits` | `string` | no | Benefits offered (plain text / markdown) |
+
+**Output:** Created job document JSON + `id`.
+
+> richText fields (`jobDescription`, `qualifications`, `benefits`) accept plain text or [simple markdown](#8-lexical-markdown-syntax). The server converts them to Payload Lexical format automatically.
+
+**Example:**
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "jobs_create",
+    "arguments": {
+      "locale": "en",
+      "title": "Senior Frontend Engineer",
+      "department": "Engineering",
+      "location": "Hanoi, Vietnam",
+      "employmentType": "fullTime",
+      "workingHours": "9AM – 6PM, Mon–Fri",
+      "salaryLabel": "Competitive",
+      "description": "Join our team to build world-class web applications.",
+      "jobDescription": "## About the Role\nWe are building the next generation...\n\n### Responsibilities\n- Design and implement frontend features\n- **Collaborate** with backend engineers\n---\nWork in an agile team.",
+      "qualifications": "### Requirements\n- **5+ years** React/Next.js experience\n- Strong TypeScript skills\n- Experience with REST APIs",
+      "benefits": "- Competitive salary\n- Annual performance bonus\n- Health insurance for employee and family\n- 15 days annual leave"
+    }
+  }
+}
+```
+
+---
+
+### `jobs_update`
+
+Update one or more fields of an existing job. Only provided fields are modified; others are unchanged.
+
+**Input:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | `string` | **yes** | Job document ID |
+| `locale` | `"en" \| "vi"` | no (default `"en"`) | Locale of the content being updated |
+| *(any field from `jobs_create`)* | | no | Field(s) to update |
+
+> Setting `locale: "vi"` writes Vietnamese content to the same document without overwriting the English content.
+
+**Example — add Vietnamese translation to an existing job:**
+```json
+{
+  "method": "tools/call",
+  "params": {
+    "name": "jobs_update",
+    "arguments": {
+      "id": "683abc123def456",
+      "locale": "vi",
+      "title": "Kỹ sư Frontend Senior",
+      "description": "Tham gia nhóm của chúng tôi để xây dựng các ứng dụng web...",
+      "jobDescription": "## Về vị trí\nChúng tôi đang xây dựng thế hệ tiếp theo...",
+      "qualifications": "### Yêu cầu\n- **5+ năm** kinh nghiệm React/Next.js",
+      "benefits": "- Mức lương cạnh tranh\n- Thưởng hiệu suất hàng năm"
+    }
+  }
+}
+```
+
+---
+
+### `jobs_delete`
+
+Permanently delete a job posting.
+
+**Input:**
+
+| Parameter | Type | Required | Description |
+|-----------|------|----------|-------------|
+| `id` | `string` | **yes** | Job document ID to delete |
+
+> This action is irreversible. The job will be removed from the database and all frontend pages will be revalidated.
+
+---
+
+## 7. Localization
+
+The `jobs` collection has Payload localization enabled on these fields:
+
+| Field | Localized | Notes |
+|-------|-----------|-------|
+| `title` | ✅ | Job title per language |
+| `description` | ✅ | Short summary per language |
+| `jobDescription` | ✅ | Main body richText per language |
+| `qualifications` | ✅ | Requirements richText per language |
+| `benefits` | ✅ | Benefits richText per language |
+| `department` | ❌ | Shared metadata |
+| `location` | ❌ | Shared metadata |
+| `employmentType` | ❌ | Select value |
+| `workingHours` | ❌ | Shared metadata |
+| `salaryLabel` | ❌ | Shared metadata |
+| `linkedinUrl` | ❌ | URL |
+
+### Typical Workflow for a Bilingual Job
+
+```
+Step 1: Create English content
+jobs_create({ locale: "en", title: "...", department: "...", location: "...", jobDescription: "..." })
+→ Returns { id: "abc123" }
+
+Step 2: Add Vietnamese translation to the same document
+jobs_update({ id: "abc123", locale: "vi", title: "...", jobDescription: "..." })
+
+Step 3: Verify both locales
+jobs_get({ id: "abc123", locale: "en" })
+jobs_get({ id: "abc123", locale: "vi" })
+```
+
+The Payload admin panel will show a locale switcher (EN/VI) on the job edit page after localization is enabled.
+
+---
+
+## 8. Lexical Markdown Syntax
+
+RichText fields accept plain strings with these markdown conventions:
+
+| Syntax | Result |
+|--------|--------|
+| `## Heading` | `<h2>` heading |
+| `### Heading` | `<h3>` heading |
+| `#### Heading` | `<h4>` heading |
+| `**bold text**` | Bold inline text |
+| `---` (alone on a line) | Horizontal rule `<hr>` |
+| Empty line | Empty paragraph (visual spacing) |
+| Plain text line | Regular paragraph |
+
+**Example input:**
+```
+## Job Overview
+We are looking for a motivated engineer to join our growing team.
+
+### Key Responsibilities
+- Build and maintain React applications
+- **Own** the frontend architecture decisions
+---
+This is a hybrid role based in Hanoi.
+```
+
+> Lists (`-`) are rendered as plain paragraphs in the current converter. For structured lists, use separate lines with `- ` prefix in your plain text and they will be treated as individual paragraphs. If true list nodes are required, pass pre-formatted Lexical JSON instead of a plain string.
+
+---
+
+## 9. CORS & Remote Access
+
+The `/api/mcp` endpoint sends these CORS headers on all responses:
+
+```
+Access-Control-Allow-Origin: *
+Access-Control-Allow-Methods: GET, POST, DELETE, OPTIONS
+Access-Control-Allow-Headers: Content-Type, Authorization, mcp-session-id, Last-Event-ID, mcp-protocol-version
+Access-Control-Expose-Headers: mcp-session-id, mcp-protocol-version
+```
+
+CORS is open (`*`) because the endpoint is protected by the `MCP_API_KEY` Bearer token. Only callers with the key can perform operations.
+
+---
+
+## 10. Testing with MCP Inspector
+
+The [MCP Inspector](https://modelcontextprotocol.io/docs/tools/inspector) is the fastest way to manually test tools.
+
+```bash
+pnpm run test:mcp
+# or directly:
+npx @modelcontextprotocol/inspector
+```
+
+> **⚠️ Common mistake:** Do NOT pass the URL as a CLI argument (`npx @modelcontextprotocol/inspector http://localhost:3000/api/mcp`).
+> The inspector treats positional arguments as a **STDIO command** to spawn, which fails with `ENOENT`.
+> Always start the inspector with **no arguments** and configure the transport in the UI.
+
+Then in the UI:
+1. **Transport:** `Streamable HTTP` ← must select this, not "STDIO"
+2. **URL:** `http://localhost:3000/api/mcp`
+3. **Headers:** Add `Authorization: Bearer your-key-here`
+4. Click **Connect**
+5. Navigate to **Tools** tab → select any tool → fill inputs → **Call Tool**
+
+### Quick curl test (check connectivity):
+```bash
+curl -X POST http://localhost:3000/api/mcp \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-key-here" \
+  -H "Accept: application/json, text/event-stream" \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": 1,
+    "method": "initialize",
+    "params": {
+      "protocolVersion": "2025-06-18",
+      "capabilities": {},
+      "clientInfo": { "name": "curl-test", "version": "1.0" }
+    }
+  }'
+```
+
+Expected response includes `"result": { "serverInfo": { "name": "iec-payload-mcp" }, ... }`.
+
+---
+
+## 11. AI Agent Configuration Examples
+
+### Claude Desktop (via HTTP — requires MCP client supporting Streamable HTTP)
+
+```json
+{
+  "mcpServers": {
+    "iec-web": {
+      "url": "https://your-domain.com/api/mcp",
+      "headers": {
+        "Authorization": "Bearer your-key-here"
+      }
+    }
+  }
+}
+```
+
+### Custom AI Agent (TypeScript / Node.js)
+
+```typescript
+import { Client } from '@modelcontextprotocol/sdk/client/index.js'
+import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
+
+const transport = new StreamableHTTPClientTransport(
+  new URL('https://your-domain.com/api/mcp'),
+  {
+    requestInit: {
+      headers: { Authorization: 'Bearer your-key-here' },
+    },
+  },
+)
+
+const client = new Client({ name: 'my-agent', version: '1.0' })
+await client.connect(transport)
+
+// Create a job
+const result = await client.callTool('jobs_create', {
+  locale: 'en',
+  title: 'Product Manager',
+  department: 'Product',
+  location: 'Ho Chi Minh City',
+  employmentType: 'fullTime',
+  jobDescription: '## About the Role\nLead product strategy...',
+})
+
+console.log(result.content[0].text)
+```
+
+### Python Agent Example
+
+```python
+import httpx, json
+
+MCP_URL = "https://your-domain.com/api/mcp"
+HEADERS = {
+    "Authorization": "Bearer your-key-here",
+    "Content-Type": "application/json",
+    "Accept": "application/json, text/event-stream",
+}
+
+def mcp_call(method, params):
+    payload = {"jsonrpc": "2.0", "id": 1, "method": method, "params": params}
+    r = httpx.post(MCP_URL, headers=HEADERS, json=payload)
+    return r.json()
+
+# Initialize
+mcp_call("initialize", {
+    "protocolVersion": "2025-06-18",
+    "capabilities": {},
+    "clientInfo": {"name": "py-agent", "version": "1.0"}
+})
+
+# Create a job
+result = mcp_call("tools/call", {
+    "name": "jobs_create",
+    "arguments": {
+        "locale": "en",
+        "title": "Data Analyst",
+        "department": "Analytics",
+        "location": "Hanoi, Vietnam",
+        "jobDescription": "## Role\nAnalyze business data...",
+    }
+})
+print(result)
+```
+
+---
+
+## 12. Security Considerations
+
+### What is protected
+- Every request validates the `Authorization: Bearer <MCP_API_KEY>` header before any MCP processing occurs.
+- An empty or missing `MCP_API_KEY` env var rejects all requests (no key = no access).
+
+### What is NOT protected
+- The `jobs` collection read access (`read: anyone` in Payload config) — the public REST API `/api/jobs` remains open for frontend use. MCP is only needed for write operations.
+
+### Recommendations
+- Use a strong random key (≥ 32 bytes): `openssl rand -base64 32`
+- Rotate `MCP_API_KEY` if compromised — update `.env` and redeploy.
+- Do not commit `MCP_API_KEY` to version control.
+- In production, restrict access at the CDN/proxy level if possible (e.g., only allow requests from known AI agent IP ranges or VPN).
+- The `jobs_delete` tool is permanent — consider removing it from registration in `server.ts` if you only want read/write access from agents.
+
+### DNS Rebinding
+The `WebStandardStreamableHTTPServerTransport` is configured without built-in origin restriction (`allowedOrigins` is not set). The Bearer token auth provides equivalent protection for a server deployment (DNS rebinding attacks require browser context).
+
+---
+
+## 13. File Structure
+
+```
+src/
+├── mcp/
+│   ├── server.ts                 McpServer factory
+│   │                             └─ createMcpServer(payload) → McpServer
+│   ├── tools/
+│   │   └── jobs.ts               Tool definitions
+│   │                             └─ registerJobTools(server, payload)
+│   │                             Tools: jobs_list, jobs_get, jobs_create,
+│   │                                    jobs_update, jobs_delete
+│   └── utils/
+│       └── lexical.ts            Markdown → Lexical JSON converter
+│                                 └─ textToLexical(text) → LexicalRoot | undefined
+└── app/(payload)/api/mcp/
+    └── route.ts                  Next.js Route Handler
+                                  Exports: GET, POST, DELETE, OPTIONS
+```
+
+### Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `MCP_API_KEY` | **yes** | Bearer token for MCP endpoint authentication |
+
+### Dependencies Added
+
+| Package | Version | Purpose |
+|---------|---------|---------|
+| `@modelcontextprotocol/sdk` | `^1.29.0` | MCP server + transport |
+| `zod` | `^4.4.3` | Tool input schema definitions |

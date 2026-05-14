@@ -42,6 +42,7 @@ export const Jobs: CollectionConfig = {
       type: 'text',
       required: true,
       label: 'Job Title',
+      localized: true,
     },
     {
       type: 'tabs',
@@ -117,6 +118,7 @@ export const Jobs: CollectionConfig = {
               name: 'description',
               type: 'textarea',
               label: 'Short Summary',
+              localized: true,
               admin: {
                 description: 'One-paragraph summary shown under the title on the detail page.',
               },
@@ -130,6 +132,7 @@ export const Jobs: CollectionConfig = {
               name: 'jobDescription',
               type: 'richText',
               label: false,
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => [
                   ...rootFeatures,
@@ -149,6 +152,7 @@ export const Jobs: CollectionConfig = {
               name: 'qualifications',
               type: 'richText',
               label: false,
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => [
                   ...rootFeatures,
@@ -167,6 +171,7 @@ export const Jobs: CollectionConfig = {
               name: 'benefits',
               type: 'richText',
               label: false,
+              localized: true,
               editor: lexicalEditor({
                 features: ({ rootFeatures }) => [
                   ...rootFeatures,
