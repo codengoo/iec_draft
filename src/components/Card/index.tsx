@@ -46,12 +46,28 @@ export const Card: React.FC<{
       ref={card.ref as React.RefObject<HTMLDivElement>}
       shadow="none"
       radius="lg"
-      className={cn('overflow-hidden border border-border hover:cursor-pointer', className)}
+      className={cn(
+        'group relative overflow-hidden border border-border bg-white hover:cursor-pointer',
+        'transition-all duration-500 ease-out',
+        'hover:-translate-y-1.5 hover:shadow-2xl hover:border-primary/40',
+        className,
+      )}
     >
       {/* Image */}
       <div className="relative w-full aspect-video overflow-hidden bg-muted">
         {metaImage && typeof metaImage !== 'string' ? (
-          <Media resource={metaImage} fill imgClassName="object-cover" />
+          <>
+            <Media
+              resource={metaImage}
+              fill
+              imgClassName="object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            />
+            {/* Subtle dark gradient at bottom for depth */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/30 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+            />
+          </>
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground text-xs">
             News
@@ -59,9 +75,9 @@ export const Card: React.FC<{
         )}
       </div>
 
-      <CardBody className="flex flex-col gap-2 p-4">
+      <CardBody className="flex flex-col gap-3 p-5">
         {/* Category + Date row */}
-        <div className="flex items-center justin nfy-between gap-2">
+        <div className="flex items-center justify-between gap-2">
           {showCategories && hasCategories && (
             <div className="flex flex-wrap gap-1">
               {categories?.map((category, index) => {
@@ -92,16 +108,18 @@ export const Card: React.FC<{
 
         {/* Title */}
         {titleToUse && (
-          <h3 className="font-bold text-sm leading-snug line-clamp-3 text-foreground">
-            <Link className="hover:underline" href={href} ref={link.ref}>
-              {titleToUse}
+          <h3 className="font-bold text-lg leading-snug line-clamp-3 text-foreground transition-colors duration-300 group-hover:text-primary">
+            <Link href={href} ref={link.ref} className="relative inline">
+              <span className="bg-[linear-gradient(currentColor,currentColor)] bg-size-[0%_2px] bg-bottom-left bg-no-repeat transition-[background-size] duration-500 ease-out group-hover:bg-size-[100%_2px]">
+                {titleToUse}
+              </span>
             </Link>
           </h3>
         )}
 
         {/* Hashtags */}
         {hasTags && (
-          <div className="flex flex-wrap gap-1 mt-1">
+          <div className="flex flex-wrap gap-1 mt-auto pt-1">
             {tags?.map((tag, i) => {
               if (typeof tag !== 'object') return null
               return (
