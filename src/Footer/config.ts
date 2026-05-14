@@ -10,8 +10,44 @@ export const Footer: GlobalConfig = {
   },
   fields: [
     {
+      name: 'companyName',
+      type: 'text',
+      label: 'Company Name',
+    },
+    {
+      name: 'address',
+      type: 'text',
+      label: 'Address',
+    },
+    {
+      name: 'hotline',
+      type: 'text',
+      label: 'Hotline',
+    },
+    {
+      name: 'email',
+      type: 'email',
+      label: 'Email',
+    },
+    {
+      name: 'phone',
+      type: 'text',
+      label: 'Phone Button Label',
+    },
+    {
+      name: 'phoneUrl',
+      type: 'text',
+      label: 'Phone Button URL (e.g. tel:+84283962388)',
+    },
+    {
+      name: 'copyright',
+      type: 'text',
+      label: 'Copyright Text',
+    },
+    {
       name: 'navItems',
       type: 'array',
+      label: 'Bottom Nav Links',
       fields: [
         link({
           appearances: false,

@@ -2001,6 +2001,13 @@ export interface Header {
  */
 export interface Footer {
   id: string;
+  companyName?: string | null;
+  address?: string | null;
+  hotline?: string | null;
+  email?: string | null;
+  phone?: string | null;
+  phoneUrl?: string | null;
+  copyright?: string | null;
   navItems?:
     | {
         link: {
@@ -2052,6 +2059,13 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  companyName?: T;
+  address?: T;
+  hotline?: T;
+  email?: T;
+  phone?: T;
+  phoneUrl?: T;
+  copyright?: T;
   navItems?:
     | T
     | {
