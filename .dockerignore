@@ -1,0 +1,38 @@
+# Dependencies
+node_modules
+
+# Build output
+.next
+
+# Git
+.git
+.gitignore
+
+# Environment files (secrets must not be baked into the image)
+.env
+.env.*
+!.env.example
+
+# Docker files themselves (avoid cache busting)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Tests
+tests
+playwright.config.ts
+vitest.config.mts
+vitest.setup.ts
+test.env
+
+# Docs
+README.md
+*.md
+!CLAUDE.md
+
+# Editor / OS
+.vscode
+.idea
+*.log
+.DS_Store
+Thumbs.db

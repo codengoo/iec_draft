@@ -1,0 +1,29 @@
+services:
+  # ─────────────────────────────────────────────
+  # Next.js + Payload CMS app
+  # ─────────────────────────────────────────────
+  app:
+    build:
+      context: .
+      args:
+        # Embedded into client bundle at build time
+        NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?Set NEXT_PUBLIC_SERVER_URL in your .env file}
+        # Needed by generateStaticParams during next build
+        DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in your .env file}
+        PAYLOAD_SECRET: ${PAYLOAD_SECRET:?Set PAYLOAD_SECRET in your .env file}
+    restart: unless-stopped
+    ports:
+      - "${PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL:?Set DATABASE_URL in your .env file}
+      PAYLOAD_SECRET: ${PAYLOAD_SECRET:?Set PAYLOAD_SECRET in your .env file}
+      NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?Set NEXT_PUBLIC_SERVER_URL in your .env file}
+      CRON_SECRET: ${CRON_SECRET:?Set CRON_SECRET in your .env file}
+      PREVIEW_SECRET: ${PREVIEW_SECRET:?Set PREVIEW_SECRET in your .env file}
+    volumes:
+      # Persist uploaded media files across container restarts
+      - media_data:/app/public/media
+
+volumes:
+  media_data:
+
