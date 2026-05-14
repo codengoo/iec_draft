@@ -1,8 +1,9 @@
 'use client'
 import { cn } from '@/utilities/ui'
 import useClickableCard from '@/utilities/useClickableCard'
+import { CardBody, Chip, Card as HeroCard } from '@heroui/react'
 import Link from 'next/link'
-import React, { Fragment } from 'react'
+import React from 'react'
 
 import type { Post } from '@/payload-types'
 
@@ -41,12 +42,11 @@ export const Card: React.FC<{
   const href = `/${relationTo}/${slug}`
 
   return (
-    <article
-      className={cn(
-        'border border-border rounded-xl overflow-hidden bg-card hover:cursor-pointer hover:shadow-md transition-shadow',
-        className,
-      )}
-      ref={card.ref}
+    <HeroCard
+      ref={card.ref as React.RefObject<HTMLDivElement>}
+      shadow="none"
+      radius="lg"
+      className={cn('overflow-hidden border border-border hover:cursor-pointer', className)}
     >
       {/* Image */}
       <div className="relative w-full aspect-video overflow-hidden bg-muted">
@@ -59,28 +59,29 @@ export const Card: React.FC<{
         )}
       </div>
 
-      {/* Content */}
-      <div className="p-4 flex flex-col gap-2">
+      <CardBody className="flex flex-col gap-2 p-4">
         {/* Category + Date row */}
-        <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center justin nfy-between gap-2">
           {showCategories && hasCategories && (
-            <span
-              className="text-xs font-bold uppercase tracking-wide truncate"
-              style={{ color: '#1447e6' }}
-            >
+            <div className="flex flex-wrap gap-1">
               {categories?.map((category, index) => {
-                if (typeof category === 'object') {
-                  const isLast = index === categories.length - 1
-                  return (
-                    <Fragment key={index}>
-                      {category.title || 'Untitled'}
-                      {!isLast && ', '}
-                    </Fragment>
-                  )
-                }
-                return null
+                if (typeof category !== 'object') return null
+                return (
+                  <Chip
+                    key={index}
+                    size="sm"
+                    color="primary"
+                    variant="light"
+                    classNames={{
+                      base: 'px-1 h-auto min-w-0',
+                      content: 'text-xs font-bold uppercase tracking-wide px-0',
+                    }}
+                  >
+                    {category.title || 'Untitled'}
+                  </Chip>
+                )
               })}
-            </span>
+            </div>
           )}
           {publishedAt && (
             <span className="text-xs text-muted-foreground whitespace-nowrap ml-auto">
@@ -104,14 +105,23 @@ export const Card: React.FC<{
             {tags?.map((tag, i) => {
               if (typeof tag !== 'object') return null
               return (
-                <span key={i} className="text-xs" style={{ color: '#1447e6' }}>
+                <Chip
+                  key={i}
+                  size="sm"
+                  color="primary"
+                  variant="light"
+                  classNames={{
+                    base: 'px-1 h-auto min-w-0',
+                    content: 'text-xs px-0',
+                  }}
+                >
                   #{tag.title}
-                </span>
+                </Chip>
               )
             })}
           </div>
         )}
-      </div>
-    </article>
+      </CardBody>
+    </HeroCard>
   )
 }
