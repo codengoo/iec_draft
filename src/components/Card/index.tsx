@@ -29,6 +29,7 @@ export const Card: React.FC<{
   doc?: CardPostData
   relationTo?: 'posts'
   showCategories?: boolean
+  showDescription?: boolean
   title?: string
 }> = (props) => {
   const { card, link } = useClickableCard({})
@@ -38,11 +39,12 @@ export const Card: React.FC<{
     doc,
     relationTo,
     showCategories,
+    showDescription,
     title: titleFromProps,
   } = props
 
   const { slug, categories, tags, meta, title, publishedAt } = doc || {}
-  const { image: metaImage } = meta || {}
+  const { image: metaImage, description } = meta || {}
 
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const hasTags = tags && Array.isArray(tags) && tags.length > 0
@@ -128,6 +130,18 @@ export const Card: React.FC<{
               </span>
             </Link>
           </h3>
+        )}
+
+        {/* Description */}
+        {showDescription && description && (
+          <p
+            className={cn(
+              'text-sm text-muted-foreground leading-relaxed',
+              compact ? 'line-clamp-2' : 'line-clamp-3',
+            )}
+          >
+            {description}
+          </p>
         )}
 
         {/* Hashtags */}

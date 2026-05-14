@@ -10,6 +10,11 @@
   "Posts": {
     "title": "Posts"
   },
+  "RelatedPosts": {
+    "eyebrow": "Keep exploring",
+    "title": "Related posts",
+    "viewAll": "View all"
+  },
   "NotFound": {
     "title": "404",
     "description": "This page could not be found.",

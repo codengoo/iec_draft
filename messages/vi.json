@@ -10,6 +10,11 @@
   "Posts": {
     "title": "Bài viết"
   },
+  "RelatedPosts": {
+    "eyebrow": "Tiếp tục khám phá",
+    "title": "Bài viết liên quan",
+    "viewAll": "Xem tất cả"
+  },
   "NotFound": {
     "title": "404",
     "description": "Không tìm thấy trang này.",

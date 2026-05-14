@@ -68,7 +68,7 @@ export default async function Post({ params: paramsPromise }: Args) {
           <Divider className="my-12 mt-56" />
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
-              className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
+              className="mt-16 md:mt-24 max-w-5xl mx-auto"
               docs={post.relatedPosts.filter((post) => typeof post === 'object')}
             />
           )}
