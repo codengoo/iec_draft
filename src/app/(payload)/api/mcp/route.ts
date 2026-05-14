@@ -54,7 +54,10 @@ async function handleMcp(request: Request): Promise<Response> {
 
   const payload = await getPayload({ config })
   const server = createMcpServer(payload)
-  const transport = new WebStandardStreamableHTTPServerTransport()
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined, // stateless — fresh instance per request
+    enableJsonResponse: true, // return JSON directly; avoids SSE stream being closed by finally block
+  })
 
   await server.connect(transport)
 
