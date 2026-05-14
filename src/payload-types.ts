@@ -184,7 +184,7 @@ export interface Page {
     links?:
       | {
           link: {
-            type?: ('reference' | 'custom') | null;
+            type?: ('reference' | 'route' | 'custom') | null;
             newTab?: boolean | null;
             reference?:
               | ({
@@ -195,6 +195,10 @@ export interface Page {
                   relationTo: 'posts';
                   value: string | Post;
                 } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
             url?: string | null;
             label: string;
             /**
@@ -512,7 +516,7 @@ export interface CallToActionBlock {
   links?:
     | {
         link: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'route' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -523,6 +527,10 @@ export interface CallToActionBlock {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
           url?: string | null;
           label: string;
           /**
@@ -562,7 +570,7 @@ export interface ContentBlock {
         } | null;
         enableLink?: boolean | null;
         link?: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'route' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -573,6 +581,10 @@ export interface ContentBlock {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
           url?: string | null;
           label: string;
           /**
@@ -1271,6 +1283,7 @@ export interface PagesSelect<T extends boolean = true> {
                     type?: T;
                     newTab?: T;
                     reference?: T;
+                    route?: T;
                     url?: T;
                     label?: T;
                     appearance?: T;
@@ -1339,6 +1352,7 @@ export interface CallToActionBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              route?: T;
               url?: T;
               label?: T;
               appearance?: T;
@@ -1365,6 +1379,7 @@ export interface ContentBlockSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              route?: T;
               url?: T;
               label?: T;
               appearance?: T;
@@ -1975,7 +1990,7 @@ export interface Header {
   navItems?:
     | {
         link: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'route' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -1986,6 +2001,10 @@ export interface Header {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
           url?: string | null;
           label: string;
         };
@@ -2015,7 +2034,7 @@ export interface Footer {
   navItems?:
     | {
         link: {
-          type?: ('reference' | 'custom') | null;
+          type?: ('reference' | 'route' | 'custom') | null;
           newTab?: boolean | null;
           reference?:
             | ({
@@ -2026,6 +2045,10 @@ export interface Footer {
                 relationTo: 'posts';
                 value: string | Post;
               } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
           url?: string | null;
           label: string;
         };
@@ -2049,6 +2072,7 @@ export interface HeaderSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              route?: T;
               url?: T;
               label?: T;
             };
@@ -2080,6 +2104,7 @@ export interface FooterSelect<T extends boolean = true> {
               type?: T;
               newTab?: T;
               reference?: T;
+              route?: T;
               url?: T;
               label?: T;
             };

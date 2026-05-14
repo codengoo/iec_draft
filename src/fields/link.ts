@@ -15,6 +15,12 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
   },
 }
 
+export const staticRouteOptions: { label: string; value: string }[] = [
+  { label: 'Home', value: '/' },
+  { label: 'Posts (listing)', value: '/posts' },
+  { label: 'Search', value: '/search' },
+]
+
 type LinkType = (options?: {
   appearances?: LinkAppearances[] | false
   disableLabel?: boolean
@@ -44,6 +50,10 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
               {
                 label: 'Internal link',
                 value: 'reference',
+              },
+              {
+                label: 'Section page',
+                value: 'route',
               },
               {
                 label: 'Custom URL',
@@ -76,6 +86,17 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       },
       label: 'Document to link to',
       relationTo: ['pages', 'posts'],
+      required: true,
+    },
+    {
+      name: 'route',
+      type: 'select',
+      admin: {
+        condition: (_, siblingData) => siblingData?.type === 'route',
+        description: 'Pick a built-in section page (route is hardcoded in the app).',
+      },
+      label: 'Section page',
+      options: staticRouteOptions,
       required: true,
     },
     {
