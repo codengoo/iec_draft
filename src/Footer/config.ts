@@ -30,6 +30,15 @@ export const Footer: GlobalConfig = {
       label: 'Email',
     },
     {
+      name: 'logoSubtitle',
+      type: 'textarea',
+      label: 'Logo Subtitle',
+      localized: true,
+      admin: {
+        description: 'Short tagline displayed under the logo in the footer',
+      },
+    },
+    {
       name: 'phone',
       type: 'text',
       label: 'Phone Button Label',

@@ -1,13 +1,13 @@
 import type { Social } from '@/payload-types'
 import { getCachedGlobal } from '@/utilities/getGlobals'
 import configPromise from '@payload-config'
+import { getLocale } from 'next-intl/server'
 import { getPayload } from 'payload'
 import React from 'react'
 
 import { CMSLink } from '@/components/Link'
 import { Logo } from '@/components/Logo/Logo'
 import { Divider } from '@heroui/react'
-import Link from 'next/link'
 import {
   IconBrandDiscord,
   IconBrandFacebook,
@@ -18,6 +18,7 @@ import {
   IconBrandYoutube,
   IconPhone,
 } from '@tabler/icons-react'
+import Link from 'next/link'
 
 function SocialIcon({ platform }: { platform: Social['platform'] }) {
   const cls = 'w-5 h-5'
@@ -42,8 +43,9 @@ function SocialIcon({ platform }: { platform: Social['platform'] }) {
 }
 
 export async function Footer() {
+  const locale = (await getLocale()) as 'en' | 'vi'
   const [footerData, payload] = await Promise.all([
-    getCachedGlobal('footer', 1)(),
+    getCachedGlobal('footer', 1, locale)(),
     getPayload({ config: configPromise }),
   ])
 
@@ -78,9 +80,16 @@ export async function Footer() {
               </div>
             </div>
             {/* Logo */}
-            <Link href="/" className="shrink-0">
-              <Logo className="brightness-0 invert w-48 md:w-64 max-w-none h-auto" />
-            </Link>
+            <div className="shrink-0 flex flex-col items-start md:items-end gap-3">
+              <Link href="/" className="inline-block">
+                <Logo className="brightness-0 invert w-48 md:w-64 max-w-none h-auto" />
+              </Link>
+              {footerData.logoSubtitle && (
+                <p className="text-xs md:text-sm text-white/75 leading-relaxed max-w-xs whitespace-pre-line md:text-right">
+                  {footerData.logoSubtitle}
+                </p>
+              )}
+            </div>
           </div>
         </div>
       )}

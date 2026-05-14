@@ -3,6 +3,7 @@
 import { Media } from '@/components/Media'
 import type { Post } from '@/payload-types'
 import { Card, CardBody, Chip } from '@heroui/react'
+import { motion } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
 
@@ -31,7 +32,12 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
     post.categories && Array.isArray(post.categories) && post.categories.length > 0
 
   return (
-    <div className="group relative">
+    <motion.div
+      className="group relative"
+      initial={{ opacity: 0, y: 32 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+    >
       {/* Decorative gradient glow behind card */}
       <div
         aria-hidden
@@ -40,10 +46,10 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
 
       <Card
         radius="lg"
-        className="relative grid grid-cols-12 overflow-hidden border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl"
+        className="relative grid grid-cols-12 overflow-hidden border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl min-h-[50vh]"
       >
-        {/* Left: hero image */}
-        <div className="col-span-7 relative min-h-105 bg-muted overflow-hidden">
+        {/* Left: hero image — 2/3 of card width */}
+        <div className="col-span-8 relative bg-muted overflow-hidden">
           {image ? (
             <>
               <Media
@@ -89,7 +95,7 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
         </div>
 
         {/* Right: content */}
-        <CardBody className="col-span-5 relative flex flex-col justify-center gap-5 p-10 bg-gradient-to-r from-indigo-50 via-white to-blue-50 overflow-hidden">
+        <CardBody className="col-span-4 relative flex flex-col justify-center gap-5 p-10 bg-gradient-to-r from-indigo-50 via-white to-blue-50 overflow-hidden">
           {/* Decorative blobs — kept on the RIGHT half so the left seam stays uniform indigo-50 */}
           <div
             aria-hidden
@@ -184,6 +190,6 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
           </Link>
         </CardBody>
       </Card>
-    </div>
+    </motion.div>
   )
 }

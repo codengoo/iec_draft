@@ -2005,6 +2005,10 @@ export interface Footer {
   address?: string | null;
   hotline?: string | null;
   email?: string | null;
+  /**
+   * Short tagline displayed under the logo in the footer
+   */
+  logoSubtitle?: string | null;
   phone?: string | null;
   phoneUrl?: string | null;
   copyright?: string | null;
@@ -2063,6 +2067,7 @@ export interface FooterSelect<T extends boolean = true> {
   address?: T;
   hotline?: T;
   email?: T;
+  logoSubtitle?: T;
   phone?: T;
   phoneUrl?: T;
   copyright?: T;
