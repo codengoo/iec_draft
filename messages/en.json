@@ -29,5 +29,25 @@
     "applyNow": "Apply Now",
     "viewLinkedIn": "View on LinkedIn",
     "noJobs": "No job openings at this time."
+  },
+  "JobDetail": {
+    "backToCareers": "Back to careers",
+    "jobDescription": "Job Description",
+    "qualifications": "Qualifications",
+    "benefits": "Benefits",
+    "jobSummary": "Job Summary",
+    "salary": "Salary",
+    "department": "Department",
+    "location": "Location",
+    "workingHours": "Working Hours",
+    "employmentType": "Employment Type",
+    "applyNow": "Apply Now",
+    "viewLinkedIn": "View on LinkedIn",
+    "type": {
+      "fullTime": "Full-time",
+      "partTime": "Part-time",
+      "contract": "Contract",
+      "internship": "Internship"
+    }
   }
 }

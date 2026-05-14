@@ -942,16 +942,69 @@ export interface Job {
   title: string;
   department: string;
   location: string;
+  employmentType?: ('fullTime' | 'partTime' | 'contract' | 'internship') | null;
+  /**
+   * e.g. "9AM – 6PM, Mon–Fri"
+   */
+  workingHours?: string | null;
   /**
    * e.g. "Competitive" or "$80k–$120k"
    */
   salaryLabel?: string | null;
   linkedinUrl?: string | null;
   /**
-   * Link to the application form or external page
+   * External link or mailto: for the Apply Now CTA
    */
   applyUrl?: string | null;
+  /**
+   * One-paragraph summary shown under the title on the detail page.
+   */
   description?: string | null;
+  jobDescription?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  qualifications?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  benefits?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -1679,10 +1732,15 @@ export interface JobsSelect<T extends boolean = true> {
   title?: T;
   department?: T;
   location?: T;
+  employmentType?: T;
+  workingHours?: T;
   salaryLabel?: T;
   linkedinUrl?: T;
   applyUrl?: T;
   description?: T;
+  jobDescription?: T;
+  qualifications?: T;
+  benefits?: T;
   updatedAt?: T;
   createdAt?: T;
   _status?: T;

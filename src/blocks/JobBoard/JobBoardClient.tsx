@@ -12,6 +12,7 @@ import {
   IconStack2,
 } from '@tabler/icons-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import Link from 'next/link'
 import { useMemo, useState } from 'react'
 
 export type JobItem = {
@@ -45,7 +46,11 @@ function JobCard({ job, index }: { job: JobItem; index: number }) {
       className="bg-white border border-gray-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4 hover:border-blue-300 hover:shadow-sm transition-all duration-200"
     >
       <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-gray-900 text-sm mb-2 truncate">{job.title}</h3>
+        <h3 className="font-semibold text-gray-900 text-sm mb-2 truncate">
+          <Link href={`/career/${job.id}`} className="hover:text-primary transition-colors">
+            {job.title}
+          </Link>
+        </h3>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
           <span className="flex items-center gap-1">
             {departmentIcon(job.department)}
@@ -77,13 +82,13 @@ function JobCard({ job, index }: { job: JobItem; index: number }) {
             <IconBrandLinkedin size={16} />
           </a>
         )}
-        <a
-          href={job.applyUrl ?? '#'}
-          aria-label="Apply for this role"
+        <Link
+          href={`/career/${job.id}`}
+          aria-label="View job details"
           className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white transition-colors"
         >
           <IconArrowRight size={16} />
-        </a>
+        </Link>
       </div>
     </motion.div>
   )

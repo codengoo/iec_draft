@@ -29,5 +29,25 @@
     "applyNow": "Ứng tuyển",
     "viewLinkedIn": "Xem trên LinkedIn",
     "noJobs": "Hiện chưa có vị trí tuyển dụng."
+  },
+  "JobDetail": {
+    "backToCareers": "Quay lại danh sách",
+    "jobDescription": "Mô tả công việc",
+    "qualifications": "Yêu cầu ứng viên",
+    "benefits": "Quyền lợi",
+    "jobSummary": "Thông tin vị trí",
+    "salary": "Mức lương",
+    "department": "Bộ phận",
+    "location": "Địa điểm",
+    "workingHours": "Giờ làm việc",
+    "employmentType": "Loại hình",
+    "applyNow": "Ứng tuyển ngay",
+    "viewLinkedIn": "Xem trên LinkedIn",
+    "type": {
+      "fullTime": "Toàn thời gian",
+      "partTime": "Bán thời gian",
+      "contract": "Hợp đồng",
+      "internship": "Thực tập"
+    }
   }
 }
