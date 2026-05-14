@@ -15,10 +15,9 @@ import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import { getLocale, getMessages } from 'next-intl/server'
 import { NextIntlClientProvider } from 'next-intl'
+import { getLocale, getMessages } from 'next-intl/server'
 import { draftMode } from 'next/headers'
 
 import { getServerSideURL } from '@/utilities/getURL'
@@ -30,13 +29,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const messages = await getMessages()
 
   return (
-    <html
-      className={cn(spaceGrotesk.variable, GeistMono.variable)}
-      lang={locale}
-      suppressHydrationWarning
-    >
+    <html className={cn(spaceGrotesk.variable, GeistMono.variable)} lang={locale}>
       <head>
-        <InitTheme />
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>

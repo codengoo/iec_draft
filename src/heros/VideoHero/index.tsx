@@ -1,9 +1,8 @@
 'use client'
 
-import React, { useEffect, useRef, useState } from 'react'
-import { motion, type Variants } from 'framer-motion'
 import type { Page } from '@/payload-types'
-import { useHeaderTheme } from '@/providers/HeaderTheme'
+import { motion, type Variants } from 'framer-motion'
+import React, { useEffect, useRef, useState } from 'react'
 import { RenderVideoHeroBlocks } from './RenderVideoHeroBlocks'
 
 type VideoHeroProps = NonNullable<Page['hero'] & { type: 'videoHero' }>
@@ -111,13 +110,8 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
   secondaryButtonUrl,
   videoPopupUrl,
 }) => {
-  const { setHeaderTheme } = useHeaderTheme()
   const videoRef = useRef<HTMLVideoElement>(null)
   const [popupOpen, setPopupOpen] = useState(false)
-
-  useEffect(() => {
-    setHeaderTheme('dark')
-  })
 
   useEffect(() => {
     if (videoRef.current) {
