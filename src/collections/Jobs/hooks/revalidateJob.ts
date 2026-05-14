@@ -11,19 +11,20 @@ export const revalidateJob: CollectionAfterChangeHook<Job> = ({
   if (!context.disableRevalidate) {
     const detailPath = `/career/${doc.id}`
     payload.logger.info(`Revalidating job at path: ${detailPath}`)
-    revalidatePath(detailPath)
-    revalidatePath('/career')
+    setImmediate(() => {
+      revalidatePath(detailPath)
+      revalidatePath('/career')
+    })
   }
   return doc
 }
 
-export const revalidateJobDelete: CollectionAfterDeleteHook<Job> = ({
-  doc,
-  req: { context },
-}) => {
+export const revalidateJobDelete: CollectionAfterDeleteHook<Job> = ({ doc, req: { context } }) => {
   if (!context.disableRevalidate) {
-    revalidatePath(`/career/${doc?.id}`)
-    revalidatePath('/career')
+    setImmediate(() => {
+      revalidatePath(`/career/${doc?.id}`)
+      revalidatePath('/career')
+    })
   }
   return doc
 }

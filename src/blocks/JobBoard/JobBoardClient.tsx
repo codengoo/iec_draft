@@ -25,6 +25,7 @@ export type JobItem = {
 }
 
 function departmentIcon(dept: string) {
+  if (!dept) return <IconBriefcase size={14} />
   const d = dept.toLowerCase()
   if (d.includes('engineer') || d.includes('dev') || d.includes('tech'))
     return <IconCode size={14} />
