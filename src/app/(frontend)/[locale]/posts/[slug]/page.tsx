@@ -11,6 +11,7 @@ import { cache } from 'react'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { PostHero } from '@/heros/PostHero'
 import { generateMeta } from '@/utilities/generateMeta'
+import { Divider } from '@heroui/react'
 import PageClient from './page.client'
 
 export async function generateStaticParams() {
@@ -64,6 +65,7 @@ export default async function Post({ params: paramsPromise }: Args) {
       <div className="flex flex-col items-center gap-4 pt-8">
         <div className="container">
           <RichText className="max-w-[48rem] mx-auto" data={post.content} enableGutter={false} />
+          <Divider className="my-12 mt-56" />
           {post.relatedPosts && post.relatedPosts.length > 0 && (
             <RelatedPosts
               className="mt-12 max-w-[52rem] lg:grid lg:grid-cols-subgrid col-start-1 col-span-3 grid-rows-[2fr]"
