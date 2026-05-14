@@ -41,12 +41,12 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
       {/* Decorative gradient glow behind card */}
       <div
         aria-hidden
-        className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-indigo-500/30 via-blue-500/20 to-purple-500/30 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-90"
+        className="absolute -inset-1 rounded-2xl bg-linear-to-r from-indigo-500/30 via-blue-500/20 to-purple-500/30 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-90"
       />
 
       <Card
         radius="lg"
-        className="relative grid grid-cols-12 overflow-hidden border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl min-h-[50vh]"
+        className="relative grid grid-cols-12 overflow-hidden border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl min-h-[60vh]"
       >
         {/* Left: hero image — 2/3 of card width */}
         <div className="col-span-8 relative bg-muted overflow-hidden">
@@ -64,10 +64,10 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
                 className="absolute inset-0 bg-gradient-to-tr from-black/30 via-transparent to-transparent pointer-events-none"
               />
 
-              {/* Right-edge gradient overlay — fades from transparent to indigo-50, matching the left edge of the content card */}
+              {/* Right-edge gradient overlay — fades from transparent into the primary-tinted info panel */}
               <div
                 aria-hidden
-                className="absolute inset-y-0 right-0 w-2/3 bg-linear-to-r from-transparent via-indigo-50/60 to-indigo-50 pointer-events-none"
+                className="absolute inset-y-0 right-0 w-2/3 bg-linear-to-r from-transparent via-primary/10 to-primary/20 pointer-events-none"
               />
 
               {/* Top-left floating badge */}
@@ -95,15 +95,20 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
         </div>
 
         {/* Right: content */}
-        <CardBody className="col-span-4 relative flex flex-col justify-center gap-5 p-10 bg-gradient-to-r from-indigo-50 via-white to-blue-50 overflow-hidden">
-          {/* Decorative blobs — kept on the RIGHT half so the left seam stays uniform indigo-50 */}
+        <CardBody className="col-span-4 relative flex flex-col justify-center gap-5 p-10 bg-linear-to-br from-primary/20 via-primary/10 to-blue-50 overflow-hidden">
+          {/* Left-edge accent stripe — anchors the info panel in primary blue */}
           <div
             aria-hidden
-            className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-gradient-to-br from-indigo-200/60 to-blue-300/40 blur-3xl"
+            className="absolute inset-y-6 left-0 w-1 rounded-r-full bg-linear-to-b from-primary to-blue-600"
+          />
+          {/* Decorative blobs — saturated primary-blue tones for stronger accent */}
+          <div
+            aria-hidden
+            className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-linear-to-br from-primary/40 to-blue-500/30 blur-3xl"
           />
           <div
             aria-hidden
-            className="absolute -bottom-20 right-8 h-52 w-52 rounded-full bg-gradient-to-tr from-purple-200/50 to-pink-200/30 blur-3xl"
+            className="absolute -bottom-20 right-8 h-52 w-52 rounded-full bg-linear-to-tr from-blue-400/35 to-primary/25 blur-3xl"
           />
 
           {/* Badge row */}

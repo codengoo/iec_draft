@@ -1,10 +1,13 @@
 'use client'
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import React from 'react'
 
 import type { Header } from '@/payload-types'
 
 import { Logo } from '@/components/Logo/Logo'
+import { useTransparentHeader } from '@/providers/TransparentHeader'
+import { cn } from '@/utilities/ui'
 import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
@@ -12,13 +15,22 @@ interface HeaderClientProps {
 }
 
 export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+  const pathname = usePathname()
+  const isPostsPage = /(^|\/)posts(\/|$)/.test(pathname)
+  const { transparent } = useTransparentHeader()
+  const isTransparent = isPostsPage || transparent
+
   return (
-    <header className="container relative z-20">
-      <div className="py-8 flex justify-between">
-        <Link href="/">
-          <Logo loading="eager" priority="high" className="invert" />
-        </Link>
-        <HeaderNav data={data} />
+    <header className="container relative z-20 bg-transparent">
+      <div
+        className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}
+      >
+        <div className={isTransparent ? 'flex-1' : ''}>
+          <Link href="/">
+            <Logo loading="eager" priority="high" className="invert" />
+          </Link>
+        </div>
+        <HeaderNav data={data} centered={isTransparent} />
       </div>
     </header>
   )

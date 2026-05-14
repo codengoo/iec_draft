@@ -1,8 +1,15 @@
 'use client'
 
 import { usePathname, useRouter } from '@/i18n/navigation'
+import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@heroui/react'
+import { IconLanguage } from '@tabler/icons-react'
 import { useLocale } from 'next-intl'
 import React, { useTransition } from 'react'
+
+const locales = [
+  { code: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+  { code: 'en', label: 'English', flag: '🇬🇧' },
+] as const
 
 export const LanguageSwitcher: React.FC = () => {
   const locale = useLocale()
@@ -17,32 +24,33 @@ export const LanguageSwitcher: React.FC = () => {
   }
 
   return (
-    <div className="flex items-center gap-1 text-sm font-medium">
-      <button
-        onClick={() => switchLocale('vi')}
-        disabled={isPending}
-        className={`px-1.5 py-0.5 rounded transition-colors ${
-          locale === 'vi'
-            ? 'text-foreground font-semibold'
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-        aria-label="Tiếng Việt"
+    <Dropdown placement="bottom-end">
+      <DropdownTrigger>
+        <button
+          type="button"
+          disabled={isPending}
+          aria-label="Change language"
+          className="inline-flex items-center justify-center rounded-full p-2 text-foreground transition-colors hover:bg-foreground/5 hover:text-primary focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+        >
+          <IconLanguage size={20} />
+        </button>
+      </DropdownTrigger>
+      <DropdownMenu
+        aria-label="Language selection"
+        selectionMode="single"
+        selectedKeys={new Set([locale])}
+        onAction={(key) => switchLocale(String(key))}
       >
-        VI
-      </button>
-      <span className="text-muted-foreground select-none">/</span>
-      <button
-        onClick={() => switchLocale('en')}
-        disabled={isPending}
-        className={`px-1.5 py-0.5 rounded transition-colors ${
-          locale === 'en'
-            ? 'text-foreground font-semibold'
-            : 'text-muted-foreground hover:text-foreground'
-        }`}
-        aria-label="English"
-      >
-        EN
-      </button>
-    </div>
+        {locales.map(({ code, label, flag }) => (
+          <DropdownItem
+            key={code}
+            startContent={<span className="text-lg leading-none">{flag}</span>}
+            className={code === locale ? 'font-semibold' : ''}
+          >
+            {label}
+          </DropdownItem>
+        ))}
+      </DropdownMenu>
+    </Dropdown>
   )
 }

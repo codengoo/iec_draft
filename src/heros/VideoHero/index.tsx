@@ -1,6 +1,7 @@
 'use client'
 
 import type { Page } from '@/payload-types'
+import { useTransparentHeader } from '@/providers/TransparentHeader'
 import { motion, type Variants } from 'framer-motion'
 import React, { useEffect, useRef, useState } from 'react'
 import { RenderVideoHeroBlocks } from './RenderVideoHeroBlocks'
@@ -112,6 +113,12 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [popupOpen, setPopupOpen] = useState(false)
+  const { setTransparent } = useTransparentHeader()
+
+  useEffect(() => {
+    setTransparent(true)
+    return () => setTransparent(false)
+  }, [setTransparent])
 
   useEffect(() => {
     if (videoRef.current) {
@@ -151,7 +158,7 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
   return (
     <>
       <div
-        className="relative w-full h-screen min-h-screen overflow-hidden mt-[-10.4rem]"
+        className="relative w-full h-screen min-h-screen overflow-hidden -mt-50 isolate"
         data-theme="dark"
       >
         {/* ── Video background ── */}
@@ -184,6 +191,8 @@ export const VideoHero: React.FC<VideoHeroProps> = ({
           className="absolute inset-0 z-10 pointer-events-none"
           style={{
             background: [
+              // ⓪ Top fade → trắng để header bar nổi bật trên video
+              'linear-gradient(to bottom, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 5%, rgba(255,255,255,0.25) 10%, transparent 20%)',
               // ① Bottom fade → white (chuyển tiếp sang section tiếp theo)
               'linear-gradient(to bottom, transparent 50%, rgba(255,255,255,0.7) 78%, rgba(255,255,255,1) 100%)',
               // ② Sky-blue diagonal highlight từ góc trên-trái
