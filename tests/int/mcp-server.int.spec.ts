@@ -136,18 +136,52 @@ describe('MCP Server — Jobs Tools', () => {
       expect(createdJobId).toBeTruthy()
     })
 
-    it('sets _status to published', async () => {
+    it('sets _status to draft (new bilingual workflow)', async () => {
       const result = await client.callTool({ name: 'jobs_create', arguments: TEST_JOB })
       const text = getText(result)
       const idMatch = text.match(/"id":\s*"([^"]+)"/)
       const extraId = idMatch![1]!
 
-      // Verify via direct Payload lookup
-      const doc = await payload.findByID({ collection: 'jobs', id: extraId, depth: 0 })
-      expect((doc as Record<string, unknown>)['_status']).toBe('published')
+      // Verify via direct Payload lookup — must include drafts
+      const doc = await payload.findByID({
+        collection: 'jobs',
+        id: extraId,
+        depth: 0,
+        draft: true,
+        overrideAccess: true,
+      })
+      expect((doc as unknown as Record<string, unknown>)['_status']).toBe('draft')
+
+      // Response should include preview URL + next-step guidance
+      expect(text).toContain('Preview URL (draft)')
+      expect(text).toContain('NEXT STEPS')
 
       // Clean up this extra job
       await payload.delete({ collection: 'jobs', id: extraId })
+    })
+
+    it('jobs_publish flips draft → published', async () => {
+      // Create a fresh draft to publish
+      const created = await client.callTool({ name: 'jobs_create', arguments: TEST_JOB })
+      const idMatch = getText(created).match(/"id":\s*"([^"]+)"/)
+      const draftId = idMatch![1]!
+
+      const published = await client.callTool({
+        name: 'jobs_publish',
+        arguments: { id: draftId },
+      })
+      expect(published.isError).toBeFalsy()
+      expect(getText(published)).toContain('Public URL')
+
+      const doc = await payload.findByID({
+        collection: 'jobs',
+        id: draftId,
+        depth: 0,
+        overrideAccess: true,
+      })
+      expect((doc as unknown as Record<string, unknown>)['_status']).toBe('published')
+
+      await payload.delete({ collection: 'jobs', id: draftId })
     })
   })
 

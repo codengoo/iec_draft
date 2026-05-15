@@ -1,6 +1,8 @@
 # MCP Integration — IEC Web
 
-Model Context Protocol (MCP) server nhúng vào Next.js App Router, cho phép AI Agent gọi HTTP để tự động tạo, cập nhật và quản lý job description trong Payload CMS.
+Model Context Protocol (MCP) server nhúng vào Next.js App Router, cho phép AI Agent gọi HTTP để tự động tạo, cập nhật và quản lý nội dung trong Payload CMS — bao gồm **job postings**, **blog posts**, và **HR review** of CV submissions.
+
+> **Server v2.0** — Tools được mở rộng cho posts và applications. Tất cả thao tác `create` đều tạo **DRAFT**, AI Agent phải hỏi confirm trước khi publish. Mọi tool create/update đều trả về **preview URL** để user review.
 
 ---
 
@@ -24,21 +26,60 @@ Model Context Protocol (MCP) server nhúng vào Next.js App Router, cho phép AI
 
 ## 1. Overview
 
-The MCP server exposes **5 tools** that operate on the `jobs` Payload collection:
+The MCP server exposes **15 tools** across 3 domains:
+
+### Jobs (bilingual postings — 7 tools)
 
 | Tool | Action |
 |------|--------|
-| `jobs_list` | List jobs (with optional filters) |
-| `jobs_get` | Get a single job by ID |
-| `jobs_create` | Create and publish a new job |
-| `jobs_update` | Update fields of an existing job |
-| `jobs_delete` | Delete a job |
+| `jobs_list` | List jobs with filters (status, department, location, …) |
+| `jobs_get` | Get a single job by ID (returns admin + preview URL) |
+| `jobs_create` | Create a job as **DRAFT** in one locale |
+| `jobs_update` | Update fields of an existing job (does not change publish status) |
+| `jobs_publish` | Flip draft → published (call only after user confirms) |
+| `jobs_unpublish` | Revert published → draft |
+| `jobs_delete` | Permanently delete a job |
+
+### Posts (blog posts — 7 tools)
+
+| Tool | Action |
+|------|--------|
+| `posts_list` | List posts with filters (status, category, tag, search) |
+| `posts_get` | Get a single post by ID (returns admin + preview URL) |
+| `posts_create` | Create a post as **DRAFT** |
+| `posts_update` | Update fields (does not change publish status) |
+| `posts_publish` | Flip draft → published (call only after user confirms) |
+| `posts_unpublish` | Revert published → draft |
+| `posts_delete` | Permanently delete a post |
+
+### Applications (CV submissions — HR-only, 4 tools)
+
+| Tool | Action |
+|------|--------|
+| `applications_list` | List candidates with filters; includes CV download URL |
+| `applications_get` | Full details of one application (CV + experience + notes) |
+| `applications_summary` | Aggregate stats — total, last 7 days, by status, by position |
+| `applications_update_status` | Move candidate through pipeline + append HR note |
+
+### Workflow rules (delivered via MCP `instructions`)
+
+1. **Drafts by default** — `*_create` always produces a draft. AI must NEVER assume publish.
+2. **Preview before publish** — every create/update response includes:
+   ```
+   Status: draft
+   Admin: http://…/admin/collections/posts/abc123
+   Preview URL (draft): http://…/next/preview?path=/en/posts/my-post&previewSecret=…
+   ```
+   AI shows these links to the user.
+3. **Explicit confirmation** — AI asks "Bạn muốn publish chưa?" and only calls `*_publish` after a yes.
+4. **Bilingual jobs** — `jobs_create(locale=en)` MUST be followed by `jobs_update(id, locale=vi)` before publish.
 
 **Key design decisions:**
 - **Embedded** in the existing Next.js app — no additional server to deploy.
 - **Payload Local API** is used directly (no HTTP round-trip to itself).
 - **Stateless per-request** — each HTTP call creates a fresh MCP server instance; no session state is persisted.
-- **Locale-aware** — all content tools accept a `locale` parameter (`en` | `vi`). The `jobs` collection has `localized: true` on content fields (`title`, `description`, `jobDescription`, `qualifications`, `benefits`).
+- **`instructions` field** — server sends workflow rules in the `initialize` response so every connected client (Claude, Cursor, Cline, …) loads them automatically.
+- **Locale-aware (jobs)** — jobs accept `locale` (`en` | `vi`). Posts are English-only.
 - **Plain text / markdown input** — richText fields accept ordinary text strings; the server converts them to Payload Lexical JSON automatically.
 
 ---
@@ -75,13 +116,16 @@ AI Agent (Claude / GPT / custom)
 ```
 src/
 ├── mcp/
-│   ├── server.ts           ← McpServer factory (createMcpServer)
+│   ├── server.ts                ← McpServer factory + workflow `instructions`
 │   ├── tools/
-│   │   └── jobs.ts         ← 5 tool definitions (registerJobTools)
+│   │   ├── jobs.ts              ← 7 job tools (incl. publish/unpublish)
+│   │   ├── posts.ts             ← 7 post tools (incl. publish/unpublish)
+│   │   └── applications.ts      ← 4 HR tools (list/get/summary/status)
 │   └── utils/
-│       └── lexical.ts      ← Plain text → Payload Lexical JSON converter
+│       ├── lexical.ts           ← Plain text → Payload Lexical JSON converter
+│       └── links.ts             ← Build admin + preview URLs for responses
 └── app/(payload)/api/mcp/
-    └── route.ts            ← HTTP route handler (POST / GET / DELETE / OPTIONS)
+    └── route.ts                 ← HTTP route handler (POST / GET / DELETE / OPTIONS)
 ```
 
 ---
@@ -154,7 +198,23 @@ The server is **stateless** — the `initialize` handshake and the tool call can
 
 ## 6. Tools Reference
 
-All tools return `{ content: [{ type: "text", text: "..." }] }`.
+All tools return `{ content: [{ type: "text", text: "..." }] }`. Every create/update tool appends a links block:
+
+```
+Status: draft
+Admin: https://your-site/admin/collections/<collection>/<id>
+Preview URL (draft): https://your-site/next/preview?path=…&previewSecret=…
+```
+
+Source of truth for parameters: see the `inputSchema` blocks in the source files (each parameter has a Zod `.describe(...)`).
+
+| Source | Tools |
+|--------|-------|
+| `src/mcp/tools/jobs.ts` | `jobs_list`, `jobs_get`, `jobs_create`, `jobs_update`, `jobs_publish`, `jobs_unpublish`, `jobs_delete` |
+| `src/mcp/tools/posts.ts` | `posts_list`, `posts_get`, `posts_create`, `posts_update`, `posts_publish`, `posts_unpublish`, `posts_delete` |
+| `src/mcp/tools/applications.ts` | `applications_list`, `applications_get`, `applications_summary`, `applications_update_status` |
+
+The sections below cover the most-used tools.
 
 ---
 
@@ -202,7 +262,7 @@ Get a single job by ID with all content fields.
 
 ### `jobs_create`
 
-Create and immediately publish a new job posting.
+Create a new job posting **as a draft**. Does NOT publish — call `jobs_publish` after the user confirms.
 
 **Input:**
 
