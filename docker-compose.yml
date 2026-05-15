@@ -20,6 +20,8 @@ services:
       NEXT_PUBLIC_SERVER_URL: ${NEXT_PUBLIC_SERVER_URL:?Set NEXT_PUBLIC_SERVER_URL in your .env file}
       CRON_SECRET: ${CRON_SECRET:?Set CRON_SECRET in your .env file}
       PREVIEW_SECRET: ${PREVIEW_SECRET:?Set PREVIEW_SECRET in your .env file}
+      # Set to "true" to enable full server error logs in Docker (pre-prod debugging)
+      VERBOSE_ERRORS: ${VERBOSE_ERRORS:-false}
     volumes:
       # Persist uploaded media files across container restarts
       - media_data:/app/public/media
