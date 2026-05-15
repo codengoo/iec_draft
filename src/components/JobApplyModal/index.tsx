@@ -29,6 +29,7 @@ type FormValues = {
   fullName: string
   email: string
   phone: string
+  position?: string
   experience: string
 }
 
@@ -40,6 +41,7 @@ type Labels = {
   email: string
   phone: string
   position: string
+  positionPlaceholder?: string
   experience: string
   cv: string
   cvHint: string
@@ -54,23 +56,34 @@ type Labels = {
 }
 
 type Props = {
-  jobId: string
-  jobTitle: string
+  jobId?: string
+  jobTitle?: string
   labels: Labels
   className?: string
+  triggerClassName?: string
+  trigger?: React.ReactNode
 }
 
 const ACCEPT = '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 const MAX_BYTES = 5 * 1024 * 1024
 
-export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+export function JobApplyModal({
+  jobId,
+  jobTitle,
+  labels,
+  className,
+  triggerClassName,
+  trigger,
+}: Props) {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [cvFile, setCvFile] = useState<File | null>(null)
   const [cvError, setCvError] = useState<string | null>(null)
   const [submitError, setSubmitError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isPending, startTransition] = useTransition()
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const isGeneral = !jobId
 
   const {
     register,
@@ -91,7 +104,6 @@ export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
   function handleOpenChange(open: boolean) {
     onOpenChange()
     if (!open) {
-      // delay so close animation doesn't show form reset
       setTimeout(resetAll, 200)
     }
   }
@@ -120,11 +132,12 @@ export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
     }
 
     const formData = new FormData()
-    formData.set('jobId', jobId)
+    if (jobId) formData.set('jobId', jobId)
     formData.set('fullName', values.fullName)
     formData.set('email', values.email)
     formData.set('phone', values.phone)
     formData.set('experience', values.experience ?? '')
+    if (isGeneral) formData.set('position', values.position ?? '')
     formData.set('cv', cvFile)
 
     startTransition(async () => {
@@ -140,9 +153,20 @@ export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
 
   return (
     <>
-      <Button className={className} size="lg" onClick={onOpen}>
-        {labels.triggerLabel}
-      </Button>
+      {trigger ? (
+        <button
+          type="button"
+          className={triggerClassName}
+          onClick={onOpen}
+          aria-label={labels.triggerLabel}
+        >
+          {trigger}
+        </button>
+      ) : (
+        <Button className={className} size="lg" onClick={onOpen}>
+          {labels.triggerLabel}
+        </Button>
+      )}
       <Modal
         isOpen={isOpen}
         onOpenChange={handleOpenChange}
@@ -159,7 +183,9 @@ export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
               {labels.title}
             </span>
-            <span className="text-xl font-semibold text-gray-900">{jobTitle}</span>
+            {jobTitle && (
+              <span className="text-xl font-semibold text-gray-900">{jobTitle}</span>
+            )}
             <span className="text-sm font-normal text-gray-500">{labels.subtitle}</span>
           </ModalHeader>
 
@@ -226,8 +252,16 @@ export function JobApplyModal({ jobId, jobTitle, labels, className }: Props) {
                 </div>
 
                 <div>
-                  <Label>{labels.position}</Label>
-                  <Input value={jobTitle} disabled className="bg-gray-50" />
+                  <Label htmlFor="position">{labels.position}</Label>
+                  {isGeneral ? (
+                    <Input
+                      id="position"
+                      placeholder={labels.positionPlaceholder}
+                      {...register('position', { maxLength: 200 })}
+                    />
+                  ) : (
+                    <Input value={jobTitle ?? ''} disabled className="bg-gray-50" />
+                  )}
                 </div>
 
                 <div>

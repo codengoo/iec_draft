@@ -55,17 +55,17 @@ export const JobApplications: CollectionConfig = {
       name: 'job',
       type: 'relationship',
       relationTo: 'jobs',
-      required: true,
       admin: {
-        description: 'The job this application was submitted for.',
+        description:
+          'The job this application was submitted for. Empty means a general/open application.',
       },
     },
     {
       name: 'position',
       type: 'text',
       admin: {
-        readOnly: true,
-        description: 'Snapshot of the job title at submission time (auto-filled).',
+        description:
+          'Position the candidate is interested in. Auto-filled from the job title for job-specific applications.',
       },
     },
     {

@@ -67,6 +67,13 @@
       "successBody": "Thank you for applying. Our HR team will review your CV and get back to you within 5 working days.",
       "close": "Close",
       "required": "required"
+    },
+    "sendCV": {
+      "trigger": "Send Us Your CV",
+      "title": "Open application",
+      "subtitle": "Tell us how you can make a difference at IEC Games.",
+      "position": "Position you're interested in",
+      "positionPlaceholder": "e.g. Game Designer, Marketing, anything you bring"
     }
   }
 }

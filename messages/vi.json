@@ -67,6 +67,13 @@
       "successBody": "Cảm ơn bạn đã ứng tuyển. Bộ phận HR sẽ xem xét CV và phản hồi trong vòng 5 ngày làm việc.",
       "close": "Đóng",
       "required": "bắt buộc"
+    },
+    "sendCV": {
+      "trigger": "Gửi CV cho chúng tôi",
+      "title": "Ứng tuyển mở",
+      "subtitle": "Hãy cho chúng tôi biết bạn có thể tạo nên điều khác biệt như thế nào tại IEC Games.",
+      "position": "Vị trí bạn quan tâm",
+      "positionPlaceholder": "Ví dụ: Game Designer, Marketing, hoặc thế mạnh của bạn"
     }
   }
 }

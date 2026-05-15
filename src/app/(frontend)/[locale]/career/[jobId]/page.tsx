@@ -23,6 +23,24 @@ import { JobApplyModal } from '@/components/JobApplyModal'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { cn } from '@/utilities/ui'
 
+const SECTION_ACCENTS: Record<string, { accent: string; bar: string; icon: string }> = {
+  jobDescription: {
+    accent: 'bg-blue-50/70 ring-blue-100',
+    bar: 'bg-blue-500',
+    icon: 'text-blue-600 bg-blue-100',
+  },
+  qualifications: {
+    accent: 'bg-violet-50/70 ring-violet-100',
+    bar: 'bg-violet-500',
+    icon: 'text-violet-600 bg-violet-100',
+  },
+  benefits: {
+    accent: 'bg-emerald-50/70 ring-emerald-100',
+    bar: 'bg-emerald-500',
+    icon: 'text-emerald-600 bg-emerald-100',
+  },
+}
+
 import type { Job, Page } from '@/payload-types'
 
 export const dynamic = 'force-static'
@@ -98,9 +116,17 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-12 items-start">
           <main className="min-w-0">
-            <Section title={t('jobDescription')} data={job.jobDescription} />
-            <Section title={t('qualifications')} data={job.qualifications} />
-            <Section title={t('benefits')} data={job.benefits} last />
+            <Section
+              variant="jobDescription"
+              title={t('jobDescription')}
+              data={job.jobDescription}
+            />
+            <Section
+              variant="qualifications"
+              title={t('qualifications')}
+              data={job.qualifications}
+            />
+            <Section variant="benefits" title={t('benefits')} data={job.benefits} last />
           </main>
 
           <aside className="lg:sticky lg:top-24">
@@ -250,19 +276,49 @@ function SummaryRow({
 type RichTextData = NonNullable<Job['jobDescription']>
 
 function Section({
+  variant,
   title,
   data,
   last,
 }: {
+  variant: 'jobDescription' | 'qualifications' | 'benefits'
   title: string
   data?: RichTextData | null
   last?: boolean
 }) {
   if (!data) return null
+  const accent = SECTION_ACCENTS[variant]
   return (
-    <section className={cn(last ? '' : 'mb-12')}>
-      <h2 className="text-2xl font-semibold text-gray-900 mb-4">{title}</h2>
-      <RichText data={data} enableGutter={false} className="max-w-none" />
+    <section
+      className={cn(
+        'relative rounded-2xl ring-1 px-6 sm:px-8 py-7 sm:py-9 shadow-sm transition-shadow hover:shadow-md',
+        accent.accent,
+        last ? '' : 'mb-8',
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn('absolute left-0 top-6 bottom-6 w-1 rounded-r-full', accent.bar)}
+      />
+      <div className="flex items-center gap-3 mb-5">
+        <span
+          aria-hidden
+          className={cn(
+            'inline-flex h-9 w-9 items-center justify-center rounded-xl text-base font-bold',
+            accent.icon,
+          )}
+        >
+          {variant === 'jobDescription' ? 'JD' : variant === 'qualifications' ? 'Q' : '★'}
+        </span>
+        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
+          {title}
+        </h2>
+      </div>
+      <RichText
+        data={data}
+        enableGutter={false}
+        className="max-w-none prose prose-gray prose-base sm:prose-lg leading-relaxed text-gray-700"
+      />
     </section>
   )
 }

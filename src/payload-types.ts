@@ -1017,11 +1017,11 @@ export interface JobApplication {
   email: string;
   phone: string;
   /**
-   * The job this application was submitted for.
+   * The job this application was submitted for. Empty means a general/open application.
    */
-  job: string | Job;
+  job?: (string | null) | Job;
   /**
-   * Snapshot of the job title at submission time (auto-filled).
+   * Position the candidate is interested in. Auto-filled from the job title for job-specific applications.
    */
   position?: string | null;
   experience?: string | null;

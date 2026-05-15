@@ -1,8 +1,9 @@
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
+import { getTranslations } from 'next-intl/server'
 import React from 'react'
 import type { SendUsCVBlock as SendUsCVBlockProps, Media, Social } from '@/payload-types'
-import { SendUsCVClient, type SocialItem } from './SendUsCVClient'
+import { SendUsCVClient, type SocialItem, type ApplyLabels } from './SendUsCVClient'
 
 export const SendUsCVBlock: React.FC<SendUsCVBlockProps & { id?: string }> = async ({
   heading,
@@ -12,6 +13,7 @@ export const SendUsCVBlock: React.FC<SendUsCVBlockProps & { id?: string }> = asy
   innovatorAvatars,
 }) => {
   const payload = await getPayload({ config: configPromise })
+  const t = await getTranslations('JobDetail')
 
   const { docs: socialDocs } = await payload.find({
     collection: 'social',
@@ -36,6 +38,28 @@ export const SendUsCVBlock: React.FC<SendUsCVBlockProps & { id?: string }> = asy
     }
   }
 
+  const applyLabels: ApplyLabels = {
+    triggerLabel: t('sendCV.trigger'),
+    title: t('sendCV.title'),
+    subtitle: t('sendCV.subtitle'),
+    fullName: t('apply.fullName'),
+    email: t('apply.email'),
+    phone: t('apply.phone'),
+    position: t('sendCV.position'),
+    positionPlaceholder: t('sendCV.positionPlaceholder'),
+    experience: t('apply.experience'),
+    cv: t('apply.cv'),
+    cvHint: t('apply.cvHint'),
+    cvAttached: t('apply.cvAttached'),
+    cvChange: t('apply.cvChange'),
+    submit: t('apply.submit'),
+    submitting: t('apply.submitting'),
+    successTitle: t('apply.successTitle'),
+    successBody: t('apply.successBody'),
+    close: t('apply.close'),
+    required: t('apply.required'),
+  }
+
   return (
     <div className="max-w-5xl mx-auto px-4">
       <SendUsCVClient
@@ -45,6 +69,7 @@ export const SendUsCVBlock: React.FC<SendUsCVBlockProps & { id?: string }> = asy
         innovatorLabel={innovatorLabel ?? undefined}
         avatarUrls={avatarUrls}
         socials={socials}
+        applyLabels={applyLabels}
       />
     </div>
   )

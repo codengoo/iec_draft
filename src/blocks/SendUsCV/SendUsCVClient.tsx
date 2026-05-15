@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
   IconBrandLinkedin,
@@ -10,12 +11,37 @@ import {
   IconBrandTwitter,
   IconBrandTiktok,
   IconBrandDiscord,
+  IconSend,
 } from '@tabler/icons-react'
+
+import { JobApplyModal } from '@/components/JobApplyModal'
 
 export type SocialItem = {
   id: string
   platform: 'linkedin' | 'facebook' | 'instagram' | 'youtube' | 'twitter' | 'tiktok' | 'discord'
   url: string
+}
+
+export type ApplyLabels = {
+  triggerLabel: string
+  title: string
+  subtitle: string
+  fullName: string
+  email: string
+  phone: string
+  position: string
+  positionPlaceholder?: string
+  experience: string
+  cv: string
+  cvHint: string
+  cvAttached: string
+  cvChange: string
+  submit: string
+  submitting: string
+  successTitle: string
+  successBody: string
+  close: string
+  required: string
 }
 
 export type SendUsCVProps = {
@@ -25,6 +51,7 @@ export type SendUsCVProps = {
   innovatorLabel?: string
   avatarUrls?: string[]
   socials?: SocialItem[]
+  applyLabels: ApplyLabels
 }
 
 function SocialIcon({ platform }: { platform: SocialItem['platform'] }) {
@@ -52,23 +79,30 @@ function SocialIcon({ platform }: { platform: SocialItem['platform'] }) {
 export function SendUsCVClient({
   heading,
   subtitle,
-  cvUrl,
   innovatorLabel,
   avatarUrls = [],
   socials = [],
+  applyLabels,
 }: SendUsCVProps) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: 'easeOut' }}
-      className="relative overflow-hidden rounded-2xl bg-[#0f1729] text-white px-8 py-10 flex flex-col items-center text-center"
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.5, ease: 'easeOut' }}
+      className="relative overflow-hidden rounded-3xl bg-linear-to-br from-[#0b1226] via-[#0f1729] to-[#101a36] text-white px-8 sm:px-12 py-12 sm:py-16 flex flex-col items-center text-center shadow-xl"
     >
+      {/* Soft radial accent */}
+      <div className="pointer-events-none absolute inset-0 opacity-60">
+        <div className="absolute -top-32 -left-32 w-80 h-80 rounded-full bg-blue-500/20 blur-3xl" />
+        <div className="absolute -bottom-32 -right-32 w-80 h-80 rounded-full bg-indigo-500/20 blur-3xl" />
+      </div>
+
       {/* Decorative puzzle icon */}
-      <div className="pointer-events-none absolute right-0 bottom-0 opacity-10 select-none">
+      <div className="pointer-events-none absolute right-2 bottom-2 opacity-5 select-none">
         <svg
-          width="200"
-          height="200"
+          width="240"
+          height="240"
           viewBox="0 0 200 200"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
@@ -80,56 +114,146 @@ export function SendUsCVClient({
         </svg>
       </div>
 
-      {heading && <p className="text-sm font-medium text-gray-300 mb-3">{heading}</p>}
-      {subtitle && (
-        <p className="text-gray-400 text-sm max-w-md leading-relaxed mb-6">{subtitle}</p>
-      )}
-
-      {/* CTA Button */}
-      <a
-        href={cvUrl ?? 'mailto:'}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg border border-white/30 text-white text-sm font-medium hover:bg-white/10 transition-colors mb-6"
+      {/* Floating mascot — left */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -left-4 sm:left-2 md:left-6 bottom-2 sm:bottom-4 hidden sm:block select-none"
+        initial={{ opacity: 0, x: -40, rotate: -6 }}
+        whileInView={{ opacity: 1, x: 0, rotate: -6 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
       >
-        Send Us Your CV
-      </a>
+        <motion.div
+          animate={{ y: [0, -10, 0] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <Image
+            src="/mascot/mascot_2.png"
+            alt=""
+            width={160}
+            height={200}
+            className="w-28 md:w-36 lg:w-40 h-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+          />
+        </motion.div>
+      </motion.div>
 
-      {/* Social icons */}
-      {socials.length > 0 && (
-        <div className="flex items-center gap-4 mb-6">
-          {socials.map((s) => (
-            <a
-              key={s.id}
-              href={s.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={s.platform}
-              className="text-gray-400 hover:text-white transition-colors"
-            >
-              <SocialIcon platform={s.platform} />
-            </a>
-          ))}
-        </div>
-      )}
+      {/* Floating mascot — right */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute -right-4 sm:right-2 md:right-6 top-4 sm:top-6 hidden sm:block select-none"
+        initial={{ opacity: 0, x: 40, rotate: 8 }}
+        whileInView={{ opacity: 1, x: 0, rotate: 8 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
+      >
+        <motion.div
+          animate={{ y: [0, -8, 0], rotate: [8, 12, 8] }}
+          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        >
+          <Image
+            src="/mascot/mascot_3.png"
+            alt=""
+            width={160}
+            height={200}
+            className="w-24 md:w-32 lg:w-36 h-auto drop-shadow-[0_10px_30px_rgba(0,0,0,0.35)]"
+          />
+        </motion.div>
+      </motion.div>
 
-      {/* Stacked avatars + innovator label */}
-      {(avatarUrls.length > 0 || innovatorLabel) && (
-        <div className="flex items-center gap-3">
-          {avatarUrls.length > 0 && (
-            <div className="flex -space-x-2">
-              {avatarUrls.map((url, i) => (
-                <img
-                  key={i}
-                  src={url}
-                  alt=""
-                  className="w-8 h-8 rounded-full border-2 border-[#0f1729] object-cover"
-                  style={{ zIndex: avatarUrls.length - i }}
-                />
-              ))}
-            </div>
-          )}
-          {innovatorLabel && <span className="text-sm text-gray-300">{innovatorLabel}</span>}
-        </div>
-      )}
+      {/* Content (above decorations) */}
+      <div className="relative z-10 flex flex-col items-center">
+        {heading && (
+          <motion.h2
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight text-white mb-4 max-w-2xl leading-tight"
+          >
+            {heading}
+          </motion.h2>
+        )}
+        {subtitle && (
+          <motion.p
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="text-gray-300 text-sm sm:text-base max-w-lg leading-relaxed mb-8"
+          >
+            {subtitle}
+          </motion.p>
+        )}
+
+        {/* CTA — opens application modal */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.4, delay: 0.3 }}
+          className="mb-8"
+        >
+          <JobApplyModal
+            labels={applyLabels}
+            trigger={
+              <motion.span
+                whileHover={{ scale: 1.04 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex items-center gap-2 px-7 py-3 rounded-xl bg-white text-[#0f1729] text-sm sm:text-base font-semibold shadow-lg hover:shadow-xl transition-shadow"
+              >
+                <IconSend size={18} />
+                {applyLabels.triggerLabel}
+              </motion.span>
+            }
+            triggerClassName="inline-flex"
+          />
+        </motion.div>
+
+        {/* Social icons */}
+        {socials.length > 0 && (
+          <div className="flex items-center gap-4 mb-6">
+            {socials.map((s, i) => (
+              <motion.a
+                key={s.id}
+                href={s.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={s.platform}
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: 0.4 + i * 0.05 }}
+                whileHover={{ y: -2 }}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <SocialIcon platform={s.platform} />
+              </motion.a>
+            ))}
+          </div>
+        )}
+
+        {/* Stacked avatars + innovator label */}
+        {(avatarUrls.length > 0 || innovatorLabel) && (
+          <div className="flex items-center gap-3">
+            {avatarUrls.length > 0 && (
+              <div className="flex -space-x-2">
+                {avatarUrls.map((url, i) => (
+                  <img
+                    key={i}
+                    src={url}
+                    alt=""
+                    className="w-8 h-8 rounded-full border-2 border-[#0f1729] object-cover"
+                    style={{ zIndex: avatarUrls.length - i }}
+                  />
+                ))}
+              </div>
+            )}
+            {innovatorLabel && (
+              <span className="text-sm text-gray-300">{innovatorLabel}</span>
+            )}
+          </div>
+        )}
+      </div>
     </motion.div>
   )
 }

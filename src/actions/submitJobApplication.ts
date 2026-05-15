@@ -15,14 +15,16 @@ export type SubmitResult =
   | { ok: false; error: string; field?: string }
 
 export async function submitJobApplication(formData: FormData): Promise<SubmitResult> {
-  const jobId = String(formData.get('jobId') ?? '').trim()
+  const rawJobId = String(formData.get('jobId') ?? '').trim()
   const fullName = String(formData.get('fullName') ?? '').trim()
   const email = String(formData.get('email') ?? '').trim()
   const phone = String(formData.get('phone') ?? '').trim()
   const experience = String(formData.get('experience') ?? '').trim()
+  const positionInput = String(formData.get('position') ?? '').trim()
   const cv = formData.get('cv')
 
-  if (!/^[a-f0-9]{24}$/i.test(jobId)) {
+  const isGeneral = !rawJobId
+  if (!isGeneral && !/^[a-f0-9]{24}$/i.test(rawJobId)) {
     return { ok: false, error: 'Invalid job reference.', field: 'jobId' }
   }
   if (fullName.length < 2) {
@@ -50,19 +52,28 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
       field: 'experience',
     }
   }
+  if (positionInput.length > 200) {
+    return {
+      ok: false,
+      error: 'Position is too long (max 200 characters).',
+      field: 'position',
+    }
+  }
 
   try {
     const payload = await getPayload({ config: configPromise })
 
-    // Confirm the job exists before uploading anything
-    const job = await payload.findByID({
-      collection: 'jobs',
-      id: jobId,
-      depth: 0,
-      overrideAccess: true,
-    })
-    if (!job) {
-      return { ok: false, error: 'This job is no longer available.', field: 'jobId' }
+    if (!isGeneral) {
+      // Confirm the job exists before uploading anything
+      const job = await payload.findByID({
+        collection: 'jobs',
+        id: rawJobId,
+        depth: 0,
+        overrideAccess: true,
+      })
+      if (!job) {
+        return { ok: false, error: 'This job is no longer available.', field: 'jobId' }
+      }
     }
 
     const buffer = Buffer.from(await cv.arrayBuffer())
@@ -83,7 +94,8 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
     await payload.create({
       collection: 'job-applications',
       data: {
-        job: jobId,
+        job: isGeneral ? undefined : rawJobId,
+        position: positionInput || (isGeneral ? 'General Application' : undefined),
         fullName,
         email,
         phone,
