@@ -21,16 +21,23 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
   const isTransparent = isPostsPage || transparent
 
   return (
-    <header className="container relative z-20 bg-transparent">
-      <div
-        className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}
-      >
-        <div className={isTransparent ? 'flex-1' : ''}>
-          <Link href="/">
-            <Logo loading="eager" priority="high" className="invert" />
-          </Link>
+    <header
+      className={cn(
+        'relative z-20 bg-transparent',
+        !isTransparent && 'border-b border-gray-200/70',
+      )}
+    >
+      <div className="container">
+        <div
+          className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}
+        >
+          <div className={isTransparent ? 'flex-1' : ''}>
+            <Link href="/">
+              <Logo loading="eager" priority="high" className="invert" />
+            </Link>
+          </div>
+          <HeaderNav data={data} centered={isTransparent} />
         </div>
-        <HeaderNav data={data} centered={isTransparent} />
       </div>
     </header>
   )

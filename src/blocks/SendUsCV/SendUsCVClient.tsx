@@ -1,6 +1,5 @@
 'use client'
 
-import React from 'react'
 import Image from 'next/image'
 import { motion } from 'framer-motion'
 import {
@@ -114,18 +113,27 @@ export function SendUsCVClient({
         </svg>
       </div>
 
-      {/* Floating mascot — left */}
+      {/* Floating mascot — left (looping y bob + rotate sway + scale breathing) */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute -left-4 sm:left-2 md:left-6 bottom-2 sm:bottom-4 hidden sm:block select-none"
-        initial={{ opacity: 0, x: -40, rotate: -6 }}
-        whileInView={{ opacity: 1, x: 0, rotate: -6 }}
+        initial={{ opacity: 0, x: -40 }}
+        whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
       >
         <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{
+            y: [0, -14, 0, -6, 0],
+            rotate: [-6, -2, -6, -8, -6],
+            scale: [1, 1.03, 1, 1.02, 1],
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+          }}
         >
           <Image
             src="/mascot/mascot_2.png"
@@ -137,18 +145,27 @@ export function SendUsCVClient({
         </motion.div>
       </motion.div>
 
-      {/* Floating mascot — right */}
+      {/* Floating mascot — right (looping y bob + rotate sway + scale breathing) */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute -right-4 sm:right-2 md:right-6 top-4 sm:top-6 hidden sm:block select-none"
-        initial={{ opacity: 0, x: 40, rotate: 8 }}
-        whileInView={{ opacity: 1, x: 0, rotate: 8 }}
+        initial={{ opacity: 0, x: 40 }}
+        whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.7, delay: 0.3, ease: 'easeOut' }}
       >
         <motion.div
-          animate={{ y: [0, -8, 0], rotate: [8, 12, 8] }}
-          transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{
+            y: [0, -10, 0, -16, 0],
+            rotate: [8, 12, 8, 5, 8],
+            scale: [1, 1.04, 1, 1.02, 1],
+          }}
+          transition={{
+            duration: 7,
+            repeat: Infinity,
+            repeatType: 'loop',
+            ease: 'easeInOut',
+          }}
         >
           <Image
             src="/mascot/mascot_3.png"

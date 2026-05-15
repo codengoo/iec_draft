@@ -20,24 +20,34 @@ import {
 import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import { JobApplyModal } from '@/components/JobApplyModal'
+import { Reveal, RevealGroup, RevealItem } from '@/components/Reveal'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { cn } from '@/utilities/ui'
 
-const SECTION_ACCENTS: Record<string, { accent: string; bar: string; icon: string }> = {
+const SECTION_ACCENTS: Record<
+  string,
+  { gradient: string; glow: string; icon: string; iconRing: string; bullet: string }
+> = {
   jobDescription: {
-    accent: 'bg-blue-50/70 ring-blue-100',
-    bar: 'bg-blue-500',
-    icon: 'text-blue-600 bg-blue-100',
+    gradient: 'from-blue-500 via-indigo-500 to-sky-500',
+    glow: 'bg-blue-400/30',
+    icon: 'bg-linear-to-br from-blue-500 to-indigo-600 text-white shadow-blue-500/40',
+    iconRing: 'ring-blue-100',
+    bullet: 'bg-blue-500',
   },
   qualifications: {
-    accent: 'bg-violet-50/70 ring-violet-100',
-    bar: 'bg-violet-500',
-    icon: 'text-violet-600 bg-violet-100',
+    gradient: 'from-violet-500 via-fuchsia-500 to-pink-500',
+    glow: 'bg-violet-400/30',
+    icon: 'bg-linear-to-br from-violet-500 to-fuchsia-600 text-white shadow-violet-500/40',
+    iconRing: 'ring-violet-100',
+    bullet: 'bg-violet-500',
   },
   benefits: {
-    accent: 'bg-emerald-50/70 ring-emerald-100',
-    bar: 'bg-emerald-500',
-    icon: 'text-emerald-600 bg-emerald-100',
+    gradient: 'from-emerald-500 via-teal-500 to-cyan-500',
+    glow: 'bg-emerald-400/30',
+    icon: 'bg-linear-to-br from-emerald-500 to-teal-600 text-white shadow-emerald-500/40',
+    iconRing: 'ring-emerald-100',
+    bullet: 'bg-emerald-500',
   },
 }
 
@@ -79,7 +89,7 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
   return (
     <article className="pt-24 pb-16">
       <div className="container">
-        <div className="mb-6">
+        <Reveal direction="up" distance={12} duration={0.4} margin="0px" className="mb-6">
           <Link
             href="/career"
             className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-primary transition-colors"
@@ -87,10 +97,10 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
             <IconArrowLeft size={16} />
             {t('backToCareers')}
           </Link>
-        </div>
+        </Reveal>
 
-        <header className="border-b border-gray-200 pb-8 mb-10">
-          <div className="flex flex-wrap gap-2 mb-4">
+        <RevealGroup as="header" className="border-b border-gray-200 pb-8 mb-10" delayStart={0.05}>
+          <RevealItem className="flex flex-wrap gap-2 mb-4">
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
               <IconStack2 size={14} />
               {job.department}
@@ -105,31 +115,41 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
                 {employmentTypeLabel}
               </span>
             )}
-          </div>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900">
-            {job.title}
-          </h1>
+          </RevealItem>
+          <RevealItem>
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-gray-900">
+              {job.title}
+            </h1>
+          </RevealItem>
           {job.description && (
-            <p className="mt-4 text-gray-600 max-w-3xl leading-relaxed">{job.description}</p>
+            <RevealItem>
+              <p className="mt-4 text-gray-600 max-w-3xl leading-relaxed">{job.description}</p>
+            </RevealItem>
           )}
-        </header>
+        </RevealGroup>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-12 items-start">
           <main className="min-w-0">
-            <Section
-              variant="jobDescription"
-              title={t('jobDescription')}
-              data={job.jobDescription}
-            />
-            <Section
-              variant="qualifications"
-              title={t('qualifications')}
-              data={job.qualifications}
-            />
-            <Section variant="benefits" title={t('benefits')} data={job.benefits} last />
+            <Reveal direction="up" distance={28} duration={0.6}>
+              <Section
+                variant="jobDescription"
+                title={t('jobDescription')}
+                data={job.jobDescription}
+              />
+            </Reveal>
+            <Reveal direction="up" distance={28} duration={0.6} delay={0.05}>
+              <Section
+                variant="qualifications"
+                title={t('qualifications')}
+                data={job.qualifications}
+              />
+            </Reveal>
+            <Reveal direction="up" distance={28} duration={0.6} delay={0.1}>
+              <Section variant="benefits" title={t('benefits')} data={job.benefits} last />
+            </Reveal>
           </main>
 
-          <aside className="lg:sticky lg:top-24">
+          <Reveal as="aside" direction="left" distance={32} delay={0.2} className="lg:sticky lg:top-24">
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-5">
                 {t('jobSummary')}
@@ -205,13 +225,13 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
                 )}
               </div>
             </div>
-          </aside>
+          </Reveal>
         </div>
       </div>
 
-      <div className="mt-20">
+      <Reveal direction="up" distance={32} duration={0.7} className="mt-20">
         <CareerSendUsCVSection />
-      </div>
+      </Reveal>
     </article>
   )
 }
@@ -291,34 +311,68 @@ function Section({
   return (
     <section
       className={cn(
-        'relative rounded-2xl ring-1 px-6 sm:px-8 py-7 sm:py-9 shadow-sm transition-shadow hover:shadow-md',
-        accent.accent,
-        last ? '' : 'mb-8',
+        'group relative overflow-hidden rounded-3xl bg-white',
+        'border border-gray-200/70 shadow-none',
+        'transition-[transform,box-shadow,border-color] duration-300 ease-out',
+        'hover:-translate-y-1 hover:border-gray-200 hover:shadow-[0_4px_12px_rgba(15,23,42,0.06),0_24px_48px_-16px_rgba(15,23,42,0.18)]',
+        last ? '' : 'mb-6',
       )}
     >
+      {/* Gradient accent strip at the top — fades in on hover */}
       <span
         aria-hidden
-        className={cn('absolute left-0 top-6 bottom-6 w-1 rounded-r-full', accent.bar)}
+        className={cn(
+          'absolute inset-x-0 top-0 h-1 bg-linear-to-r opacity-0 transition-opacity duration-300 group-hover:opacity-100',
+          accent.gradient,
+        )}
       />
-      <div className="flex items-center gap-3 mb-5">
-        <span
-          aria-hidden
+      {/* Soft colored glow in the corner — only on hover */}
+      <span
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full blur-3xl opacity-0',
+          'transition-opacity duration-500 group-hover:opacity-80',
+          accent.glow,
+        )}
+      />
+
+      <div className="relative px-7 sm:px-10 pt-9 sm:pt-11 pb-8 sm:pb-10">
+        <div className="flex items-center gap-4 mb-7">
+          <span
+            aria-hidden
+            className={cn(
+              'inline-flex h-11 w-11 items-center justify-center rounded-2xl ring-4 ring-white text-sm font-bold shadow-lg',
+              accent.icon,
+            )}
+          >
+            {variant === 'jobDescription' ? 'JD' : variant === 'qualifications' ? 'Q' : '★'}
+          </span>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-2xl sm:text-[28px] font-semibold tracking-tight text-gray-900 leading-tight">
+              {title}
+            </h2>
+            <span
+              aria-hidden
+              className={cn(
+                'mt-2 inline-block h-0.5 w-10 rounded-full bg-linear-to-r',
+                accent.gradient,
+              )}
+            />
+          </div>
+        </div>
+
+        <RichText
+          data={data}
+          enableGutter={false}
           className={cn(
-            'inline-flex h-9 w-9 items-center justify-center rounded-xl text-base font-bold',
-            accent.icon,
+            'max-w-none prose prose-gray prose-base sm:prose-lg leading-[1.75] text-gray-700',
+            'prose-headings:text-gray-900 prose-headings:font-semibold prose-headings:tracking-tight',
+            'prose-strong:text-gray-900 prose-a:text-blue-600 hover:prose-a:text-blue-700',
+            'prose-li:my-1.5 prose-ul:my-3 prose-p:my-3',
+            'marker:text-gray-400',
           )}
-        >
-          {variant === 'jobDescription' ? 'JD' : variant === 'qualifications' ? 'Q' : '★'}
-        </span>
-        <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-gray-900">
-          {title}
-        </h2>
+        />
       </div>
-      <RichText
-        data={data}
-        enableGutter={false}
-        className="max-w-none prose prose-gray prose-base sm:prose-lg leading-relaxed text-gray-700"
-      />
     </section>
   )
 }
