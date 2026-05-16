@@ -28,6 +28,9 @@ const nextConfig: NextConfig = {
       {
         pathname: '/mascot/**',
       },
+      {
+        pathname: '/page_404/**',
+      },
     ],
     qualities: [100],
     remotePatterns: [
