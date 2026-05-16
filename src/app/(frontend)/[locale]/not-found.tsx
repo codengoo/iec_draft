@@ -77,7 +77,7 @@ export default function NotFound() {
       x: wallX,
       y: wallY,
       delay: 0.15,
-      scale: 0.5,
+      scale: 0.55,
       filter:
         'drop-shadow(6px 22px 32px rgba(30,55,85,0.32)) drop-shadow(0 4px 8px rgba(30,55,85,0.16))',
     },
@@ -87,7 +87,7 @@ export default function NotFound() {
       x: signX,
       y: signY,
       delay: 0.25,
-      scale: 0.3,
+      scale: 0.35,
       filter: 'drop-shadow(4px 12px 20px rgba(30,55,85,0.28))',
     },
   ]
@@ -96,7 +96,7 @@ export default function NotFound() {
     <div
       ref={containerRef}
       className="flex min-h-[calc(100vh+10rem)] -mt-40 flex-col items-center justify-center select-none overflow-hidden"
-      style={{ background: 'linear-gradient(180deg, #A8D4EE 0%, #C8E6F5 55%, #DFF1FA 100%)' }}
+      style={{ background: 'linear-gradient(0deg, #A8D4EE 0%, #C8E6F5 40%, #DFF1FA 100%)' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
