@@ -8,7 +8,9 @@ import { useCallback, useEffect, useRef } from 'react'
 
 import { Button } from '@/components/ui/button'
 import { useTransparentHeader } from '@/providers/TransparentHeader'
-import { cn } from '@/utilities/ui'
+
+// Smooth cubic-bezier used for all entrance animations
+const EASE: [number, number, number, number] = [0.25, 0.46, 0.45, 0.94]
 
 export default function NotFound() {
   const t = useTranslations('NotFound')
@@ -44,7 +46,7 @@ export default function NotFound() {
     rawY.set(0)
   }, [rawX, rawY])
 
-  // Parallax depths — larger multiplier = closer layer = more movement
+  // Parallax — larger multiplier = closer layer = more movement
   const cloudX = useTransform(springX, (v) => v * 10)
   const cloudY = useTransform(springY, (v) => v * 5 - 50)
 
@@ -57,7 +59,8 @@ export default function NotFound() {
   const mascotX = useTransform(springX, (v) => v * 56 - 75)
   const mascotY = useTransform(springY, (v) => v * 26 + 50)
 
-  const layers = [
+  // Non-mascot layers — mascot is rendered separately with float animation
+  const bgLayers = [
     {
       src: '/page_404/cloud.png',
       alt: '',
@@ -65,17 +68,16 @@ export default function NotFound() {
       y: cloudY,
       delay: 0,
       scale: 0.9,
-      // Clouds are far back — very soft, diffuse shadow
-      filter: 'drop-shadow(0 12px 18px rgba(40,80,120,0.12))',
+      // Distant clouds: desaturated + brighter for atmospheric (aerial) perspective
+      filter: 'drop-shadow(0 10px 16px rgba(40,80,120,0.10)) brightness(1.06) saturate(0.70)',
     },
     {
       src: '/page_404/wall.png',
       alt: '404 page not found',
       x: wallX,
       y: wallY,
-      delay: 0.1,
-      scale: 0.7,
-      // Heavy stone wall — strong ground shadow + subtle contact shadow
+      delay: 0.15,
+      scale: 0.5,
       filter:
         'drop-shadow(6px 22px 32px rgba(30,55,85,0.32)) drop-shadow(0 4px 8px rgba(30,55,85,0.16))',
     },
@@ -84,21 +86,9 @@ export default function NotFound() {
       alt: 'Oops! Page not found',
       x: signX,
       y: signY,
-      delay: 0.2,
-      scale: 0.4,
-      // Construction sign — medium depth, slightly offset to match wall lighting
-      filter: 'drop-shadow(4px 12px 20px rgba(30,55,85,0.30))',
-    },
-    {
-      src: '/page_404/mascot.png',
-      alt: 'Lost mascot',
-      x: mascotX,
-      y: mascotY,
-      delay: 0.3,
-      scale: 0.8,
-      // Mascot is closest — strongest, most defined shadow
-      filter:
-        'drop-shadow(8px 24px 36px rgba(30,55,85,0.38)) drop-shadow(0 6px 12px rgba(30,55,85,0.18))',
+      delay: 0.25,
+      scale: 0.3,
+      filter: 'drop-shadow(4px 12px 20px rgba(30,55,85,0.28))',
     },
   ]
 
@@ -110,41 +100,74 @@ export default function NotFound() {
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >
-      {/* ── Parallax scene ─────────────────────────────────────────────────
-          All source PNGs share a 1280×854 canvas so they stack pixel-perfectly.
-          scale:1.05 provides edge buffer for the parallax shift.
-      ──────────────────────────────────────────────────────────────────── */}
+      {/* ── Parallax scene ── */}
       <div
         className="relative w-full overflow-hidden"
         style={{ maxWidth: 1100, aspectRatio: '1280 / 854' }}
       >
-        {layers.map(({ src, alt, x, y, delay, scale, filter }) => (
-          <motion.div
-            key={src}
-            className={cn('absolute inset-0')}
-            style={{ x, y, scale: scale ?? 1, filter }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay }}
-          >
-            <Image
-              src={src}
-              alt={alt}
-              fill
-              className="object-contain"
-              priority={delay === 0}
-              draggable={true}
-            />
+        {/* Background + mid-ground — outer div carries parallax, inner carries entrance */}
+        {bgLayers.map(({ src, alt, x, y, delay, scale, filter }) => (
+          <motion.div key={src} className="absolute inset-0" style={{ x, y, scale, filter }}>
+            <motion.div
+              className="absolute inset-0"
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.85, delay, ease: EASE }}
+            >
+              <Image
+                src={src}
+                alt={alt}
+                fill
+                className="object-contain"
+                priority={delay === 0}
+                draggable={false}
+              />
+            </motion.div>
           </motion.div>
         ))}
+
+        {/* Mascot — foreground, floats after entrance */}
+        <motion.div
+          className="absolute inset-0"
+          style={{
+            x: mascotX,
+            y: mascotY,
+            scale: 0.8,
+            filter:
+              'drop-shadow(8px 24px 36px rgba(30,55,85,0.38)) drop-shadow(0 6px 12px rgba(30,55,85,0.18))',
+          }}
+        >
+          {/* Entrance */}
+          <motion.div
+            className="absolute inset-0"
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.3, ease: EASE }}
+          >
+            {/* Float — gentle perpetual bob starts after entrance settles */}
+            <motion.div
+              className="absolute inset-0"
+              animate={{ y: [0, -14, 0] }}
+              transition={{ duration: 3.8, repeat: Infinity, ease: 'easeInOut', delay: 1.6 }}
+            >
+              <Image
+                src="/page_404/mascot.png"
+                alt="Lost mascot"
+                fill
+                className="object-contain"
+                draggable={false}
+              />
+            </motion.div>
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* ── CTA ────────────────────────────────────────────────────────── */}
+      {/* ── CTA — slides up after scene ── */}
       <motion.div
         className="flex flex-col items-center gap-3 mt-1 pb-8"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.65, ease: EASE }}
       >
         <p className="text-sm text-[#3a6680]">{t('description')}</p>
         <Button asChild size="lg">
