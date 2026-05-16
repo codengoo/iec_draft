@@ -46,7 +46,7 @@ export default function NotFound() {
 
   // Parallax depths — larger multiplier = closer layer = more movement
   const cloudX = useTransform(springX, (v) => v * 10)
-  const cloudY = useTransform(springY, (v) => v * 5)
+  const cloudY = useTransform(springY, (v) => v * 5 - 50)
 
   const wallX = useTransform(springX, (v) => v * 24)
   const wallY = useTransform(springY, (v) => v * 12)
@@ -54,8 +54,8 @@ export default function NotFound() {
   const signX = useTransform(springX, (v) => v * 38 + 220)
   const signY = useTransform(springY, (v) => v * 20 + 140)
 
-  const mascotX = useTransform(springX, (v) => v * 56)
-  const mascotY = useTransform(springY, (v) => v * 26)
+  const mascotX = useTransform(springX, (v) => v * 56 - 75)
+  const mascotY = useTransform(springY, (v) => v * 26 + 50)
 
   const layers = [
     {
@@ -64,7 +64,7 @@ export default function NotFound() {
       x: cloudX,
       y: cloudY,
       delay: 0,
-      scale: 1,
+      scale: 0.9,
       // Clouds are far back — very soft, diffuse shadow
       filter: 'drop-shadow(0 12px 18px rgba(40,80,120,0.12))',
     },
