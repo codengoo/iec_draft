@@ -45,6 +45,10 @@ export const hero: Field = {
           label: 'Video Hero',
           value: 'videoHero',
         },
+        {
+          label: 'Brand Hero',
+          value: 'brandHero',
+        },
       ],
       required: true,
     },
@@ -185,6 +189,76 @@ export const hero: Field = {
         description:
           'YouTube or direct video URL to open in a popup when the play button is clicked',
         condition: (_, { type } = {}) => type === 'videoHero',
+      },
+    },
+    // --- Brand Hero fields ---
+    {
+      name: 'eyebrow',
+      type: 'text',
+      label: 'Eyebrow',
+      localized: true,
+      admin: {
+        description: 'Small label above the heading (e.g. "Gaming Studio").',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+    },
+    {
+      name: 'brandHeading',
+      type: 'text',
+      label: 'Brand Heading',
+      localized: true,
+      admin: {
+        description: 'Large brand heading (e.g. "IEC Games").',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+    },
+    {
+      name: 'tagline',
+      type: 'textarea',
+      label: 'Tagline',
+      localized: true,
+      admin: {
+        description: 'Supporting paragraph under the heading.',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+    },
+    {
+      name: 'inlineStats',
+      type: 'array',
+      label: 'Inline Stats',
+      maxRows: 4,
+      admin: {
+        description: 'Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'value',
+              type: 'text',
+              required: true,
+              admin: { width: '40%' },
+            },
+            {
+              name: 'label',
+              type: 'text',
+              required: true,
+              localized: true,
+              admin: { width: '60%' },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      name: 'mascot',
+      type: 'upload',
+      label: 'Mascot Image',
+      relationTo: 'media',
+      admin: {
+        condition: (_, { type } = {}) => type === 'brandHero',
       },
     },
   ],
