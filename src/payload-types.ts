@@ -281,6 +281,9 @@ export interface Page {
     | VisionMissionBlock
     | CoreValuesBlock
     | CareersHighlightBlock
+    | FeatureTabsBlock
+    | SocialConnectBlock
+    | IECLifeBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1167,6 +1170,63 @@ export interface CareersHighlightBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureTabsBlock".
+ */
+export interface FeatureTabsBlock {
+  tabs?:
+    | {
+        label: string;
+        icon?: (string | null) | Media;
+        description?: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        } | null;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'featureTabs';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialConnectBlock".
+ */
+export interface SocialConnectBlock {
+  heading?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'socialConnect';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IECLifeBlock".
+ */
+export interface IECLifeBlock {
+  eyebrow?: string | null;
+  heading: string;
+  ctaLabel?: string | null;
+  /**
+   * How many recent posts to show (1 featured + the rest in the side list).
+   */
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'iecLife';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
  */
 export interface Job {
@@ -1659,6 +1719,9 @@ export interface PagesSelect<T extends boolean = true> {
         visionMission?: T | VisionMissionBlockSelect<T>;
         coreValues?: T | CoreValuesBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
+        featureTabs?: T | FeatureTabsBlockSelect<T>;
+        socialConnect?: T | SocialConnectBlockSelect<T>;
+        iecLife?: T | IECLifeBlockSelect<T>;
       };
   meta?:
     | T
@@ -1920,6 +1983,43 @@ export interface CareersHighlightBlockSelect<T extends boolean = true> {
         route?: T;
         url?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "FeatureTabsBlock_select".
+ */
+export interface FeatureTabsBlockSelect<T extends boolean = true> {
+  tabs?:
+    | T
+    | {
+        label?: T;
+        icon?: T;
+        description?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "SocialConnectBlock_select".
+ */
+export interface SocialConnectBlockSelect<T extends boolean = true> {
+  heading?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "IECLifeBlock_select".
+ */
+export interface IECLifeBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  ctaLabel?: T;
+  limit?: T;
   id?: T;
   blockName?: T;
 }
@@ -2653,6 +2753,9 @@ export interface Home {
         | VisionMissionBlock
         | CoreValuesBlock
         | CareersHighlightBlock
+        | FeatureTabsBlock
+        | SocialConnectBlock
+        | IECLifeBlock
       )[]
     | null;
   _status?: ('draft' | 'published') | null;
@@ -2789,6 +2892,9 @@ export interface HomeSelect<T extends boolean = true> {
         visionMission?: T | VisionMissionBlockSelect<T>;
         coreValues?: T | CoreValuesBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
+        featureTabs?: T | FeatureTabsBlockSelect<T>;
+        socialConnect?: T | SocialConnectBlockSelect<T>;
+        iecLife?: T | IECLifeBlockSelect<T>;
       };
   _status?: T;
   updatedAt?: T;

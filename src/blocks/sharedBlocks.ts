@@ -9,7 +9,10 @@ import { SendUsCV } from '@/blocks/SendUsCV/config'
 import { AboutWithStats } from '@/blocks/AboutWithStats/config'
 import { CareersHighlight } from '@/blocks/CareersHighlight/config'
 import { CoreValues } from '@/blocks/CoreValues/config'
+import { FeatureTabs } from '@/blocks/FeatureTabs/config'
 import { GamesPortfolio } from '@/blocks/GamesPortfolio/config'
+import { IECLife } from '@/blocks/IECLife/config'
+import { SocialConnect } from '@/blocks/SocialConnect/config'
 import { VisionMission } from '@/blocks/VisionMission/config'
 
 /**
@@ -29,4 +32,7 @@ export const sharedLayoutBlocks = [
   VisionMission,
   CoreValues,
   CareersHighlight,
+  FeatureTabs,
+  SocialConnect,
+  IECLife,
 ]

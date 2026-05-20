@@ -13,7 +13,10 @@ import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
 import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
 import { CoreValuesBlock } from '@/blocks/CoreValues/Component'
+import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
+import { IECLifeBlock } from '@/blocks/IECLife/Component'
+import { SocialConnectBlock } from '@/blocks/SocialConnect/Component'
 import { VisionMissionBlock } from '@/blocks/VisionMission/Component'
 
 const blockComponents = {
@@ -29,6 +32,9 @@ const blockComponents = {
   visionMission: VisionMissionBlock,
   coreValues: CoreValuesBlock,
   careersHighlight: CareersHighlightBlock,
+  featureTabs: FeatureTabsBlock,
+  socialConnect: SocialConnectBlock,
+  iecLife: IECLifeBlock,
 }
 
 export const RenderBlocks: React.FC<{
