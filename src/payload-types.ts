@@ -267,6 +267,20 @@ export interface Page {
         }[]
       | null;
     mascot?: (string | null) | Media;
+    /**
+     * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
+     */
+    decorations?:
+      | {
+          image: string | Media;
+          position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'middleLeft' | 'middleRight';
+          /**
+           * Width as % of hero
+           */
+          sizePercent?: number | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout: (
     | CallToActionBlock
@@ -1703,6 +1717,14 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        decorations?:
+          | T
+          | {
+              image?: T;
+              position?: T;
+              sizePercent?: T;
+              id?: T;
+            };
       };
   layout?:
     | T
@@ -2738,6 +2760,20 @@ export interface Home {
         }[]
       | null;
     mascot?: (string | null) | Media;
+    /**
+     * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
+     */
+    decorations?:
+      | {
+          image: string | Media;
+          position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'middleLeft' | 'middleRight';
+          /**
+           * Width as % of hero
+           */
+          sizePercent?: number | null;
+          id?: string | null;
+        }[]
+      | null;
   };
   layout?:
     | (
@@ -2876,6 +2912,14 @@ export interface HomeSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        decorations?:
+          | T
+          | {
+              image?: T;
+              position?: T;
+              sizePercent?: T;
+              id?: T;
+            };
       };
   layout?:
     | T

@@ -261,6 +261,58 @@ export const hero: Field = {
         condition: (_, { type } = {}) => type === 'brandHero',
       },
     },
+    {
+      name: 'decorations',
+      type: 'array',
+      label: 'Decorations',
+      maxRows: 8,
+      admin: {
+        description:
+          'Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'image',
+              type: 'upload',
+              relationTo: 'media',
+              required: true,
+              admin: { width: '50%' },
+            },
+            {
+              name: 'position',
+              type: 'select',
+              required: true,
+              defaultValue: 'topLeft',
+              options: [
+                { label: 'Top Left', value: 'topLeft' },
+                { label: 'Top Right', value: 'topRight' },
+                { label: 'Bottom Left', value: 'bottomLeft' },
+                { label: 'Bottom Right', value: 'bottomRight' },
+                { label: 'Middle Left', value: 'middleLeft' },
+                { label: 'Middle Right', value: 'middleRight' },
+              ],
+              admin: { width: '30%' },
+            },
+            {
+              name: 'sizePercent',
+              type: 'number',
+              label: 'Size (%)',
+              defaultValue: 8,
+              min: 2,
+              max: 30,
+              admin: {
+                width: '20%',
+                description: 'Width as % of hero',
+              },
+            },
+          ],
+        },
+      ],
+    },
   ],
   label: false,
 }
