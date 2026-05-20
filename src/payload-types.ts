@@ -1045,7 +1045,28 @@ export interface SendUsCVBlock {
  * via the `definition` "AboutWithStatsBlock".
  */
 export interface AboutWithStatsBlock {
-  heading: string;
+  /**
+   * Small uppercase label above the heading (e.g. "IEC GAMES LÀ STUDIO").
+   */
+  eyebrow?: string | null;
+  /**
+   * Bolded words/phrases will be rendered with the brand gradient color.
+   */
+  heading: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
   description?: {
     root: {
       type: string;
@@ -1061,11 +1082,69 @@ export interface AboutWithStatsBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Small illustration shown beside the description text.
+   */
   mascot?: (string | null) | Media;
+  /**
+   * Optional second mascot (e.g. a mascot in an airplane) that flies across the section as the user scrolls — enters from one side, arcs through the middle, exits on the other side.
+   */
+  flyingMascot?: (string | null) | Media;
+  /**
+   * Optional "Về [Studio]" link rendered under the description with an arrow.
+   */
+  cta?:
+    | {
+        link: {
+          type?: ('reference' | 'route' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
+          url?: string | null;
+          label: string;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Each stat counts up from 0 when scrolled into view. e.g. value=50, suffix="+", label="Nhân sự chuyên nghiệp".
+   */
   stats?:
     | {
-        value: string;
+        /**
+         * Numeric value (e.g. 50, 5, 20).
+         */
+        value: number;
+        /**
+         * Unit / sign appended to the number (e.g. "+", "M+", "%").
+         */
+        suffix?: string | null;
         label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Optional floating 3D / illustrated objects scattered around the section.
+   */
+  decorations?:
+    | {
+        image: string | Media;
+        position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'middleLeft' | 'middleRight';
+        /**
+         * Width as % of section
+         */
+        sizePercent?: number | null;
         id?: string | null;
       }[]
     | null;
@@ -1989,14 +2068,40 @@ export interface SendUsCVBlockSelect<T extends boolean = true> {
  * via the `definition` "AboutWithStatsBlock_select".
  */
 export interface AboutWithStatsBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   heading?: T;
   description?: T;
   mascot?: T;
+  flyingMascot?: T;
+  cta?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              route?: T;
+              url?: T;
+              label?: T;
+            };
+        id?: T;
+      };
   stats?:
     | T
     | {
         value?: T;
+        suffix?: T;
         label?: T;
+        id?: T;
+      };
+  decorations?:
+    | T
+    | {
+        image?: T;
+        position?: T;
+        sizePercent?: T;
         id?: T;
       };
   id?: T;

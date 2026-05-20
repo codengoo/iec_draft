@@ -37,6 +37,9 @@ const blockComponents = {
   iecLife: IECLifeBlock,
 }
 
+// Blocks that manage their own vertical spacing — skip the outer `my-16` wrapper.
+const flushBlocks = new Set(['aboutWithStats'])
+
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
 }> = (props) => {
@@ -54,8 +57,9 @@ export const RenderBlocks: React.FC<{
             const Block = blockComponents[blockType]
 
             if (Block) {
+              const isFlush = flushBlocks.has(blockType)
               return (
-                <div className="my-16" key={index}>
+                <div className={isFlush ? undefined : 'my-16'} key={index}>
                   {/* @ts-expect-error there may be some mismatch between the expected types here */}
                   <Block {...block} disableInnerContainer />
                 </div>
