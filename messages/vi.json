@@ -47,6 +47,12 @@
     "qrErrorTitle": "Không tạo được QR",
     "qrErrorBody": "Có lỗi khi tạo mã QR. Vui lòng thử lại."
   },
+  "Video": {
+    "play": "Xem giới thiệu",
+    "iframeTitle": "Video giới thiệu",
+    "errorTitle": "Không mở được video",
+    "errorBody": "Liên kết video không hợp lệ hoặc không được hỗ trợ."
+  },
   "JobBoard": {
     "searchPlaceholder": "Tìm việc làm...",
     "department": "Bộ phận",

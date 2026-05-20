@@ -268,6 +268,37 @@ export interface Page {
       | null;
     mascot?: (string | null) | Media;
     /**
+     * Primary call-to-action button (e.g. "Explore us") shown next to the share / video buttons.
+     */
+    cta?:
+      | {
+          link: {
+            type?: ('reference' | 'route' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
+            url?: string | null;
+            label: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional. YouTube / Vimeo URL or direct .mp4 link. When set, a play button appears next to the CTA and opens the video in a popup.
+     */
+    introVideoUrl?: string | null;
+    /**
      * QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.
      */
     share?: {
@@ -1727,6 +1758,22 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        cta?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    route?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        introVideoUrl?: T;
         share?:
           | T
           | {
@@ -2777,6 +2824,37 @@ export interface Home {
       | null;
     mascot?: (string | null) | Media;
     /**
+     * Primary call-to-action button (e.g. "Explore us") shown next to the share / video buttons.
+     */
+    cta?:
+      | {
+          link: {
+            type?: ('reference' | 'route' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
+            url?: string | null;
+            label: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional. YouTube / Vimeo URL or direct .mp4 link. When set, a play button appears next to the CTA and opens the video in a popup.
+     */
+    introVideoUrl?: string | null;
+    /**
      * QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.
      */
     share?: {
@@ -2938,6 +3016,22 @@ export interface HomeSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        cta?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    route?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        introVideoUrl?: T;
         share?:
           | T
           | {

@@ -71,6 +71,10 @@ export const hero: Field = {
     linkGroup({
       overrides: {
         maxRows: 2,
+        admin: {
+          initCollapsed: true,
+          condition: (_, { type } = {}) => type !== 'brandHero',
+        },
       },
     }),
     {
@@ -258,6 +262,30 @@ export const hero: Field = {
       label: 'Mascot Image',
       relationTo: 'media',
       admin: {
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+    },
+    linkGroup({
+      appearances: false,
+      overrides: {
+        name: 'cta',
+        label: 'Hero CTA Button',
+        maxRows: 1,
+        admin: {
+          initCollapsed: false,
+          description:
+            'Primary call-to-action button (e.g. "Explore us") shown next to the share / video buttons.',
+          condition: (_, { type } = {}) => type === 'brandHero',
+        },
+      },
+    }),
+    {
+      name: 'introVideoUrl',
+      type: 'text',
+      label: 'Intro Video URL',
+      admin: {
+        description:
+          'Optional. YouTube / Vimeo URL or direct .mp4 link. When set, a play button appears next to the CTA and opens the video in a popup.',
         condition: (_, { type } = {}) => type === 'brandHero',
       },
     },

@@ -47,6 +47,12 @@
     "qrErrorTitle": "QR generation failed",
     "qrErrorBody": "We couldn't render the QR code. Please try again."
   },
+  "Video": {
+    "play": "Watch intro",
+    "iframeTitle": "Intro video",
+    "errorTitle": "Couldn't open video",
+    "errorBody": "The video link is missing or not supported."
+  },
   "JobBoard": {
     "searchPlaceholder": "Search jobs...",
     "department": "Department",
