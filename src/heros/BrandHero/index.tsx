@@ -350,7 +350,7 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
                   href={resolveLinkHref(primaryLink)}
                   target={primaryLink.newTab ? '_blank' : undefined}
                   rel={primaryLink.newTab ? 'noreferrer' : undefined}
-                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 hover:shadow-md md:px-7 md:py-3.5 md:text-base"
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-semibold text-primary-foreground shadow-[0_14px_32px_-8px_rgba(0,111,238,0.55)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_20px_40px_-8px_rgba(0,111,238,0.65)] md:text-base"
                 >
                   {primaryLink.label}
                   <IconArrowRight size={18} stroke={2.5} />
