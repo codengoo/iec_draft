@@ -51,7 +51,7 @@ export const VideoPopup: React.FC<Props> = ({ url, className, ariaLabel }) => {
         onClick={handleOpen}
         aria-label={ariaLabel ?? t('play')}
         className={cn(
-          'inline-flex h-12 w-12 items-center justify-center rounded-full bg-card text-primary shadow-[0_10px_24px_-8px_rgba(0,111,238,0.35)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_-8px_rgba(0,111,238,0.55)]',
+          'inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-white/55 text-primary shadow-[0_10px_24px_-8px_rgba(0,111,238,0.35)] backdrop-blur-xl backdrop-saturate-150 transition duration-200 hover:-translate-y-0.5 hover:bg-white/75 hover:shadow-[0_16px_30px_-8px_rgba(0,111,238,0.55)]',
           className,
         )}
       >
