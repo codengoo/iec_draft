@@ -5,6 +5,7 @@ import { IconArrowRight } from '@tabler/icons-react'
 import type { Home, Page, Media as MediaType } from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import { ShareWidget } from '@/components/ShareWidget'
 
 type BrandHeroProps = NonNullable<Page['hero']> | NonNullable<Home['hero']>
 
@@ -149,17 +150,23 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
               </dl>
             )}
 
-            {primaryLink && (
-              <Link
-                href={resolveLinkHref(primaryLink)}
-                target={primaryLink.newTab ? '_blank' : undefined}
-                rel={primaryLink.newTab ? 'noreferrer' : undefined}
-                className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 hover:shadow-md md:px-7 md:py-3.5 md:text-base"
-              >
-                {primaryLink.label}
-                <IconArrowRight size={18} stroke={2.5} />
-              </Link>
-            )}
+            <div className="flex items-center gap-3">
+              {primaryLink && (
+                <Link
+                  href={resolveLinkHref(primaryLink)}
+                  target={primaryLink.newTab ? '_blank' : undefined}
+                  rel={primaryLink.newTab ? 'noreferrer' : undefined}
+                  className="inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition hover:opacity-90 hover:shadow-md md:px-7 md:py-3.5 md:text-base"
+                >
+                  {primaryLink.label}
+                  <IconArrowRight size={18} stroke={2.5} />
+                </Link>
+              )}
+              <ShareWidget
+                shareText={brandHeading ?? ''}
+                ariaLabel="Share IEC Games"
+              />
+            </div>
           </div>
 
           <div className="relative flex items-center justify-center lg:col-span-6">
