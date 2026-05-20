@@ -213,6 +213,17 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
         }}
       />
 
+      {/* Bottom transition: fades the hero's radial blue tints to pure white at the bottom
+          edge so the seam against the next (white) section disappears. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-0 right-0 -z-10 h-64 md:h-80 lg:h-96"
+        style={{
+          background:
+            'linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(255,255,255,0.6) 55%, #ffffff 100%)',
+        }}
+      />
+
       {/* Accent diagonal lines */}
       <svg
         aria-hidden
