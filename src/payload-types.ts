@@ -257,11 +257,18 @@ export interface Page {
      */
     tagline?: string | null;
     /**
-     * Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").
+     * Each stat shows a number that counts up from 0 when scrolled into view, followed by a unit suffix (e.g. value=2.5, suffix="B+", label="Total Downloads" → "2.5B+").
      */
     inlineStats?:
       | {
-          value: string;
+          /**
+           * Numeric value (e.g. 2.5, 50, 20).
+           */
+          value: number;
+          /**
+           * Unit / sign appended to the number (e.g. "B+", "M+", "+", "%").
+           */
+          suffix?: string | null;
           label: string;
           id?: string | null;
         }[]
@@ -1754,6 +1761,7 @@ export interface PagesSelect<T extends boolean = true> {
           | T
           | {
               value?: T;
+              suffix?: T;
               label?: T;
               id?: T;
             };
@@ -2813,11 +2821,18 @@ export interface Home {
      */
     tagline?: string | null;
     /**
-     * Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").
+     * Each stat shows a number that counts up from 0 when scrolled into view, followed by a unit suffix (e.g. value=2.5, suffix="B+", label="Total Downloads" → "2.5B+").
      */
     inlineStats?:
       | {
-          value: string;
+          /**
+           * Numeric value (e.g. 2.5, 50, 20).
+           */
+          value: number;
+          /**
+           * Unit / sign appended to the number (e.g. "B+", "M+", "+", "%").
+           */
+          suffix?: string | null;
           label: string;
           id?: string | null;
         }[]
@@ -3012,6 +3027,7 @@ export interface HomeSelect<T extends boolean = true> {
           | T
           | {
               value?: T;
+              suffix?: T;
               label?: T;
               id?: T;
             };

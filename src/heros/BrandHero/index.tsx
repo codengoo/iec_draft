@@ -1,6 +1,19 @@
-import React from 'react'
+'use client'
+
+import React, { useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { IconArrowRight } from '@tabler/icons-react'
+import {
+  animate,
+  motion,
+  useInView,
+  useMotionValue,
+  useReducedMotion,
+  useSpring,
+  useTransform,
+  type MotionValue,
+  type Variants,
+} from 'framer-motion'
 
 import type { Home, Page, Media as MediaType } from '@/payload-types'
 
@@ -46,6 +59,97 @@ function resolveLinkHref(link: CtaLink) {
   return link.url ?? '#'
 }
 
+/* ----------------------------- CountUp -------------------------------- */
+
+function inferDecimals(n: number): number {
+  if (Number.isInteger(n)) return 0
+  const parts = String(n).split('.')
+  return Math.min(parts[1]?.length ?? 0, 2)
+}
+
+const CountUp: React.FC<{ to: number; duration?: number }> = ({ to, duration = 1.4 }) => {
+  const ref = useRef<HTMLSpanElement>(null)
+  const reduced = useReducedMotion()
+  const inView = useInView(ref, { once: true, margin: '-15%' })
+  const decimals = inferDecimals(to)
+
+  useEffect(() => {
+    if (!ref.current) return
+    if (reduced) {
+      ref.current.textContent = to.toFixed(decimals)
+      return
+    }
+    if (!inView) return
+    const controls = animate(0, to, {
+      duration,
+      ease: 'easeOut',
+      onUpdate(v) {
+        if (ref.current) ref.current.textContent = v.toFixed(decimals)
+      },
+    })
+    return () => controls.stop()
+  }, [inView, to, decimals, duration, reduced])
+
+  return <span ref={ref}>{reduced ? to.toFixed(decimals) : (0).toFixed(decimals)}</span>
+}
+
+/* ------------------------- Stagger variants --------------------------- */
+
+const container: Variants = {
+  hidden: { opacity: 1 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.12, delayChildren: 0.05 },
+  },
+}
+
+const item: Variants = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.65, ease: 'easeOut' } },
+}
+
+/* ----------------------- Decoration with parallax --------------------- */
+
+type DecorationProps = {
+  dec: NonNullable<BrandHeroProps['decorations']>[number]
+  index: number
+  smoothX: MotionValue<number>
+  smoothY: MotionValue<number>
+  reduced: boolean | null
+}
+
+const DecorationItem: React.FC<DecorationProps> = ({ dec, index, smoothX, smoothY, reduced }) => {
+  // Bigger / closer items move more for a sense of depth.
+  const depth = Math.max(0.4, Math.min(1.5, (dec.sizePercent ?? 8) / 10))
+  const tx = useTransform(smoothX, [-1, 1], [-14 * depth, 14 * depth])
+  const ty = useTransform(smoothY, [-1, 1], [-10 * depth, 10 * depth])
+
+  if (!dec.image || typeof dec.image !== 'object') return null
+  const pos = (dec.position ?? 'topLeft') as DecorPosition
+  const size = dec.sizePercent ?? 8
+
+  return (
+    <motion.div
+      aria-hidden
+      className={`pointer-events-none absolute select-none ${positionClass[pos]}`}
+      style={{
+        width: `${size}%`,
+        maxWidth: '180px',
+        minWidth: '40px',
+        x: reduced ? 0 : tx,
+        y: reduced ? 0 : ty,
+      }}
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.7, delay: 0.35 + index * 0.08, ease: 'easeOut' }}
+    >
+      <Media resource={dec.image as MediaType} imgClassName="w-full h-auto opacity-90" />
+    </motion.div>
+  )
+}
+
+/* ------------------------------ BrandHero ----------------------------- */
+
 export const BrandHero: React.FC<BrandHeroProps> = ({
   eyebrow,
   brandHeading,
@@ -57,13 +161,48 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
   share,
   introVideoUrl,
 }) => {
+  const reduced = useReducedMotion()
   const primaryLink = cta?.[0]?.link
 
   const qrLogoUrl =
     share?.qrLogo && typeof share.qrLogo === 'object' ? getMediaUrl(share.qrLogo.url) : undefined
 
+  // Section-scoped mouse tracking → drives mascot + decoration parallax.
+  const sectionRef = useRef<HTMLElement>(null)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+  const smoothX = useSpring(mouseX, { stiffness: 70, damping: 18, mass: 0.5 })
+  const smoothY = useSpring(mouseY, { stiffness: 70, damping: 18, mass: 0.5 })
+
+  const mascotX = useTransform(smoothX, [-1, 1], [-28, 28])
+  const mascotY = useTransform(smoothY, [-1, 1], [-18, 18])
+  const mascotRotate = useTransform(smoothX, [-1, 1], [-3, 3])
+
+  useEffect(() => {
+    if (reduced) return
+    const el = sectionRef.current
+    if (!el) return
+    const handleMove = (e: MouseEvent) => {
+      const rect = el.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      const y = ((e.clientY - rect.top) / rect.height) * 2 - 1
+      mouseX.set(x)
+      mouseY.set(y)
+    }
+    const handleLeave = () => {
+      mouseX.set(0)
+      mouseY.set(0)
+    }
+    el.addEventListener('mousemove', handleMove)
+    el.addEventListener('mouseleave', handleLeave)
+    return () => {
+      el.removeEventListener('mousemove', handleMove)
+      el.removeEventListener('mouseleave', handleLeave)
+    }
+  }, [mouseX, mouseY, reduced])
+
   return (
-    <section className="relative overflow-hidden">
+    <section ref={sectionRef} className="relative overflow-hidden">
       {/* Background gradient */}
       <div
         aria-hidden
@@ -74,7 +213,7 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
         }}
       />
 
-      {/* Accent diagonal lines (cyan + sky-blue) */}
+      {/* Accent diagonal lines */}
       <svg
         aria-hidden
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full"
@@ -93,56 +232,72 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
             <stop offset="100%" stopColor="#7DD3FC" stopOpacity="0" />
           </linearGradient>
         </defs>
-        <line
+        <motion.line
           x1="560"
           y1="720"
           x2="1440"
           y2="-40"
           stroke="url(#brandHeroLineCyan)"
           strokeWidth="1.5"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.8, delay: 0.2, ease: 'easeOut' }}
         />
-        <line
+        <motion.line
           x1="700"
           y1="540"
           x2="1440"
           y2="360"
           stroke="url(#brandHeroLineSky)"
           strokeWidth="1.2"
+          initial={{ pathLength: 0, opacity: 0 }}
+          animate={{ pathLength: 1, opacity: 1 }}
+          transition={{ duration: 1.6, delay: 0.5, ease: 'easeOut' }}
         />
       </svg>
 
-      {/* Decorations (absolute) */}
+      {/* Decorations (parallax + stagger fade) */}
       {Array.isArray(decorations) &&
-        decorations.map((dec, i) => {
-          if (!dec.image || typeof dec.image !== 'object') return null
-          const pos = (dec.position ?? 'topLeft') as DecorPosition
-          const size = dec.sizePercent ?? 8
-          return (
-            <div
-              key={dec.id ?? i}
-              aria-hidden
-              className={`pointer-events-none absolute select-none ${positionClass[pos]}`}
-              style={{ width: `${size}%`, maxWidth: '180px', minWidth: '40px' }}
-            >
-              <Media resource={dec.image as MediaType} imgClassName="w-full h-auto opacity-90" />
-            </div>
-          )
-        })}
+        decorations.map((dec, i) => (
+          <DecorationItem
+            key={dec.id ?? i}
+            dec={dec}
+            index={i}
+            smoothX={smoothX}
+            smoothY={smoothY}
+            reduced={reduced}
+          />
+        ))}
 
       <div className="container relative py-20 md:py-28 lg:py-32">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+          <motion.div
+            className="lg:col-span-7"
+            variants={container}
+            initial="hidden"
+            animate="visible"
+          >
             {eyebrow && (
-              <span className="mb-5 inline-block text-xs font-semibold uppercase tracking-[0.25em] text-primary">
+              <motion.span
+                variants={item}
+                className="mb-5 inline-block text-xs font-semibold uppercase tracking-[0.25em] text-primary"
+              >
                 {eyebrow}
-              </span>
+              </motion.span>
             )}
+
             {brandHeading && (
-              <div className="relative isolate mb-6 max-w-full">
-                {/* Soft blue glow behind heading */}
-                <span
+              <motion.div variants={item} className="relative isolate mb-6 max-w-full">
+                <motion.span
                   aria-hidden
-                  className="pointer-events-none absolute -inset-x-4 -inset-y-2 -z-10 rounded-3xl opacity-60 blur-2xl"
+                  className="pointer-events-none absolute -inset-x-4 -inset-y-2 -z-10 rounded-3xl blur-2xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: reduced ? 0.6 : [0.45, 0.7, 0.45] }}
+                  transition={
+                    reduced
+                      ? { duration: 0.6 }
+                      : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
+                  }
                   style={{
                     background:
                       'radial-gradient(50% 60% at 25% 50%, rgba(125, 211, 252, 0.6) 0%, transparent 70%), radial-gradient(50% 60% at 75% 50%, rgba(56, 189, 248, 0.45) 0%, transparent 70%), radial-gradient(60% 80% at 50% 50%, rgba(0, 111, 238, 0.25) 0%, transparent 75%)',
@@ -157,30 +312,39 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
                 >
                   {brandHeading}
                 </h1>
-              </div>
+              </motion.div>
             )}
+
             {tagline && (
-              <p className="mb-10 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg">
+              <motion.p
+                variants={item}
+                className="mb-10 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg"
+              >
                 {tagline}
-              </p>
+              </motion.p>
             )}
 
             {Array.isArray(inlineStats) && inlineStats.length > 0 && (
-              <dl className="mb-10 flex flex-wrap gap-x-12 gap-y-4">
+              <motion.dl variants={item} className="mb-10 flex flex-wrap gap-x-12 gap-y-4">
                 {inlineStats.map((stat, i) => (
                   <div key={i}>
                     <dt className="text-3xl font-bold leading-none text-foreground md:text-4xl">
-                      {stat.value}
+                      <CountUp to={stat.value ?? 0} />
+                      {stat.suffix && (
+                        <span aria-hidden className="ml-0.5">
+                          {stat.suffix}
+                        </span>
+                      )}
                     </dt>
                     <dd className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">
                       {stat.label}
                     </dd>
                   </div>
                 ))}
-              </dl>
+              </motion.dl>
             )}
 
-            <div className="flex flex-wrap items-center gap-3">
+            <motion.div variants={item} className="flex flex-wrap items-center gap-3">
               {primaryLink && (
                 <Link
                   href={resolveLinkHref(primaryLink)}
@@ -198,18 +362,38 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
                 enabledPlatforms={share?.enabledPlatforms as SharePlatformKey[] | undefined}
                 qrLogo={qrLogoUrl}
               />
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
+          {/* Mascot — mouse parallax + idle float */}
           <div className="relative flex items-center justify-center lg:col-span-5">
             {mascot && typeof mascot === 'object' && (
-              <div className="w-full max-w-65 md:max-w-xs lg:max-w-sm">
-                <Media
-                  resource={mascot}
-                  imgClassName="w-full h-auto select-none drop-shadow-xl"
-                  priority
-                />
-              </div>
+              <motion.div
+                className="w-full max-w-65 md:max-w-xs lg:max-w-sm"
+                style={{
+                  x: reduced ? 0 : mascotX,
+                  y: reduced ? 0 : mascotY,
+                  rotate: reduced ? 0 : mascotRotate,
+                }}
+                initial={{ opacity: 0, scale: 0.88 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
+              >
+                <motion.div
+                  animate={reduced ? undefined : { y: [0, -12, 0] }}
+                  transition={
+                    reduced
+                      ? undefined
+                      : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }
+                  }
+                >
+                  <Media
+                    resource={mascot}
+                    imgClassName="w-full h-auto select-none drop-shadow-xl"
+                    priority
+                  />
+                </motion.div>
+              </motion.div>
             )}
           </div>
         </div>

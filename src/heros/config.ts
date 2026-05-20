@@ -232,7 +232,8 @@ export const hero: Field = {
       label: 'Inline Stats',
       maxRows: 4,
       admin: {
-        description: 'Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").',
+        description:
+          'Each stat shows a number that counts up from 0 when scrolled into view, followed by a unit suffix (e.g. value=2.5, suffix="B+", label="Total Downloads" → "2.5B+").',
         condition: (_, { type } = {}) => type === 'brandHero',
       },
       fields: [
@@ -241,16 +242,21 @@ export const hero: Field = {
           fields: [
             {
               name: 'value',
-              type: 'text',
+              type: 'number',
               required: true,
-              admin: { width: '40%' },
+              admin: { width: '30%', description: 'Numeric value (e.g. 2.5, 50, 20).' },
+            },
+            {
+              name: 'suffix',
+              type: 'text',
+              admin: { width: '30%', description: 'Unit / sign appended to the number (e.g. "B+", "M+", "+", "%").' },
             },
             {
               name: 'label',
               type: 'text',
               required: true,
               localized: true,
-              admin: { width: '60%' },
+              admin: { width: '40%' },
             },
           ],
         },
