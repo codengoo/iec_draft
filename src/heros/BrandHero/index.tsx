@@ -171,19 +171,12 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
   const sectionRef = useRef<HTMLElement>(null)
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
-  const smoothX = useSpring(mouseX, { stiffness: 70, damping: 20, mass: 0.7 })
-  const smoothY = useSpring(mouseY, { stiffness: 70, damping: 20, mass: 0.7 })
+  const smoothX = useSpring(mouseX, { stiffness: 70, damping: 18, mass: 0.5 })
+  const smoothY = useSpring(mouseY, { stiffness: 70, damping: 18, mass: 0.5 })
 
-  // 3D mascot motion: subtle translate + dominant rotateY/rotateX so the
-  // mascot looks like it's facing / leaning toward the cursor.
-  const mascotX = useTransform(smoothX, [-1, 1], [-8, 8])
-  const mascotY = useTransform(smoothY, [-1, 1], [-6, 6])
-  // CSS rotateY: positive turns right edge back → invert mouseX so cursor-right
-  // makes the mascot lean right (right side forward).
-  const mascotRotateY = useTransform(smoothX, [-1, 1], [20, -20])
-  // CSS rotateX: positive brings bottom edge forward. Direct map mouseY so
-  // cursor-down tilts the mascot's chin forward, cursor-up lifts the chin.
-  const mascotRotateX = useTransform(smoothY, [-1, 1], [-14, 14])
+  const mascotX = useTransform(smoothX, [-1, 1], [-28, 28])
+  const mascotY = useTransform(smoothY, [-1, 1], [-18, 18])
+  const mascotRotate = useTransform(smoothX, [-1, 1], [-3, 3])
 
   useEffect(() => {
     if (reduced) return
@@ -332,7 +325,7 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
             )}
 
             {Array.isArray(inlineStats) && inlineStats.length > 0 && (
-              <motion.dl variants={item} className="mb-10 flex flex-wrap gap-x-12 gap-y-4">
+              <motion.dl variants={item} className="mb-10 flex flex-wrap gap-x-20 gap-y-6 md:gap-x-24">
                 {inlineStats.map((stat, i) => (
                   <div key={i}>
                     <dt className="text-3xl font-bold leading-none text-foreground md:text-4xl">
@@ -372,20 +365,44 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
             </motion.div>
           </motion.div>
 
-          {/* Mascot — 3D mouse-follow tilt + idle float */}
-          <div
-            className="relative flex items-center justify-center lg:col-span-5"
-            style={{ perspective: '1200px' }}
-          >
+          {/* Mascot — mouse parallax + idle float, gradient halo behind */}
+          <div className="relative flex items-center justify-center lg:col-span-5">
+            {/* Animated gradient blur halo behind mascot */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-0 flex items-center justify-center"
+            >
+              <motion.div
+                className="aspect-square w-full max-w-65 rounded-full md:max-w-xs lg:max-w-sm"
+                style={{
+                  background:
+                    'conic-gradient(from 0deg, #38BDF8 0%, #006FEE 25%, #6366F1 50%, #0EA5E9 75%, #38BDF8 100%)',
+                  filter: 'blur(64px)',
+                  opacity: 0.55,
+                }}
+                animate={
+                  reduced
+                    ? undefined
+                    : { rotate: 360, scale: [0.95, 1.08, 0.95] }
+                }
+                transition={
+                  reduced
+                    ? undefined
+                    : {
+                        rotate: { duration: 24, repeat: Infinity, ease: 'linear' },
+                        scale: { duration: 7, repeat: Infinity, ease: 'easeInOut' },
+                      }
+                }
+              />
+            </div>
+
             {mascot && typeof mascot === 'object' && (
               <motion.div
-                className="w-full max-w-65 transform-gpu md:max-w-xs lg:max-w-sm"
+                className="relative w-full max-w-65 md:max-w-xs lg:max-w-sm"
                 style={{
                   x: reduced ? 0 : mascotX,
                   y: reduced ? 0 : mascotY,
-                  rotateY: reduced ? 0 : mascotRotateY,
-                  rotateX: reduced ? 0 : mascotRotateX,
-                  transformStyle: 'preserve-3d',
+                  rotate: reduced ? 0 : mascotRotate,
                 }}
                 initial={{ opacity: 0, scale: 0.88 }}
                 animate={{ opacity: 1, scale: 1 }}
