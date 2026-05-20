@@ -273,10 +273,9 @@ export interface Page {
     share?: {
       enabledPlatforms?: ('facebook' | 'x' | 'linkedin' | 'messenger' | 'telegram' | 'whatsapp' | 'email')[] | null;
       /**
-       * Image rendered at the centre of the QR code (use the site logo).
+       * Image rendered at the centre of the QR code (use the site logo). The colour theme of the QR is chosen by the visitor inside the share popup.
        */
       qrLogo?: (string | null) | Media;
-      qrColorPreset?: ('mono' | 'iecIndigo' | 'instagram' | 'sunset' | 'ocean' | 'forest') | null;
     };
     /**
      * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
@@ -1733,7 +1732,6 @@ export interface PagesSelect<T extends boolean = true> {
           | {
               enabledPlatforms?: T;
               qrLogo?: T;
-              qrColorPreset?: T;
             };
         decorations?:
           | T
@@ -2784,10 +2782,9 @@ export interface Home {
     share?: {
       enabledPlatforms?: ('facebook' | 'x' | 'linkedin' | 'messenger' | 'telegram' | 'whatsapp' | 'email')[] | null;
       /**
-       * Image rendered at the centre of the QR code (use the site logo).
+       * Image rendered at the centre of the QR code (use the site logo). The colour theme of the QR is chosen by the visitor inside the share popup.
        */
       qrLogo?: (string | null) | Media;
-      qrColorPreset?: ('mono' | 'iecIndigo' | 'instagram' | 'sunset' | 'ocean' | 'forest') | null;
     };
     /**
      * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
@@ -2946,7 +2943,6 @@ export interface HomeSelect<T extends boolean = true> {
           | {
               enabledPlatforms?: T;
               qrLogo?: T;
-              qrColorPreset?: T;
             };
         decorations?:
           | T

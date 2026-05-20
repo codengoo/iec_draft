@@ -156,6 +156,18 @@ function buildQrColorOptions(preset: QrPresetConfig) {
   }
 }
 
+/** CSS background used for the swatch preview button in the picker row. */
+function swatchBackground(preset: QrPresetConfig): string {
+  if (preset.type === 'solid') return preset.color ?? '#000000'
+  const stops = preset.colorStops ?? []
+  // Convert qr-code-styling rotation (radians) into CSS deg offset from "to right" (0rad ≈ 90deg)
+  const deg = Math.round(90 + ((preset.rotation ?? 0) * 180) / Math.PI)
+  const parts = stops.map((s) => `${s.color} ${Math.round(s.offset * 100)}%`).join(', ')
+  return `linear-gradient(${deg}deg, ${parts})`
+}
+
+const PRESET_ORDER: QrColorPreset[] = ['mono', 'iecIndigo', 'instagram', 'sunset', 'ocean', 'forest']
+
 type Props = {
   /** Default text used in X / Telegram / WhatsApp intent bodies. */
   shareText?: string
@@ -163,10 +175,10 @@ type Props = {
   enabledPlatforms?: SharePlatformKey[]
   /** Image URL rendered at the centre of the QR code. */
   qrLogo?: string | null
-  /** Colour theme for the QR dots / corners. */
-  qrColorPreset?: QrColorPreset
   /** Optional URL override (defaults to window.location.href). */
   overrideUrl?: string
+  /** Initial QR colour preset (visitor can still change it inside the popup). */
+  initialQrPreset?: QrColorPreset
   className?: string
   ariaLabel?: string
 }
@@ -175,7 +187,7 @@ export const ShareWidget: React.FC<Props> = ({
   shareText = '',
   enabledPlatforms,
   qrLogo,
-  qrColorPreset = 'iecIndigo',
+  initialQrPreset = 'iecIndigo',
   overrideUrl,
   className,
   ariaLabel,
@@ -184,6 +196,7 @@ export const ShareWidget: React.FC<Props> = ({
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
   const [url, setUrl] = useState<string>('')
   const [copied, setCopied] = useState(false)
+  const [selectedPreset, setSelectedPreset] = useState<QrColorPreset>(initialQrPreset)
   const qrContainerRef = useRef<HTMLDivElement | null>(null)
   const qrInstanceRef = useRef<any>(null)
 
@@ -213,7 +226,7 @@ export const ShareWidget: React.FC<Props> = ({
         const QRCodeStyling = (await import('qr-code-styling')).default
         if (cancelled) return
 
-        const preset = QR_PRESETS[qrColorPreset]
+        const preset = QR_PRESETS[selectedPreset]
         const colorOptions = buildQrColorOptions(preset)
 
         const opts = {
@@ -256,7 +269,7 @@ export const ShareWidget: React.FC<Props> = ({
     return () => {
       cancelled = true
     }
-  }, [isOpen, url, qrLogo, qrColorPreset, t])
+  }, [isOpen, url, qrLogo, selectedPreset, t])
 
   const handleCopy = async () => {
     if (!url) return
@@ -388,7 +401,7 @@ export const ShareWidget: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* QR code */}
+                {/* QR code + style picker */}
                 <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-4">
                   <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                     {t('scanToOpen')}
@@ -399,6 +412,36 @@ export const ShareWidget: React.FC<Props> = ({
                       className="flex h-60 w-60 items-center justify-center"
                     />
                   </div>
+
+                  {/* Preset picker */}
+                  <div className="flex w-full flex-col items-center gap-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      {t('qrStyle')}
+                    </span>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {PRESET_ORDER.map((key) => {
+                        const isActive = selectedPreset === key
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={() => setSelectedPreset(key)}
+                            title={t(`presets.${key}` as `presets.${QrColorPreset}`)}
+                            aria-label={t(`presets.${key}` as `presets.${QrColorPreset}`)}
+                            aria-pressed={isActive}
+                            className={cn(
+                              'h-7 w-7 rounded-full ring-offset-2 transition focus:outline-none',
+                              isActive
+                                ? 'ring-2 ring-primary scale-110'
+                                : 'ring-1 ring-border hover:scale-105',
+                            )}
+                            style={{ background: swatchBackground(QR_PRESETS[key]) }}
+                          />
+                        )
+                      })}
+                    </div>
+                  </div>
+
                   <button
                     type="button"
                     onClick={handleDownload}

@@ -292,21 +292,9 @@ export const hero: Field = {
           relationTo: 'media',
           label: 'QR Centre Logo',
           admin: {
-            description: 'Image rendered at the centre of the QR code (use the site logo).',
+            description:
+              'Image rendered at the centre of the QR code (use the site logo). The colour theme of the QR is chosen by the visitor inside the share popup.',
           },
-        },
-        {
-          name: 'qrColorPreset',
-          type: 'select',
-          defaultValue: 'iecIndigo',
-          options: [
-            { label: 'Mono Black', value: 'mono' },
-            { label: 'IEC Indigo (brand)', value: 'iecIndigo' },
-            { label: 'Instagram (orange → pink → purple)', value: 'instagram' },
-            { label: 'Sunset (orange → red)', value: 'sunset' },
-            { label: 'Ocean (cyan → blue)', value: 'ocean' },
-            { label: 'Forest (teal → green)', value: 'forest' },
-          ],
         },
       ],
     },

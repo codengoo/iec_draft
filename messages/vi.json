@@ -28,7 +28,16 @@
     "copy": "Sao chép",
     "copied": "Đã chép",
     "scanToOpen": "Quét để mở",
+    "qrStyle": "Phong cách QR",
     "downloadPng": "Tải PNG",
+    "presets": {
+      "mono": "Đơn sắc",
+      "iecIndigo": "Thương hiệu",
+      "instagram": "Instagram",
+      "sunset": "Hoàng hôn",
+      "ocean": "Đại dương",
+      "forest": "Rừng cây"
+    },
     "copySuccessTitle": "Đã sao chép link",
     "copySuccessBody": "Đường dẫn của trang đã được sao chép vào clipboard.",
     "copyErrorTitle": "Sao chép thất bại",

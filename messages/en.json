@@ -28,7 +28,16 @@
     "copy": "Copy",
     "copied": "Copied",
     "scanToOpen": "Scan to open",
+    "qrStyle": "QR style",
     "downloadPng": "Download PNG",
+    "presets": {
+      "mono": "Mono",
+      "iecIndigo": "Brand",
+      "instagram": "Instagram",
+      "sunset": "Sunset",
+      "ocean": "Ocean",
+      "forest": "Forest"
+    },
     "copySuccessTitle": "Link copied",
     "copySuccessBody": "The page link is now on your clipboard.",
     "copyErrorTitle": "Couldn't copy",
