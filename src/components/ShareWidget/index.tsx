@@ -352,7 +352,7 @@ export const ShareWidget: React.FC<Props> = ({
               </ModalHeader>
               <ModalBody className="pb-6">
                 {/* Platforms (icon-only, tooltip on hover) */}
-                <div className="flex flex-wrap items-center gap-2.5">
+                <div className="flex flex-wrap items-center justify-center gap-2.5">
                   {activePlatforms.map(({ key, label, Icon, buildUrl, hoverClass }) => (
                     <a
                       key={key}
@@ -401,24 +401,14 @@ export const ShareWidget: React.FC<Props> = ({
                   </div>
                 </div>
 
-                {/* QR code + style picker */}
-                <div className="mt-2 flex flex-col items-center gap-3 rounded-lg border border-border bg-card p-4">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                    {t('scanToOpen')}
-                  </p>
-                  <div className="overflow-hidden rounded-lg bg-white p-2 shadow-sm">
-                    <div
-                      ref={qrContainerRef}
-                      className="flex h-60 w-60 items-center justify-center"
-                    />
-                  </div>
-
-                  {/* Preset picker */}
-                  <div className="flex w-full flex-col items-center gap-2">
-                    <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {/* QR style picker + QR code */}
+                <div className="mt-2 flex flex-col items-center gap-4 rounded-lg border border-border bg-card p-4">
+                  {/* Preset picker — above QR */}
+                  <div className="flex w-full flex-col items-center gap-2.5">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                       {t('qrStyle')}
                     </span>
-                    <div className="flex flex-wrap items-center justify-center gap-2">
+                    <div className="flex flex-wrap items-center justify-center gap-4">
                       {PRESET_ORDER.map((key) => {
                         const isActive = selectedPreset === key
                         return (
@@ -430,7 +420,7 @@ export const ShareWidget: React.FC<Props> = ({
                             aria-label={t(`presets.${key}` as `presets.${QrColorPreset}`)}
                             aria-pressed={isActive}
                             className={cn(
-                              'h-7 w-7 rounded-full ring-offset-2 transition focus:outline-none',
+                              'h-8 w-8 rounded-full ring-offset-2 ring-offset-card transition focus:outline-none',
                               isActive
                                 ? 'ring-2 ring-primary scale-110'
                                 : 'ring-1 ring-border hover:scale-105',
@@ -440,6 +430,16 @@ export const ShareWidget: React.FC<Props> = ({
                         )
                       })}
                     </div>
+                  </div>
+
+                  <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                    {t('scanToOpen')}
+                  </p>
+                  <div className="overflow-hidden rounded-lg bg-white p-2 shadow-sm">
+                    <div
+                      ref={qrContainerRef}
+                      className="flex h-60 w-60 items-center justify-center"
+                    />
                   </div>
 
                   <button
