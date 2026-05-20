@@ -316,12 +316,19 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
             )}
 
             {tagline && (
-              <motion.p
-                variants={item}
-                className="mb-10 max-w-md text-base leading-relaxed text-muted-foreground md:text-lg"
-              >
-                {tagline}
-              </motion.p>
+              <motion.div variants={item} className="mb-10">
+                <p className="max-w-md text-base font-medium leading-relaxed tracking-wide text-foreground/75 md:text-lg">
+                  {tagline}
+                </p>
+                <span
+                  aria-hidden
+                  className="mt-6 block h-0.75 w-16 rounded-full"
+                  style={{
+                    background:
+                      'linear-gradient(to right, #006FEE 0%, #38BDF8 70%, transparent 100%)',
+                  }}
+                />
+              </motion.div>
             )}
 
             {Array.isArray(inlineStats) && inlineStats.length > 0 && (
