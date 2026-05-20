@@ -268,6 +268,17 @@ export interface Page {
       | null;
     mascot?: (string | null) | Media;
     /**
+     * QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.
+     */
+    share?: {
+      enabledPlatforms?: ('facebook' | 'x' | 'linkedin' | 'messenger' | 'telegram' | 'whatsapp' | 'email')[] | null;
+      /**
+       * Image rendered at the centre of the QR code (use the site logo).
+       */
+      qrLogo?: (string | null) | Media;
+      qrColorPreset?: ('mono' | 'iecIndigo' | 'instagram' | 'sunset' | 'ocean' | 'forest') | null;
+    };
+    /**
      * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
      */
     decorations?:
@@ -1717,6 +1728,13 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        share?:
+          | T
+          | {
+              enabledPlatforms?: T;
+              qrLogo?: T;
+              qrColorPreset?: T;
+            };
         decorations?:
           | T
           | {
@@ -2761,6 +2779,17 @@ export interface Home {
       | null;
     mascot?: (string | null) | Media;
     /**
+     * QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.
+     */
+    share?: {
+      enabledPlatforms?: ('facebook' | 'x' | 'linkedin' | 'messenger' | 'telegram' | 'whatsapp' | 'email')[] | null;
+      /**
+       * Image rendered at the centre of the QR code (use the site logo).
+       */
+      qrLogo?: (string | null) | Media;
+      qrColorPreset?: ('mono' | 'iecIndigo' | 'instagram' | 'sunset' | 'ocean' | 'forest') | null;
+    };
+    /**
      * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
      */
     decorations?:
@@ -2912,6 +2941,13 @@ export interface HomeSelect<T extends boolean = true> {
               id?: T;
             };
         mascot?: T;
+        share?:
+          | T
+          | {
+              enabledPlatforms?: T;
+              qrLogo?: T;
+              qrColorPreset?: T;
+            };
         decorations?:
           | T
           | {

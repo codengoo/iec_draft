@@ -20,6 +20,24 @@
     "description": "Không tìm thấy trang này.",
     "goHome": "Về trang chủ"
   },
+  "Share": {
+    "trigger": "Chia sẻ",
+    "title": "Chia sẻ trang này",
+    "subtitle": "Chọn nền tảng, sao chép link hoặc quét / tải mã QR.",
+    "pageLink": "Đường dẫn",
+    "copy": "Sao chép",
+    "copied": "Đã chép",
+    "scanToOpen": "Quét để mở",
+    "downloadPng": "Tải PNG",
+    "copySuccessTitle": "Đã sao chép link",
+    "copySuccessBody": "Đường dẫn của trang đã được sao chép vào clipboard.",
+    "copyErrorTitle": "Sao chép thất bại",
+    "copyErrorBody": "Trình duyệt đã chặn truy cập clipboard. Hãy chọn và sao chép thủ công.",
+    "qrDownloadedTitle": "Đã tải mã QR",
+    "qrDownloadedBody": "File iec-share-qr.png đã được lưu vào thư mục Downloads.",
+    "qrErrorTitle": "Không tạo được QR",
+    "qrErrorBody": "Có lỗi khi tạo mã QR. Vui lòng thử lại."
+  },
   "JobBoard": {
     "searchPlaceholder": "Tìm việc làm...",
     "department": "Bộ phận",

@@ -110,6 +110,9 @@ importers:
       prism-react-renderer:
         specifier: ^2.3.1
         version: 2.4.1(react@19.2.6)
+      qr-code-styling:
+        specifier: ^1.9.2
+        version: 1.9.2
       react:
         specifier: 19.2.6
         version: 19.2.6
@@ -5668,6 +5671,13 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+
+  qr-code-styling@1.9.2:
+    resolution: {integrity: sha512-RgJaZJ1/RrXJ6N0j7a+pdw3zMBmzZU4VN2dtAZf8ZggCfRB5stEQ3IoDNGaNhYY3nnZKYlYSLl5YkfWN5dPutg==}
+    engines: {node: '>=18.18.0'}
+
+  qrcode-generator@1.5.2:
+    resolution: {integrity: sha512-pItrW0Z9HnDBnFmgiNrY1uxRdri32Uh9EjNYLPVC2zZ3ZRIIEqBoDgm4DkvDwNNDHTK7FNkmr8zAa77BYc9xNw==}
 
   qs-esm@8.0.1:
     resolution: {integrity: sha512-eZ7l+0ZVy3He9c85pEM9KEBR9DFA4jrmWvIjm9wpcHvScwc/vgZDl2TNOF0pm0JsWKw24XBUZOY0Wxn7/nvJnw==}
@@ -13243,6 +13253,12 @@ snapshots:
       once: 1.4.0
 
   punycode@2.3.1: {}
+
+  qr-code-styling@1.9.2:
+    dependencies:
+      qrcode-generator: 1.5.2
+
+  qrcode-generator@1.5.2: {}
 
   qs-esm@8.0.1: {}
 

@@ -20,6 +20,24 @@
     "description": "This page could not be found.",
     "goHome": "Go home"
   },
+  "Share": {
+    "trigger": "Share",
+    "title": "Share this page",
+    "subtitle": "Pick a platform, copy the link, or scan / download the QR code.",
+    "pageLink": "Page link",
+    "copy": "Copy",
+    "copied": "Copied",
+    "scanToOpen": "Scan to open",
+    "downloadPng": "Download PNG",
+    "copySuccessTitle": "Link copied",
+    "copySuccessBody": "The page link is now on your clipboard.",
+    "copyErrorTitle": "Couldn't copy",
+    "copyErrorBody": "Your browser blocked clipboard access. Select the link manually.",
+    "qrDownloadedTitle": "QR code downloaded",
+    "qrDownloadedBody": "Saved iec-share-qr.png to your downloads.",
+    "qrErrorTitle": "QR generation failed",
+    "qrErrorBody": "We couldn't render the QR code. Please try again."
+  },
   "JobBoard": {
     "searchPlaceholder": "Search jobs...",
     "department": "Department",

@@ -5,7 +5,8 @@ import { IconArrowRight } from '@tabler/icons-react'
 import type { Home, Page, Media as MediaType } from '@/payload-types'
 
 import { Media } from '@/components/Media'
-import { ShareWidget } from '@/components/ShareWidget'
+import { ShareWidget, type QrColorPreset, type SharePlatformKey } from '@/components/ShareWidget'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type BrandHeroProps = NonNullable<Page['hero']> | NonNullable<Home['hero']>
 
@@ -43,8 +44,12 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
   links,
   mascot,
   decorations,
+  share,
 }) => {
   const primaryLink = links?.[0]?.link
+
+  const qrLogoUrl =
+    share?.qrLogo && typeof share.qrLogo === 'object' ? getMediaUrl(share.qrLogo.url) : undefined
 
   return (
     <section className="relative overflow-hidden">
@@ -164,7 +169,9 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
               )}
               <ShareWidget
                 shareText={brandHeading ?? ''}
-                ariaLabel="Share IEC Games"
+                enabledPlatforms={share?.enabledPlatforms as SharePlatformKey[] | undefined}
+                qrLogo={qrLogoUrl}
+                qrColorPreset={(share?.qrColorPreset as QrColorPreset | undefined) ?? 'iecIndigo'}
               />
             </div>
           </div>

@@ -262,6 +262,55 @@ export const hero: Field = {
       },
     },
     {
+      name: 'share',
+      type: 'group',
+      label: 'Share Widget',
+      admin: {
+        description:
+          'QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.',
+        condition: (_, { type } = {}) => type === 'brandHero',
+      },
+      fields: [
+        {
+          name: 'enabledPlatforms',
+          type: 'select',
+          hasMany: true,
+          defaultValue: ['facebook', 'x', 'linkedin', 'messenger', 'telegram', 'whatsapp', 'email'],
+          options: [
+            { label: 'Facebook', value: 'facebook' },
+            { label: 'X / Twitter', value: 'x' },
+            { label: 'LinkedIn', value: 'linkedin' },
+            { label: 'Messenger', value: 'messenger' },
+            { label: 'Telegram', value: 'telegram' },
+            { label: 'WhatsApp', value: 'whatsapp' },
+            { label: 'Email', value: 'email' },
+          ],
+        },
+        {
+          name: 'qrLogo',
+          type: 'upload',
+          relationTo: 'media',
+          label: 'QR Centre Logo',
+          admin: {
+            description: 'Image rendered at the centre of the QR code (use the site logo).',
+          },
+        },
+        {
+          name: 'qrColorPreset',
+          type: 'select',
+          defaultValue: 'iecIndigo',
+          options: [
+            { label: 'Mono Black', value: 'mono' },
+            { label: 'IEC Indigo (brand)', value: 'iecIndigo' },
+            { label: 'Instagram (orange → pink → purple)', value: 'instagram' },
+            { label: 'Sunset (orange → red)', value: 'sunset' },
+            { label: 'Ocean (cyan → blue)', value: 'ocean' },
+            { label: 'Forest (teal → green)', value: 'forest' },
+          ],
+        },
+      ],
+    },
+    {
       name: 'decorations',
       type: 'array',
       label: 'Decorations',
