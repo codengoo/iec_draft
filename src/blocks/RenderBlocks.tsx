@@ -10,6 +10,12 @@ import { JobBoardBlock } from '@/blocks/JobBoard/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 
+import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
+import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
+import { CoreValuesBlock } from '@/blocks/CoreValues/Component'
+import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
+import { VisionMissionBlock } from '@/blocks/VisionMission/Component'
+
 const blockComponents = {
   archive: ArchiveBlock,
   content: ContentBlock,
@@ -18,6 +24,11 @@ const blockComponents = {
   jobBoard: JobBoardBlock,
   mediaBlock: MediaBlock,
   sendUsCV: SendUsCVBlock,
+  aboutWithStats: AboutWithStatsBlock,
+  gamesPortfolio: GamesPortfolioBlock,
+  visionMission: VisionMissionBlock,
+  coreValues: CoreValuesBlock,
+  careersHighlight: CareersHighlightBlock,
 }
 
 export const RenderBlocks: React.FC<{

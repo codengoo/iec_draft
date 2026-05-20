@@ -2,13 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { Archive } from '../../blocks/ArchiveBlock/config'
-import { CallToAction } from '../../blocks/CallToAction/config'
-import { Content } from '../../blocks/Content/config'
-import { FormBlock } from '../../blocks/Form/config'
-import { JobBoard } from '../../blocks/JobBoard/config'
-import { SendUsCV } from '../../blocks/SendUsCV/config'
-import { MediaBlock } from '../../blocks/MediaBlock/config'
+import { sharedLayoutBlocks } from '../../blocks/sharedBlocks'
 import { hero } from '@/heros/config'
 import { slugField } from 'payload'
 import { populatePublishedAt } from '../../hooks/populatePublishedAt'
@@ -74,7 +68,7 @@ export const Pages: CollectionConfig<'pages'> = {
             {
               name: 'layout',
               type: 'blocks',
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, JobBoard, SendUsCV],
+              blocks: sharedLayoutBlocks,
               required: true,
               admin: {
                 initCollapsed: true,

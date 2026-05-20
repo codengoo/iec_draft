@@ -1,10 +1,9 @@
 import type { Metadata } from 'next'
 
 import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { homeStatic } from '@/endpoints/seed/home-static'
 import configPromise from '@payload-config'
 import { draftMode } from 'next/headers'
-import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
+import { getPayload } from 'payload'
 import { cache } from 'react'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
@@ -22,55 +21,42 @@ export default async function HomePage({ params: paramsPromise }: Args) {
   const { locale } = await paramsPromise
   const url = '/'
 
-  let page: RequiredDataFromCollectionSlug<'pages'> | null
+  const home = await queryHomeGlobal(locale, draft)
 
-  page = await queryHomePageBySlug(locale)
-
-  if (!page) {
-    page = homeStatic
-  }
-
-  if (!page) {
+  if (!home) {
     return <PayloadRedirects url={url} />
   }
 
-  const { hero, layout } = page
+  const { hero, layout } = home
 
   return (
     <article className="pt-16 pb-24">
       <PageClient />
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
-      <RenderHero {...hero} />
-      <RenderBlocks blocks={layout} />
+      {hero && <RenderHero {...hero} />}
+      {Array.isArray(layout) && <RenderBlocks blocks={layout} />}
     </article>
   )
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { locale } = await paramsPromise
-  const page = await queryHomePageBySlug(locale)
-  return generateMeta({ doc: page })
+  const home = await queryHomeGlobal(locale, false)
+  // Re-use the page meta helper; map hero richText -> meta where useful.
+  return generateMeta({ doc: home as any })
 }
 
-const queryHomePageBySlug = cache(async (locale: string) => {
-  const { isEnabled: draft } = await draftMode()
-
+const queryHomeGlobal = cache(async (locale: string, draft: boolean) => {
   const payload = await getPayload({ config: configPromise })
 
-  const result = await payload.find({
-    collection: 'pages',
+  const home = await payload.findGlobal({
+    slug: 'home',
+    depth: 2,
     draft,
-    limit: 1,
-    pagination: false,
     overrideAccess: draft,
     locale: locale as 'en' | 'vi',
-    where: {
-      slug: {
-        equals: 'home',
-      },
-    },
   })
 
-  return result.docs?.[0] || null
+  return home || null
 })

@@ -76,6 +76,7 @@ export interface Config {
     jobs: Job;
     'job-applications': JobApplication;
     social: Social;
+    games: Game;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -102,6 +103,7 @@ export interface Config {
     jobs: JobsSelect<false> | JobsSelect<true>;
     'job-applications': JobApplicationsSelect<false> | JobApplicationsSelect<true>;
     social: SocialSelect<false> | SocialSelect<true>;
+    games: GamesSelect<false> | GamesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -120,10 +122,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    home: Home;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    home: HomeSelect<false> | HomeSelect<true>;
   };
   locale: 'en' | 'vi';
   widgets: {
@@ -167,7 +171,7 @@ export interface Page {
   id: string;
   title: string;
   hero: {
-    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'videoHero';
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'videoHero' | 'brandHero';
     richText?: {
       root: {
         type: string;
@@ -240,8 +244,44 @@ export interface Page {
      * YouTube or direct video URL to open in a popup when the play button is clicked
      */
     videoPopupUrl?: string | null;
+    /**
+     * Small label above the heading (e.g. "Gaming Studio").
+     */
+    eyebrow?: string | null;
+    /**
+     * Large brand heading (e.g. "IEC Games").
+     */
+    brandHeading?: string | null;
+    /**
+     * Supporting paragraph under the heading.
+     */
+    tagline?: string | null;
+    /**
+     * Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").
+     */
+    inlineStats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    mascot?: (string | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock | JobBoardBlock | SendUsCVBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | JobBoardBlock
+    | SendUsCVBlock
+    | AboutWithStatsBlock
+    | GamesPortfolioBlock
+    | VisionMissionBlock
+    | CoreValuesBlock
+    | CareersHighlightBlock
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -937,11 +977,205 @@ export interface SendUsCVBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutWithStatsBlock".
+ */
+export interface AboutWithStatsBlock {
+  heading: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  mascot?: (string | null) | Media;
+  stats?:
+    | {
+        value: string;
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'aboutWithStats';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GamesPortfolioBlock".
+ */
+export interface GamesPortfolioBlock {
+  eyebrow?: string | null;
+  heading: string;
+  populateBy?: ('collection' | 'selection') | null;
+  selectedGames?: (string | Game)[] | null;
+  limit?: number | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'gamesPortfolio';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "games".
+ */
+export interface Game {
+  id: string;
+  title: string;
+  cover: string | Media;
+  /**
+   * Short tagline shown under the title on portfolio cards.
+   */
+  description?: string | null;
+  /**
+   * Short pills shown on the card (e.g. "18+", "TOP 10", "200+ Downloads").
+   */
+  badges?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * External link to play / download the game.
+   */
+  playUrl?: string | null;
+  publishedAt?: string | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock".
+ */
+export interface VisionMissionBlock {
+  heading: string;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  mascot?: (string | null) | Media;
+  cta?:
+    | {
+        link: {
+          type?: ('reference' | 'route' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'visionMission';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock".
+ */
+export interface CoreValuesBlock {
+  /**
+   * Small decorative icon shown above the heading.
+   */
+  accentIcon?: (string | null) | Media;
+  heading: string;
+  values?:
+    | {
+        label: string;
+        id?: string | null;
+      }[]
+    | null;
+  mascot?: (string | null) | Media;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'coreValues';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CareersHighlightBlock".
+ */
+export interface CareersHighlightBlock {
+  heading: string;
+  /**
+   * How many featured jobs to show (jobs with "Featured Job" enabled).
+   */
+  limit?: number | null;
+  ctaLabel?: string | null;
+  ctaLink?: {
+    type?: ('reference' | 'route' | 'custom') | null;
+    newTab?: boolean | null;
+    reference?:
+      | ({
+          relationTo: 'pages';
+          value: string | Page;
+        } | null)
+      | ({
+          relationTo: 'posts';
+          value: string | Post;
+        } | null);
+    /**
+     * Pick a built-in section page (route is hardcoded in the app).
+     */
+    route?: ('/' | '/posts' | '/search') | null;
+    url?: string | null;
+  };
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'careersHighlight';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
  */
 export interface Job {
   id: string;
   title: string;
+  /**
+   * Show this job in the CareersHighlight block on the home page.
+   */
+  isFeatured?: boolean | null;
   department: string;
   location: string;
   employmentType?: ('fullTime' | 'partTime' | 'contract' | 'internship') | null;
@@ -1285,6 +1519,10 @@ export interface PayloadLockedDocument {
         value: string | Social;
       } | null)
     | ({
+        relationTo: 'games';
+        value: string | Game;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: string | Redirect;
       } | null)
@@ -1394,6 +1632,17 @@ export interface PagesSelect<T extends boolean = true> {
         secondaryButtonLabel?: T;
         secondaryButtonUrl?: T;
         videoPopupUrl?: T;
+        eyebrow?: T;
+        brandHeading?: T;
+        tagline?: T;
+        inlineStats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        mascot?: T;
       };
   layout?:
     | T
@@ -1405,6 +1654,11 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         jobBoard?: T | JobBoardBlockSelect<T>;
         sendUsCV?: T | SendUsCVBlockSelect<T>;
+        aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
+        gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
+        visionMission?: T | VisionMissionBlockSelect<T>;
+        coreValues?: T | CoreValuesBlockSelect<T>;
+        careersHighlight?: T | CareersHighlightBlockSelect<T>;
       };
   meta?:
     | T
@@ -1570,6 +1824,101 @@ export interface SendUsCVBlockSelect<T extends boolean = true> {
     | {
         avatar?: T;
         id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "AboutWithStatsBlock_select".
+ */
+export interface AboutWithStatsBlockSelect<T extends boolean = true> {
+  heading?: T;
+  description?: T;
+  mascot?: T;
+  stats?:
+    | T
+    | {
+        value?: T;
+        label?: T;
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "GamesPortfolioBlock_select".
+ */
+export interface GamesPortfolioBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  populateBy?: T;
+  selectedGames?: T;
+  limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "VisionMissionBlock_select".
+ */
+export interface VisionMissionBlockSelect<T extends boolean = true> {
+  heading?: T;
+  body?: T;
+  mascot?: T;
+  cta?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              route?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CoreValuesBlock_select".
+ */
+export interface CoreValuesBlockSelect<T extends boolean = true> {
+  accentIcon?: T;
+  heading?: T;
+  values?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  mascot?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CareersHighlightBlock_select".
+ */
+export interface CareersHighlightBlockSelect<T extends boolean = true> {
+  heading?: T;
+  limit?: T;
+  ctaLabel?: T;
+  ctaLink?:
+    | T
+    | {
+        type?: T;
+        newTab?: T;
+        reference?: T;
+        route?: T;
+        url?: T;
       };
   id?: T;
   blockName?: T;
@@ -1760,6 +2109,7 @@ export interface UsersSelect<T extends boolean = true> {
  */
 export interface JobsSelect<T extends boolean = true> {
   title?: T;
+  isFeatured?: T;
   department?: T;
   location?: T;
   employmentType?: T;
@@ -1802,6 +2152,28 @@ export interface SocialSelect<T extends boolean = true> {
   order?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "games_select".
+ */
+export interface GamesSelect<T extends boolean = true> {
+  title?: T;
+  cover?: T;
+  description?: T;
+  badges?:
+    | T
+    | {
+        label?: T;
+        id?: T;
+      };
+  playUrl?: T;
+  publishedAt?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  _status?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2165,6 +2537,130 @@ export interface Footer {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home".
+ */
+export interface Home {
+  id: string;
+  hero: {
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'videoHero' | 'brandHero';
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'route' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
+            url?: string | null;
+            label: string;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'outline') | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (string | null) | Media;
+    videoSource?: ('upload' | 'youtube') | null;
+    videoFile?: (string | null) | Media;
+    /**
+     * Enter the full YouTube URL (e.g. https://www.youtube.com/watch?v=xxxxx)
+     */
+    youtubeUrl?: string | null;
+    /**
+     * Main heading displayed in the overlay area
+     */
+    heading?: string | null;
+    /**
+     * Subtitle / description text below the heading
+     */
+    subtitle?: string | null;
+    /**
+     * Content displayed inside the overlay area (left 2/3 of the screen)
+     */
+    overlayContent?:
+      | (CallToActionBlock | ContentBlock | MediaBlock | BannerBlock | CodeBlock | PolicyTabsBlock)[]
+      | null;
+    primaryButtonLabel?: string | null;
+    primaryButtonUrl?: string | null;
+    secondaryButtonLabel?: string | null;
+    secondaryButtonUrl?: string | null;
+    /**
+     * YouTube or direct video URL to open in a popup when the play button is clicked
+     */
+    videoPopupUrl?: string | null;
+    /**
+     * Small label above the heading (e.g. "Gaming Studio").
+     */
+    eyebrow?: string | null;
+    /**
+     * Large brand heading (e.g. "IEC Games").
+     */
+    brandHeading?: string | null;
+    /**
+     * Supporting paragraph under the heading.
+     */
+    tagline?: string | null;
+    /**
+     * Small stats shown next to the CTA (e.g. "2.5B+ Total Downloads").
+     */
+    inlineStats?:
+      | {
+          value: string;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    mascot?: (string | null) | Media;
+  };
+  layout?:
+    | (
+        | CallToActionBlock
+        | ContentBlock
+        | MediaBlock
+        | ArchiveBlock
+        | FormBlock
+        | JobBoardBlock
+        | SendUsCVBlock
+        | AboutWithStatsBlock
+        | GamesPortfolioBlock
+        | VisionMissionBlock
+        | CoreValuesBlock
+        | CareersHighlightBlock
+      )[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2215,6 +2711,86 @@ export interface FooterSelect<T extends boolean = true> {
             };
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home_select".
+ */
+export interface HomeSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    route?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+        videoSource?: T;
+        videoFile?: T;
+        youtubeUrl?: T;
+        heading?: T;
+        subtitle?: T;
+        overlayContent?:
+          | T
+          | {
+              cta?: T | CallToActionBlockSelect<T>;
+              content?: T | ContentBlockSelect<T>;
+              mediaBlock?: T | MediaBlockSelect<T>;
+              banner?: T | BannerBlockSelect<T>;
+              code?: T | CodeBlockSelect<T>;
+              policyTabs?: T | PolicyTabsBlockSelect<T>;
+            };
+        primaryButtonLabel?: T;
+        primaryButtonUrl?: T;
+        secondaryButtonLabel?: T;
+        secondaryButtonUrl?: T;
+        videoPopupUrl?: T;
+        eyebrow?: T;
+        brandHeading?: T;
+        tagline?: T;
+        inlineStats?:
+          | T
+          | {
+              value?: T;
+              label?: T;
+              id?: T;
+            };
+        mascot?: T;
+      };
+  layout?:
+    | T
+    | {
+        cta?: T | CallToActionBlockSelect<T>;
+        content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
+        archive?: T | ArchiveBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+        jobBoard?: T | JobBoardBlockSelect<T>;
+        sendUsCV?: T | SendUsCVBlockSelect<T>;
+        aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
+        gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
+        visionMission?: T | VisionMissionBlockSelect<T>;
+        coreValues?: T | CoreValuesBlockSelect<T>;
+        careersHighlight?: T | CareersHighlightBlockSelect<T>;
+      };
+  _status?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
