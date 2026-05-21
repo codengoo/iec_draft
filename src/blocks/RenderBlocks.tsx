@@ -12,12 +12,20 @@ import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 
 import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
 import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
-import { CoreValuesBlock } from '@/blocks/CoreValues/Component'
+import {
+  CoreValuesBlock,
+  CoreValuesLeftContent,
+  CoreValuesRightContent,
+} from '@/blocks/CoreValues/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
 import { IECLifeBlock } from '@/blocks/IECLife/Component'
 import { SocialConnectBlock } from '@/blocks/SocialConnect/Component'
-import { VisionMissionBlock } from '@/blocks/VisionMission/Component'
+import {
+  VisionMissionBlock,
+  VisionMissionLeftContent,
+  VisionMissionRightContent,
+} from '@/blocks/VisionMission/Component'
 import { PinnedCrossfade } from '@/components/PinnedCrossfade'
 
 const blockComponents = {
@@ -50,9 +58,8 @@ export const RenderBlocks: React.FC<{
 
   if (!hasBlocks) return null
 
-  // Detect adjacent VisionMission → CoreValues pairs. Each VM index that is
-  // immediately followed by a CV gets paired; the CV index gets skipped from
-  // its own render slot because PinnedCrossfade renders both at once.
+  // Detect adjacent VisionMission → CoreValues pairs. The CV slot is skipped
+  // from its own render position because PinnedCrossfade renders both at once.
   const pairs = new Map<number, number>()
   const skipIndices = new Set<number>()
   for (let i = 0; i < blocks.length - 1; i++) {
@@ -69,23 +76,21 @@ export const RenderBlocks: React.FC<{
 
         const { blockType } = block
 
-        // Paired VM + CV → wrap in PinnedCrossfade
+        // Paired VM + CV → pinned staggered slide-up
         if (pairs.has(index)) {
           const cvIndex = pairs.get(index)!
           const cvBlock = blocks[cvIndex]
-          const VMComp = blockComponents.visionMission
-          const CVComp = blockComponents.coreValues
           return (
             <PinnedCrossfade
               key={index}
-              first={
-                // @ts-expect-error there may be some mismatch between the expected types here
-                <VMComp {...block} disableInnerContainer />
-              }
-              second={
-                // @ts-expect-error there may be some mismatch between the expected types here
-                <CVComp {...cvBlock} disableInnerContainer />
-              }
+              // @ts-expect-error block props are validated by Payload schema
+              firstLeft={<VisionMissionLeftContent {...block} />}
+              // @ts-expect-error block props are validated by Payload schema
+              firstRight={<VisionMissionRightContent {...block} />}
+              // @ts-expect-error block props are validated by Payload schema
+              secondLeft={<CoreValuesLeftContent {...cvBlock} />}
+              // @ts-expect-error block props are validated by Payload schema
+              secondRight={<CoreValuesRightContent {...cvBlock} />}
             />
           )
         }
