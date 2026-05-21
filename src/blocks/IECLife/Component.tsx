@@ -131,9 +131,9 @@ export const IECLifeBlock: React.FC<Props & { id?: string }> = async ({
                 className="bg-clip-text text-4xl font-black uppercase leading-none tracking-tight text-transparent md:text-5xl lg:text-6xl"
                 style={{
                   backgroundImage:
-                    'linear-gradient(120deg, #006FEE 0%, #38BDF8 55%, #0EA5E9 100%)',
+                    'linear-gradient(120deg, #E11D48 0%, #EC4899 55%, #FB923C 100%)',
                   filter:
-                    'drop-shadow(0 8px 18px rgba(0, 111, 238, 0.35)) drop-shadow(0 2px 4px rgba(56, 189, 248, 0.25))',
+                    'drop-shadow(0 8px 18px rgba(225, 29, 72, 0.3)) drop-shadow(0 2px 4px rgba(251, 146, 60, 0.25))',
                 }}
               >
                 {heading}
