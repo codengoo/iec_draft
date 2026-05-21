@@ -18,6 +18,7 @@ import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
 import { IECLifeBlock } from '@/blocks/IECLife/Component'
 import { SocialConnectBlock } from '@/blocks/SocialConnect/Component'
 import { VisionMissionBlock } from '@/blocks/VisionMission/Component'
+import { PinnedCrossfade } from '@/components/PinnedCrossfade'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -47,30 +48,63 @@ export const RenderBlocks: React.FC<{
 
   const hasBlocks = blocks && Array.isArray(blocks) && blocks.length > 0
 
-  if (hasBlocks) {
-    return (
-      <Fragment>
-        {blocks.map((block, index) => {
-          const { blockType } = block
+  if (!hasBlocks) return null
 
-          if (blockType && blockType in blockComponents) {
-            const Block = blockComponents[blockType]
-
-            if (Block) {
-              const isFlush = flushBlocks.has(blockType)
-              return (
-                <div className={isFlush ? undefined : 'my-16'} key={index}>
-                  {/* @ts-expect-error there may be some mismatch between the expected types here */}
-                  <Block {...block} disableInnerContainer />
-                </div>
-              )
-            }
-          }
-          return null
-        })}
-      </Fragment>
-    )
+  // Detect adjacent VisionMission → CoreValues pairs. Each VM index that is
+  // immediately followed by a CV gets paired; the CV index gets skipped from
+  // its own render slot because PinnedCrossfade renders both at once.
+  const pairs = new Map<number, number>()
+  const skipIndices = new Set<number>()
+  for (let i = 0; i < blocks.length - 1; i++) {
+    if (blocks[i].blockType === 'visionMission' && blocks[i + 1].blockType === 'coreValues') {
+      pairs.set(i, i + 1)
+      skipIndices.add(i + 1)
+    }
   }
 
-  return null
+  return (
+    <Fragment>
+      {blocks.map((block, index) => {
+        if (skipIndices.has(index)) return null
+
+        const { blockType } = block
+
+        // Paired VM + CV → wrap in PinnedCrossfade
+        if (pairs.has(index)) {
+          const cvIndex = pairs.get(index)!
+          const cvBlock = blocks[cvIndex]
+          const VMComp = blockComponents.visionMission
+          const CVComp = blockComponents.coreValues
+          return (
+            <PinnedCrossfade
+              key={index}
+              first={
+                // @ts-expect-error there may be some mismatch between the expected types here
+                <VMComp {...block} disableInnerContainer />
+              }
+              second={
+                // @ts-expect-error there may be some mismatch between the expected types here
+                <CVComp {...cvBlock} disableInnerContainer />
+              }
+            />
+          )
+        }
+
+        if (blockType && blockType in blockComponents) {
+          const Block = blockComponents[blockType]
+
+          if (Block) {
+            const isFlush = flushBlocks.has(blockType)
+            return (
+              <div className={isFlush ? undefined : 'my-16'} key={index}>
+                {/* @ts-expect-error there may be some mismatch between the expected types here */}
+                <Block {...block} disableInnerContainer />
+              </div>
+            )
+          }
+        }
+        return null
+      })}
+    </Fragment>
+  )
 }

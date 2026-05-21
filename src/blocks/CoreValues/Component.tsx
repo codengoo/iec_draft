@@ -29,6 +29,7 @@ import type { CoreValuesBlock as Props } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { SectionBackground } from '@/components/SectionBackground'
 
 type IconName =
   | 'sparkles'
@@ -116,41 +117,7 @@ export const CoreValuesBlock: React.FC<Props> = ({
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-b from-sky-50/60 via-background to-background py-20 lg:py-28">
-      {/* Top fade — smooth white → transparent */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 z-1 h-32 bg-linear-to-b from-white to-transparent dark:from-background"
-      />
-
-      {/* Decorative background blobs */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-0 right-0 h-[32rem] w-[32rem] rounded-full bg-primary/5 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -top-32 right-10 h-72 w-72 rounded-full border-2 border-sky-200/50 lg:h-96 lg:w-96"
-      />
-
-      {/* Bottom-left filled circle (mirrors VisionMission) */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-28 -left-28 h-64 w-64 rounded-full bg-sky-100 md:h-80 md:w-80 lg:-bottom-32 lg:-left-32 lg:h-96 lg:w-96"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-32 -left-32 h-72 w-72 rounded-full border-2 border-sky-200/60 md:h-88 md:w-88 lg:-bottom-36 lg:-left-36 lg:h-104 lg:w-104"
-      />
-
-      {/* Dot grid — right side */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-1/3 right-12 hidden h-32 w-24 opacity-40 lg:block"
-        style={{
-          backgroundImage: 'radial-gradient(circle, rgba(0,111,238,0.35) 1px, transparent 1px)',
-          backgroundSize: '12px 12px',
-        }}
-      />
+      <SectionBackground />
 
       <div className="container relative w-full">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
