@@ -1,0 +1,308 @@
+'use client'
+
+import { animate, motion, useMotionValue, useTransform } from 'framer-motion'
+import { useCallback, useRef, useState } from 'react'
+
+import { Media } from '@/components/Media'
+import type { Game } from '@/payload-types'
+
+/* ─── Layout constants ─────────────────────────────── */
+const CARD_W = 340 // card slot width in px
+const CARD_GAP = 32 // gap between card slots
+const STEP = CARD_W + CARD_GAP // distance between card centers
+const DRAG_THRESHOLD = 60 // px offset required to advance
+
+/* ─── Single card ──────────────────────────────────── */
+function GameCardInner({ game, isCenter }: { game: Game; isCenter: boolean }) {
+  const href = game.playUrl || (game.slug ? `/games/${game.slug}` : null)
+
+  return (
+    <article
+      className={`overflow-hidden rounded-2xl ${
+        isCenter
+          ? 'bg-linear-to-b from-[#0d1f40] to-[#060d1e] ring-1 ring-blue-500/20 shadow-[0_28px_72px_-8px_rgba(0,90,255,0.4),0_8px_24px_rgba(0,0,0,0.5)]'
+          : 'bg-[#0b0b12] ring-1 ring-white/5 shadow-[0_8px_24px_rgba(0,0,0,0.35)]'
+      }`}
+    >
+      {/* Cover image */}
+      {game.cover && typeof game.cover === 'object' && (
+        <div className={`overflow-hidden ${isCenter ? 'aspect-video' : 'aspect-4/3'}`}>
+          <Media
+            resource={game.cover}
+            imgClassName="h-full w-full object-cover transition-transform duration-700"
+          />
+        </div>
+      )}
+
+      {/* Info */}
+      <div className={isCenter ? 'p-6 pb-7' : 'p-4'}>
+        {/* Badges – center card only */}
+        {isCenter && Array.isArray(game.badges) && game.badges.length > 0 && (
+          <div className="mb-3 flex flex-wrap gap-2">
+            {game.badges.map((badge, i) => (
+              <span
+                key={i}
+                className="rounded-full bg-blue-500/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-blue-300"
+              >
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        )}
+
+        <h3
+          className={`font-bold leading-tight text-white ${
+            isCenter ? 'text-xl' : 'line-clamp-2 text-sm'
+          }`}
+        >
+          {game.title}
+        </h3>
+
+        {/* Description – center card only */}
+        {isCenter && game.description && (
+          <p className="mt-2.5 line-clamp-3 text-sm leading-relaxed text-white/55">
+            {game.description}
+          </p>
+        )}
+
+        {/* CTA – center card only */}
+        {isCenter && href && (
+          <a
+            href={href}
+            target={game.playUrl ? '_blank' : undefined}
+            rel={game.playUrl ? 'noreferrer' : undefined}
+            onClick={(e) => e.stopPropagation()}
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white ring-1 ring-blue-400/30 transition hover:bg-blue-500"
+          >
+            Play now
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className="h-3.5 w-3.5"
+            >
+              <path
+                fillRule="evenodd"
+                d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </a>
+        )}
+      </div>
+    </article>
+  )
+}
+
+/* ─── Carousel ─────────────────────────────────────── */
+type CarouselProps = {
+  games: Game[]
+  eyebrow?: string
+  heading?: string | null
+}
+
+export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
+  // Default to the 2nd card (index 1) so all three cards are visible at load;
+  // fall back to 0 if there is only one card.
+  const [activeIdx, setActiveIdx] = useState(() => (games.length > 1 ? 1 : 0))
+
+  // Live drag offset — applied as a dampened x-shift to the whole track for drag feel
+  const dragX = useMotionValue(0)
+  const trackOffset = useTransform(dragX, (v) => v * 0.35)
+
+  const pointerStartX = useRef(0)
+  const didDrag = useRef(false)
+
+  const goTo = useCallback(
+    (idx: number) => setActiveIdx(Math.max(0, Math.min(idx, games.length - 1))),
+    [games.length],
+  )
+  const prev = useCallback(() => goTo(activeIdx - 1), [activeIdx, goTo])
+  const next = useCallback(() => goTo(activeIdx + 1), [activeIdx, goTo])
+
+  /* ── Pointer handlers ── */
+  const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    pointerStartX.current = e.clientX
+    didDrag.current = false
+  }, [])
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent) => {
+      if (e.buttons !== 1) return
+      const delta = e.clientX - pointerStartX.current
+      if (Math.abs(delta) > 6) didDrag.current = true
+      dragX.set(delta)
+    },
+    [dragX],
+  )
+
+  const snapDragBack = useCallback(() => {
+    animate(dragX, 0, { type: 'spring', stiffness: 400, damping: 35 })
+  }, [dragX])
+
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent) => {
+      const delta = e.clientX - pointerStartX.current
+      if (delta < -DRAG_THRESHOLD) next()
+      else if (delta > DRAG_THRESHOLD) prev()
+      snapDragBack()
+    },
+    [next, prev, snapDragBack],
+  )
+
+  return (
+    <div className="flex w-full flex-col items-center gap-12">
+      {/* ── Header ──────────────────────────────────── */}
+      {(eyebrow || heading) && (
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          className="px-4 text-center"
+        >
+          {eyebrow && (
+            <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.25em] text-blue-400/80">
+              {eyebrow}
+            </span>
+          )}
+          {heading && (
+            <h2 className="text-3xl font-bold text-white md:text-4xl lg:text-5xl">{heading}</h2>
+          )}
+        </motion.div>
+      )}
+
+      {/* ── Track ───────────────────────────────────── */}
+      {/* Outer wrapper clips cards at the left/right viewport edges */}
+      <div className="relative w-full overflow-hidden">
+        {/* Left edge fade */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 left-0 z-20 w-[12%] min-w-10"
+          style={{
+            background: 'linear-gradient(to right, oklch(10% 0.02 260deg) 0%, transparent 100%)',
+          }}
+        />
+        {/* Right edge fade */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 z-20 w-[12%] min-w-10"
+          style={{
+            background: 'linear-gradient(to left, oklch(10% 0.02 260deg) 0%, transparent 100%)',
+          }}
+        />
+
+        {/* Nav arrows */}
+        <button
+          onClick={prev}
+          disabled={activeIdx === 0}
+          aria-label="Previous game"
+          className="absolute left-4 top-1/2 z-30 -translate-y-1/2 hidden rounded-full bg-white/5 p-3 text-white ring-1 ring-white/10 backdrop-blur-sm transition hover:bg-white/15 disabled:opacity-20 active:scale-95 md:block"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="h-5 w-5"
+          >
+            <path
+              fillRule="evenodd"
+              d="M17 10a.75.75 0 01-.75.75H5.612l4.158 3.96a.75.75 0 11-1.04 1.08l-5.5-5.25a.75.75 0 010-1.08l5.5-5.25a.75.75 0 111.04 1.08L5.612 9.25H16.25A.75.75 0 0117 10z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+        <button
+          onClick={next}
+          disabled={activeIdx === games.length - 1}
+          aria-label="Next game"
+          className="absolute right-4 top-1/2 z-30 -translate-y-1/2 hidden rounded-full bg-white/5 p-3 text-white ring-1 ring-white/10 backdrop-blur-sm transition hover:bg-white/15 disabled:opacity-20 active:scale-95 md:block"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            className="h-5 w-5"
+          >
+            <path
+              fillRule="evenodd"
+              d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+
+        {/*
+         * Card pivot — horizontally centered, width = CARD_W.
+         * overflow:visible lets side cards extend beyond the pivot bounds;
+         * the outer overflow:hidden wrapper clips them at the viewport edges.
+         * x: trackOffset provides live drag-follow feedback.
+         */}
+        <motion.div
+          className="relative mx-auto cursor-grab select-none active:cursor-grabbing"
+          style={{ height: 480, width: CARD_W, x: trackOffset, overflow: 'visible' }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerCancel={snapDragBack}
+        >
+          {games.map((game, idx) => {
+            const distance = idx - activeIdx
+            const abs = Math.abs(distance)
+            if (abs > 2) return null // only render ±2 around the active card
+
+            const isCenter = abs === 0
+
+            return (
+              <motion.div
+                key={game.id}
+                className="absolute bottom-0"
+                style={{
+                  width: CARD_W,
+                  left: '50%',
+                  marginLeft: -CARD_W / 2,
+                  originX: 0.5,
+                  originY: 1, // scale from the bottom — keeps card baselines aligned
+                }}
+                animate={{
+                  x: distance * STEP,
+                  scale: isCenter ? 1 : abs === 1 ? 0.77 : 0.62,
+                  opacity: isCenter ? 1 : abs === 1 ? 0.58 : 0,
+                  y: isCenter ? 0 : 18,
+                  zIndex: isCenter ? 10 : abs === 1 ? 5 : 0,
+                }}
+                transition={{ type: 'spring', stiffness: 340, damping: 34, mass: 0.7 }}
+                onClick={() => {
+                  if (!isCenter && !didDrag.current) goTo(idx)
+                }}
+              >
+                <GameCardInner game={game} isCenter={isCenter} />
+              </motion.div>
+            )
+          })}
+        </motion.div>
+      </div>
+
+      {/* ── Dot indicators ──────────────────────────── */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="flex items-center gap-2"
+      >
+        {games.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => goTo(i)}
+            aria-label={`Go to game ${i + 1}`}
+            className={`rounded-full transition-all duration-300 ${
+              i === activeIdx ? 'h-2.5 w-7 bg-white' : 'h-2 w-2 bg-white/30 hover:bg-white/50'
+            }`}
+          />
+        ))}
+      </motion.div>
+    </div>
+  )
+}
