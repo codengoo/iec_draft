@@ -108,6 +108,14 @@ export const CoreValues: Block = {
             description: 'Optional image shown on the right when this card is hovered.',
           },
         },
+        {
+          name: 'imageCaption',
+          type: 'text',
+          localized: true,
+          admin: {
+            description: 'Short caption shown right below the hovered image.',
+          },
+        },
       ],
     },
     {

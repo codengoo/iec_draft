@@ -235,6 +235,7 @@ export const CoreValuesRightContent: React.FC<Props> = ({ mascot, values }) => {
     hoveredValue?.image && typeof hoveredValue.image === 'object'
       ? (hoveredValue.image as MediaType)
       : null
+  const hoveredCaption = hoveredValue?.imageCaption ?? null
 
   return (
     <div className="relative flex min-h-112 items-center justify-center">
@@ -248,26 +249,30 @@ export const CoreValuesRightContent: React.FC<Props> = ({ mascot, values }) => {
         <div className="size-96 rounded-full bg-primary/10 blur-3xl" />
       </motion.div>
 
-      {/* Mascot — fades & shrinks slightly when a card is hovered */}
+      {/* Mascot — outer layer controls visibility (one-time tween),
+          inner layer keeps an independent floating loop so re-appearing
+          after unhover doesn't reset or yo-yo the opacity. */}
       {mascot && typeof mascot === 'object' && (
         <motion.div
-          className="drop-shadow-2xl relative z-10"
+          className="relative z-10"
           animate={{
-            y: hoveredImage ? 0 : [0, -14, 0],
             opacity: hoveredImage ? 0 : 1,
             scale: hoveredImage ? 0.9 : 1,
           }}
-          transition={
-            hoveredImage
-              ? { duration: 0.4, ease: 'easeOut' }
-              : { duration: 3.5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={{ duration: 0.4, ease: 'easeOut' }}
         >
-          <Media resource={mascot} imgClassName="h-auto w-72 select-none md:w-80 lg:w-96" />
+          <motion.div
+            className="drop-shadow-2xl"
+            animate={{ y: [0, -14, 0] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          >
+            <Media resource={mascot} imgClassName="h-auto w-72 select-none md:w-80 lg:w-96" />
+          </motion.div>
         </motion.div>
       )}
 
-      {/* Hovered card image — bo góc mềm, soft shadow, floating */}
+      {/* Hovered card: image + caption together in a single white card —
+          bo góc mềm, soft shadow, floating as one unit */}
       <AnimatePresence mode="wait">
         {hoveredImage && (
           <motion.div
@@ -279,14 +284,21 @@ export const CoreValuesRightContent: React.FC<Props> = ({ mascot, values }) => {
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
             <motion.div
-              className="overflow-hidden rounded-4xl shadow-[0_30px_80px_-20px_rgba(0,111,238,0.45),0_10px_30px_-12px_rgba(0,0,0,0.18)] ring-1 ring-white/50 backdrop-blur-sm"
+              className="rounded-4xl bg-white p-3 shadow-[0_30px_80px_-20px_rgba(0,111,238,0.45),0_10px_30px_-12px_rgba(0,0,0,0.18)] ring-1 ring-white/60 dark:bg-white/95"
               animate={{ y: [0, -12, 0] }}
               transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
             >
-              <Media
-                resource={hoveredImage}
-                imgClassName="block h-auto w-72 select-none md:w-80 lg:w-96"
-              />
+              <div className="overflow-hidden rounded-3xl">
+                <Media
+                  resource={hoveredImage}
+                  imgClassName="block h-auto w-72 select-none md:w-80 lg:w-96"
+                />
+              </div>
+              {hoveredCaption && (
+                <p className="mt-4 px-3 pb-2 text-center text-base font-medium leading-relaxed text-foreground/85 md:text-lg">
+                  {hoveredCaption}
+                </p>
+              )}
             </motion.div>
           </motion.div>
         )}

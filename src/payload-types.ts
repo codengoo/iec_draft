@@ -1399,6 +1399,10 @@ export interface CoreValuesBlock {
          * Optional image shown on the right when this card is hovered.
          */
         image?: (string | null) | Media;
+        /**
+         * Short caption shown right below the hovered image.
+         */
+        imageCaption?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -2341,6 +2345,7 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+        imageCaption?: T;
         id?: T;
       };
   mascot?: T;
