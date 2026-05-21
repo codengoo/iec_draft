@@ -408,7 +408,7 @@ export const IECLifeView: React.FC<Props> = ({ posts, eyebrow, heading, ctaLabel
   const [featured, ...rest] = posts
 
   return (
-    <section className="relative overflow-hidden bg-[#FFF5F0] py-16 md:py-20 lg:py-24">
+    <section className="relative mx-4 my-8 overflow-hidden rounded-[2rem] bg-[#FFF5F0] py-16 md:mx-8 md:my-12 md:rounded-[2.5rem] md:py-20 lg:mx-12 lg:my-16 lg:rounded-[3rem] lg:py-24">
       <Decorations />
 
       <motion.div

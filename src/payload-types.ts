@@ -1560,11 +1560,7 @@ export interface CategoryShowcaseBlock {
    */
   category: string | Category;
   /**
-   * How many posts to show as pill rows in the left column.
-   */
-  pillsCount?: number | null;
-  /**
-   * Optional CTA label shown under the pill list.
+   * Label for the dark CTA button under the description.
    */
   ctaLabel?: string | null;
   id?: string | null;
@@ -2477,7 +2473,6 @@ export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
   heading?: T;
   description?: T;
   category?: T;
-  pillsCount?: T;
   ctaLabel?: T;
   id?: T;
   blockName?: T;

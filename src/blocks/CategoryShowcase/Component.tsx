@@ -7,19 +7,15 @@ import type { Category, CategoryShowcaseBlock as Props, Post } from '@/payload-t
 
 import { CategoryShowcaseView } from './CategoryShowcaseView'
 
-const BENTO_COUNT = 4
+const COLLAGE_COUNT = 5
 
 export const CategoryShowcaseBlock: React.FC<Props & { id?: string }> = async ({
   eyebrow,
   heading,
   description,
   category,
-  pillsCount: pillsCountFromProps,
   ctaLabel,
 }) => {
-  const pillsCount = pillsCountFromProps ?? 3
-  const total = pillsCount + BENTO_COUNT
-
   const categoryId =
     typeof category === 'object' && category !== null ? category.id : category
 
@@ -31,7 +27,7 @@ export const CategoryShowcaseBlock: React.FC<Props & { id?: string }> = async ({
     collection: 'posts',
     where: { categories: { contains: categoryId } },
     sort: '-publishedAt',
-    limit: total,
+    limit: COLLAGE_COUNT,
     depth: 1,
   })
 
@@ -41,9 +37,6 @@ export const CategoryShowcaseBlock: React.FC<Props & { id?: string }> = async ({
   const categoryResolved =
     typeof category === 'object' && category !== null ? (category as Category) : null
 
-  const pillPosts = posts.slice(0, pillsCount)
-  const bentoPosts = posts.slice(pillsCount, pillsCount + BENTO_COUNT)
-
   return (
     <CategoryShowcaseView
       eyebrow={eyebrow}
@@ -51,8 +44,7 @@ export const CategoryShowcaseBlock: React.FC<Props & { id?: string }> = async ({
       description={description}
       ctaLabel={ctaLabel}
       category={categoryResolved}
-      pillPosts={pillPosts}
-      bentoPosts={bentoPosts}
+      posts={posts}
     />
   )
 }

@@ -17,7 +17,9 @@ export const CareersHighlightBlock: React.FC<Props & { id?: string }> = async ({
   const limit = limitFromProps || 3
   const payload = await getPayload({ config: configPromise })
 
-  const { docs } = await payload.find({
+  // Try featured jobs first; if none exist, fall back to the most recent jobs
+  // so the section never appears empty when there is data in the collection.
+  const { docs: featuredDocs } = await payload.find({
     collection: 'jobs',
     where: { isFeatured: { equals: true } },
     sort: '-createdAt',
@@ -25,7 +27,16 @@ export const CareersHighlightBlock: React.FC<Props & { id?: string }> = async ({
     depth: 0,
   })
 
-  const jobs = docs as Job[]
+  let jobs = featuredDocs as Job[]
+  if (jobs.length === 0) {
+    const { docs: recentDocs } = await payload.find({
+      collection: 'jobs',
+      sort: '-createdAt',
+      limit,
+      depth: 0,
+    })
+    jobs = recentDocs as Job[]
+  }
 
   return (
     <section className="container">

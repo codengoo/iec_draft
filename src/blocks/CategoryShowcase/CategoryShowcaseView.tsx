@@ -1,18 +1,55 @@
 'use client'
 
-import { IconArrowRight, IconArrowUpRight, IconSparkles } from '@tabler/icons-react'
+import { IconArrowRight, IconSparkles, IconStarFilled } from '@tabler/icons-react'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Category, Post } from '@/payload-types'
+import type { Category, Post, Tag } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
 
-type SerializedDescription = NonNullable<
-  React.ComponentProps<typeof RichText>['data']
->
+/* ──────────── helpers ──────────── */
+
+function formatPostDate(timestamp?: string | null): string {
+  if (!timestamp) return ''
+  const date = new Date(timestamp)
+  const DD = String(date.getDate()).padStart(2, '0')
+  const MM = String(date.getMonth() + 1).padStart(2, '0')
+  const YYYY = date.getFullYear()
+  return `${DD}/${MM}/${YYYY}`
+}
+
+function getTags(tags?: (string | Tag)[] | null): Tag[] {
+  if (!Array.isArray(tags)) return []
+  return tags.filter((t): t is Tag => typeof t === 'object' && t !== null)
+}
+
+function extractPlainText(node: unknown, max: number = 180): string {
+  if (!node || typeof node !== 'object') return ''
+  const n = node as { text?: unknown; children?: unknown }
+  let out = ''
+  if (typeof n.text === 'string') out += n.text
+  if (Array.isArray(n.children)) {
+    for (const child of n.children) {
+      if (out.length >= max) break
+      out += (out && !out.endsWith(' ') ? ' ' : '') + extractPlainText(child, max - out.length)
+    }
+  }
+  return out.length > max ? out.slice(0, max).trimEnd() + '…' : out
+}
+
+function getPostExcerpt(post: Post, max: number = 180): string {
+  if (post.meta?.description) {
+    return post.meta.description.length > max
+      ? post.meta.description.slice(0, max).trimEnd() + '…'
+      : post.meta.description
+  }
+  return extractPlainText(post.content?.root, max).trim()
+}
+
+type SerializedDescription = NonNullable<React.ComponentProps<typeof RichText>['data']>
 
 type Props = {
   eyebrow?: string | null
@@ -20,8 +57,7 @@ type Props = {
   description?: SerializedDescription | null
   ctaLabel?: string | null
   category: Category | null
-  pillPosts: Post[]
-  bentoPosts: Post[]
+  posts: Post[]
 }
 
 /* ──────────── motion variants ──────────── */
@@ -39,13 +75,8 @@ const fadeUp: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: 'easeOut' } },
 }
 
-const fadeLeft: Variants = {
-  hidden: { opacity: 0, x: -40 },
-  visible: { opacity: 1, x: 0, transition: { duration: 0.65, ease: 'easeOut' } },
-}
-
 const popIn: Variants = {
-  hidden: { opacity: 0, scale: 0.9, y: 20 },
+  hidden: { opacity: 0, scale: 0.92, y: 20 },
   visible: {
     opacity: 1,
     scale: 1,
@@ -54,124 +85,61 @@ const popIn: Variants = {
   },
 }
 
-/* ──────────── pill row ──────────── */
+/* ──────────── photo card ──────────── */
 
-const PostPill: React.FC<{ post: Post }> = ({ post }) => (
-  <motion.div variants={fadeLeft}>
-    <Link
-      href={`/posts/${post.slug}`}
-      className="group flex items-center justify-between gap-4 rounded-full bg-slate-900 px-5 py-3.5 text-sm font-semibold text-white shadow-[0_10px_25px_-12px_rgba(15,23,42,0.55)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_14px_30px_-12px_rgba(15,23,42,0.7)] md:px-6 md:py-4 md:text-base"
-    >
-      <span className="line-clamp-1">{post.title}</span>
-      <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-white/15 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:bg-white/25">
-        <IconArrowRight className="size-4" stroke={2.4} />
-      </span>
-    </Link>
-  </motion.div>
-)
+const PhotoCard: React.FC<{ post: Post; className?: string }> = ({ post, className = '' }) => {
+  if (!post.heroImage || typeof post.heroImage !== 'object') return null
+  const tags = getTags(post.tags).slice(0, 2)
+  const date = formatPostDate(post.publishedAt)
+  const excerpt = getPostExcerpt(post, 140)
 
-/* ──────────── bento cards ──────────── */
-
-type CardProps = { post: Post }
-
-// Card 0: compact lavender card with image on top + title below
-const SoftImageCard: React.FC<CardProps & { tone?: 'lavender' | 'white' }> = ({
-  post,
-  tone = 'lavender',
-}) => {
-  const bg = tone === 'lavender' ? 'bg-indigo-50' : 'bg-white'
-  const ring = tone === 'lavender' ? 'ring-indigo-100' : 'ring-slate-100'
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className={`group flex h-full flex-col overflow-hidden rounded-3xl p-3 shadow-[0_25px_50px_-30px_rgba(0,0,0,0.25)] ring-1 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_35px_60px_-25px_rgba(0,0,0,0.3)] ${bg} ${ring}`}
+      className={`group relative block overflow-hidden rounded-2xl bg-muted shadow-[0_15px_35px_-15px_rgba(0,0,0,0.25)] ring-1 ring-black/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_25px_50px_-15px_rgba(0,0,0,0.35)] ${className}`}
     >
-      {post.heroImage && typeof post.heroImage === 'object' && (
-        <div className="relative aspect-4/3 w-full overflow-hidden rounded-2xl bg-muted">
-          <Media
-            fill
-            resource={post.heroImage}
-            imgClassName="object-cover transition-transform duration-700 group-hover:scale-105"
-            size="(max-width: 1024px) 50vw, 25vw"
-          />
-        </div>
-      )}
-      <div className="flex flex-1 flex-col gap-2 px-2 pb-2 pt-4 md:px-3 md:pb-3">
-        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-slate-900 transition-colors duration-300 group-hover:text-primary md:text-base">
+      <Media
+        fill
+        resource={post.heroImage}
+        imgClassName="object-cover transition-transform duration-700 group-hover:scale-110"
+        size="(max-width: 768px) 100vw, 33vw"
+      />
+
+      {/* Persistent gradient — keeps text legible without hover */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-linear-to-t from-slate-900/95 via-slate-900/55 to-slate-900/10 transition-opacity duration-500 group-hover:from-slate-900/95 group-hover:via-slate-900/70"
+      />
+
+      {/* Content overlay — always visible */}
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-4 text-white md:p-5">
+        {(tags.length > 0 || date) && (
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-wide md:text-[11px]">
+            {tags.map((t) => (
+              <span key={t.id} className="text-sky-300">
+                #{t.title.replace(/\s+/g, '_')}
+              </span>
+            ))}
+            {tags.length > 0 && date && (
+              <span aria-hidden className="text-white/50">
+                •
+              </span>
+            )}
+            {date && <span className="text-white/80">{date}</span>}
+          </div>
+        )}
+        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-white md:text-base">
           {post.title}
         </h3>
+        {excerpt && (
+          <p className="line-clamp-2 max-h-0 overflow-hidden text-[11px] leading-relaxed text-white/75 opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100 md:text-xs">
+            {excerpt}
+          </p>
+        )}
       </div>
     </Link>
   )
 }
-
-// Card 1: primary brand gradient card — image as background w/ blue overlay, title white
-const BrandOverlayCard: React.FC<CardProps & { label?: string }> = ({ post, label }) => (
-  <Link
-    href={`/posts/${post.slug}`}
-    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-primary p-6 text-white shadow-[0_25px_50px_-25px_rgba(0,111,238,0.55)] ring-1 ring-primary/20 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_35px_60px_-22px_rgba(0,111,238,0.7)] md:p-7"
-    style={{
-      backgroundImage: 'linear-gradient(135deg, #006FEE 0%, #38BDF8 100%)',
-    }}
-  >
-    {post.heroImage && typeof post.heroImage === 'object' && (
-      <div className="pointer-events-none absolute inset-0 opacity-30 mix-blend-overlay">
-        <Media
-          fill
-          resource={post.heroImage}
-          imgClassName="object-cover scale-110 transition-transform duration-700 group-hover:scale-125"
-          size="(max-width: 1024px) 50vw, 25vw"
-        />
-      </div>
-    )}
-    <div className="pointer-events-none absolute -right-12 -top-12 size-44 rounded-full bg-white/10 blur-2xl" />
-    {label && (
-      <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white backdrop-blur-sm">
-        <IconSparkles className="size-3" stroke={2.5} />
-        {label}
-      </span>
-    )}
-    <h3 className="relative mt-4 line-clamp-3 text-lg font-black leading-tight md:text-xl lg:text-2xl">
-      {post.title}
-    </h3>
-    <span className="relative mt-3 inline-flex size-9 items-center justify-center rounded-full bg-white/20 text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white/30">
-      <IconArrowUpRight className="size-4" stroke={2.5} />
-    </span>
-  </Link>
-)
-
-// Card 2: dark navy card — image bg + dark overlay, title white
-const DarkOverlayCard: React.FC<CardProps & { label?: string }> = ({ post, label }) => (
-  <Link
-    href={`/posts/${post.slug}`}
-    className="group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl bg-slate-900 p-6 text-white shadow-[0_25px_50px_-25px_rgba(15,23,42,0.7)] ring-1 ring-slate-700/40 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_35px_60px_-22px_rgba(15,23,42,0.85)] md:p-7"
-  >
-    {post.heroImage && typeof post.heroImage === 'object' && (
-      <>
-        <div className="pointer-events-none absolute inset-0 opacity-35">
-          <Media
-            fill
-            resource={post.heroImage}
-            imgClassName="object-cover scale-110 transition-transform duration-700 group-hover:scale-125"
-            size="(max-width: 1024px) 50vw, 25vw"
-          />
-        </div>
-        <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/85 to-slate-900/30" />
-      </>
-    )}
-    {label && (
-      <span className="relative inline-flex w-fit items-center gap-1.5 rounded-full bg-white/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-white/85 backdrop-blur-sm">
-        {label}
-      </span>
-    )}
-    <h3 className="relative mt-4 line-clamp-3 text-lg font-black leading-tight md:text-xl lg:text-2xl">
-      {post.title}
-    </h3>
-    <span className="relative mt-3 inline-flex size-9 items-center justify-center rounded-full bg-white/15 text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white/25">
-      <IconArrowUpRight className="size-4" stroke={2.5} />
-    </span>
-  </Link>
-)
 
 /* ──────────── decorations ──────────── */
 
@@ -179,48 +147,116 @@ const Decorations: React.FC = () => {
   const reduced = useReducedMotion()
   return (
     <>
+      {/* Smooth bridge from CoreValues — sky tint fades into white at the top */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -top-24 -left-24 h-96 w-96 rounded-full bg-primary/10 blur-3xl"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -bottom-32 -right-32 h-112 w-112 rounded-full bg-indigo-200/30 blur-3xl"
+        className="pointer-events-none absolute inset-x-0 top-0 z-1 h-48 bg-linear-to-b from-sky-50/80 via-sky-50/30 to-transparent"
       />
 
-      {/* Dot grid top-right */}
+      {/* Soft primary blob — top-left, echoing CoreValues' palette */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-12 top-20 hidden h-28 w-28 opacity-50 lg:block"
+        className="pointer-events-none absolute -top-32 -left-24 h-112 w-md rounded-full bg-primary/8 blur-3xl"
+      />
+
+      {/* Outline ring — top-left, continuation of CoreValues rings */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-20 -left-16 hidden h-72 w-72 rounded-full border-2 border-sky-200/55 lg:block lg:h-96 lg:w-96"
+      />
+
+      {/* Solid pastel circle peeking from top-left */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-16 -left-12 hidden h-48 w-48 rounded-full bg-sky-100/70 md:block lg:h-64 lg:w-64"
+      />
+
+      {/* Indigo blob — bottom-right */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -right-32 h-128 w-lg rounded-full bg-indigo-200/25 blur-3xl"
+      />
+
+      {/* Outline ring — bottom-right */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-24 -right-16 hidden h-72 w-72 rounded-full border-2 border-indigo-200/45 lg:block lg:h-88 lg:w-88"
+      />
+
+      {/* Dot grids */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-14 top-28 hidden h-28 w-28 opacity-50 lg:block"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(0,111,238,0.4) 1.5px, transparent 1.5px)',
+          backgroundImage:
+            'radial-gradient(circle, rgba(0,111,238,0.35) 1.5px, transparent 1.5px)',
           backgroundSize: '12px 12px',
         }}
       />
-      {/* Dot grid bottom-left */}
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-16 left-8 hidden h-24 w-24 opacity-50 lg:block"
+        className="pointer-events-none absolute bottom-32 left-10 hidden h-24 w-24 opacity-50 lg:block"
         style={{
-          backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.4) 1.5px, transparent 1.5px)',
+          backgroundImage:
+            'radial-gradient(circle, rgba(99,102,241,0.4) 1.5px, transparent 1.5px)',
           backgroundSize: '12px 12px',
         }}
       />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-32 top-1/2 hidden h-20 w-20 -translate-y-1/2 opacity-40 lg:block"
+        style={{
+          backgroundImage:
+            'radial-gradient(circle, rgba(56,189,248,0.5) 1.5px, transparent 1.5px)',
+          backgroundSize: '14px 14px',
+        }}
+      />
 
-      {/* Floating sparkle */}
+      {/* Small accent dot near the corner circle */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute left-44 top-44 hidden h-3 w-3 rounded-full bg-sky-300/70 lg:block"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute right-32 bottom-44 hidden h-3 w-3 rounded-full bg-indigo-300/70 lg:block"
+      />
+
+      {/* Floating sparkle — top */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute right-20 bottom-32 hidden lg:block"
+        className="pointer-events-none absolute left-16 top-32 hidden lg:block"
         initial={{ opacity: 0, scale: 0.5 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, margin: '-10%' }}
-        transition={{ duration: 0.7, delay: 0.3 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
       >
         <motion.div
-          animate={reduced ? undefined : { y: [0, -10, 0], rotate: [-6, 6, -6] }}
-          transition={reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+          animate={reduced ? undefined : { y: [0, -10, 0], rotate: [-8, 8, -8] }}
+          transition={
+            reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
+          }
         >
-          <IconSparkles className="size-10 text-primary/70" stroke={2} />
+          <IconSparkles className="size-9 text-primary/55" stroke={2} />
+        </motion.div>
+      </motion.div>
+
+      {/* Floating star — bottom-right */}
+      <motion.div
+        aria-hidden
+        className="pointer-events-none absolute right-24 bottom-32 hidden lg:block"
+        initial={{ opacity: 0, scale: 0.5 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, margin: '-10%' }}
+        transition={{ duration: 0.7, delay: 0.4 }}
+      >
+        <motion.div
+          animate={reduced ? undefined : { y: [0, -8, 0], rotate: [6, -6, 6] }}
+          transition={
+            reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }
+          }
+        >
+          <IconStarFilled className="size-7 text-amber-300/65" />
         </motion.div>
       </motion.div>
     </>
@@ -234,20 +270,16 @@ export const CategoryShowcaseView: React.FC<Props> = ({
   heading,
   description,
   ctaLabel,
-  category,
-  pillPosts,
-  bentoPosts,
+  posts,
 }) => {
-  const allPostsHref = '/posts'
-  // Bento cells (up to 4). Pad with undefined so unused cells render nothing.
-  const [b0, b1, b2, b3] = [bentoPosts[0], bentoPosts[1], bentoPosts[2], bentoPosts[3]]
+  // Collage uses up to 5 posts in fixed slot positions
+  const [p1, p2, p3, p4, p5] = [posts[0], posts[1], posts[2], posts[3], posts[4]]
 
   return (
-    <section className="relative overflow-hidden bg-linear-to-b from-slate-50/60 via-background to-background py-16 md:py-20 lg:py-24">
+    <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-b from-sky-50/40 via-white to-white py-16 md:py-20 lg:py-24">
       <Decorations />
-
       <motion.div
-        className="container relative"
+        className="container relative w-full"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: '-15%' }}
@@ -283,59 +315,68 @@ export const CategoryShowcaseView: React.FC<Props> = ({
               </motion.div>
             )}
 
-            {pillPosts.length > 0 && (
-              <motion.ul className="mt-8 flex flex-col gap-3" variants={container}>
-                {pillPosts.map((post) => (
-                  <li key={post.id}>
-                    <PostPill post={post} />
-                  </li>
-                ))}
-              </motion.ul>
-            )}
-
             {ctaLabel && (
               <motion.div variants={fadeUp} className="mt-8">
                 <Link
-                  href={allPostsHref}
-                  className="group inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.2em] text-primary"
+                  href="/posts"
+                  className="group inline-flex items-center justify-between gap-4 rounded-full bg-slate-900 px-7 py-4 text-sm font-semibold text-white shadow-[0_14px_30px_-12px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_18px_36px_-12px_rgba(15,23,42,0.75)] md:text-base"
                 >
-                  <span className="relative">
-                    {ctaLabel}
-                    <span
-                      aria-hidden
-                      className="absolute -bottom-1 left-0 h-px w-full origin-left scale-x-0 bg-primary transition-transform duration-300 group-hover:scale-x-100"
-                    />
-                  </span>
-                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full border border-primary/30 transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
-                    <IconArrowUpRight className="size-3.5" stroke={2.5} />
+                  <span>{ctaLabel}</span>
+                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-white/15 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:bg-white/25">
+                    <IconArrowRight className="size-4" stroke={2.4} />
                   </span>
                 </Link>
               </motion.div>
             )}
           </div>
 
-          {/* RIGHT — bento 2x2 */}
-          {bentoPosts.length > 0 && (
+          {/* RIGHT — photo collage 4 cols × 2 rows */}
+          {posts.length > 0 && (
             <motion.div className="lg:col-span-7" variants={container}>
-              <div className="grid grid-cols-2 gap-4 md:gap-5">
-                {b0 && (
-                  <motion.div variants={popIn} className="aspect-square md:aspect-[5/4]">
-                    <SoftImageCard post={b0} tone="lavender" />
+              <div className="grid auto-rows-[12rem] grid-cols-4 gap-3 md:auto-rows-[16rem] md:gap-4 lg:auto-rows-[19rem]">
+                {/* Slot 1: top-left wide (cols 1-2 × row 1) */}
+                {p1 && (
+                  <motion.div
+                    variants={popIn}
+                    className="col-span-2 row-span-1 md:col-span-2 md:row-span-1"
+                  >
+                    <PhotoCard post={p1} className="h-full w-full" />
                   </motion.div>
                 )}
-                {b1 && (
-                  <motion.div variants={popIn} className="aspect-square md:aspect-[5/4]">
-                    <BrandOverlayCard post={b1} label={category?.title} />
+                {/* Slot 2: top-mid narrow (col 3 × row 1) */}
+                {p2 && (
+                  <motion.div
+                    variants={popIn}
+                    className="col-span-2 row-span-1 md:col-span-1 md:row-span-1"
+                  >
+                    <PhotoCard post={p2} className="h-full w-full" />
                   </motion.div>
                 )}
-                {b2 && (
-                  <motion.div variants={popIn} className="aspect-square md:aspect-[5/4]">
-                    <DarkOverlayCard post={b2} label={category?.title} />
+                {/* Slot 3: right tall (col 4 × rows 1-2) */}
+                {p3 && (
+                  <motion.div
+                    variants={popIn}
+                    className="col-span-2 row-span-1 md:col-span-1 md:row-span-2"
+                  >
+                    <PhotoCard post={p3} className="h-full w-full" />
                   </motion.div>
                 )}
-                {b3 && (
-                  <motion.div variants={popIn} className="aspect-square md:aspect-[5/4]">
-                    <SoftImageCard post={b3} tone="white" />
+                {/* Slot 4: bottom-left narrow (col 1 × row 2) */}
+                {p4 && (
+                  <motion.div
+                    variants={popIn}
+                    className="col-span-2 row-span-1 md:col-span-1 md:row-span-1"
+                  >
+                    <PhotoCard post={p4} className="h-full w-full" />
+                  </motion.div>
+                )}
+                {/* Slot 5: bottom-mid wide (cols 2-3 × row 2) */}
+                {p5 && (
+                  <motion.div
+                    variants={popIn}
+                    className="col-span-2 row-span-1 md:col-span-2 md:row-span-1"
+                  >
+                    <PhotoCard post={p5} className="h-full w-full" />
                   </motion.div>
                 )}
               </div>

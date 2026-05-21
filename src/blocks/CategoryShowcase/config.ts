@@ -54,21 +54,12 @@ export const CategoryShowcase: Block = {
       },
     },
     {
-      name: 'pillsCount',
-      type: 'number',
-      defaultValue: 3,
-      admin: {
-        description: 'How many posts to show as pill rows in the left column.',
-        step: 1,
-      },
-    },
-    {
       name: 'ctaLabel',
       type: 'text',
       localized: true,
       defaultValue: 'Xem tất cả',
       admin: {
-        description: 'Optional CTA label shown under the pill list.',
+        description: 'Label for the dark CTA button under the description.',
       },
     },
   ],
