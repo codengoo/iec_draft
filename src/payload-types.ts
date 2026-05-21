@@ -1210,10 +1210,6 @@ export interface Game {
    * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
    */
   downloads?: string | null;
-  /**
-   * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
-   */
-  downloads?: string | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1229,6 +1225,29 @@ export interface Game {
  * via the `definition` "VisionMissionBlock".
  */
 export interface VisionMissionBlock {
+  /**
+   * Small label shown in the pill above the heading.
+   */
+  eyebrow?: string | null;
+  eyebrowIcon?:
+    | (
+        | 'gamepad'
+        | 'users'
+        | 'star'
+        | 'heart'
+        | 'sparkles'
+        | 'shield'
+        | 'trophy'
+        | 'bolt'
+        | 'target'
+        | 'palette'
+        | 'rocket'
+        | 'eye'
+      )
+    | null;
+  /**
+   * Any "&" character in the heading is highlighted in primary color.
+   */
   heading: string;
   body?: {
     root: {
@@ -1245,7 +1264,35 @@ export interface VisionMissionBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Small feature pills shown below the body (e.g. SÁNG TẠO, KẾT NỐI, GIÁ TRỊ).
+   */
+  features?:
+    | {
+        icon?:
+          | (
+              | 'gamepad'
+              | 'users'
+              | 'star'
+              | 'heart'
+              | 'sparkles'
+              | 'shield'
+              | 'trophy'
+              | 'bolt'
+              | 'target'
+              | 'palette'
+              | 'rocket'
+              | 'eye'
+            )
+          | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
   mascot?: (string | null) | Media;
+  vision?: string | null;
+  mission?: string | null;
   cta?:
     | {
         link: {
@@ -2154,9 +2201,21 @@ export interface GamesPortfolioBlockSelect<T extends boolean = true> {
  * via the `definition` "VisionMissionBlock_select".
  */
 export interface VisionMissionBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  eyebrowIcon?: T;
   heading?: T;
   body?: T;
+  features?:
+    | T
+    | {
+        icon?: T;
+        title?: T;
+        description?: T;
+        id?: T;
+      };
   mascot?: T;
+  vision?: T;
+  mission?: T;
   cta?:
     | T
     | {
