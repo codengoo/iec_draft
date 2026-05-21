@@ -1046,6 +1046,22 @@ export interface SendUsCVBlock {
  */
 export interface AboutWithStatsBlock {
   /**
+   * Optional horizontal scrolling text strip at the top of the section. Each phrase is rendered in a row separated by the badge image, and the whole row translates sideways as the user scrolls through the section.
+   */
+  marqueePhrases?:
+    | {
+        /**
+         * Short uppercase phrase (e.g. "CHẤT LƯỢNG").
+         */
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Badge image displayed between marquee phrases (e.g. a circular "IEC GAMES STUDIO" stamp). Only shown when Marquee Phrases is configured.
+   */
+  marqueeBadge?: (string | null) | Media;
+  /**
    * Small uppercase label above the heading (e.g. "IEC GAMES LÀ STUDIO").
    */
   eyebrow?: string | null;
@@ -2068,6 +2084,13 @@ export interface SendUsCVBlockSelect<T extends boolean = true> {
  * via the `definition` "AboutWithStatsBlock_select".
  */
 export interface AboutWithStatsBlockSelect<T extends boolean = true> {
+  marqueePhrases?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  marqueeBadge?: T;
   eyebrow?: T;
   heading?: T;
   description?: T;

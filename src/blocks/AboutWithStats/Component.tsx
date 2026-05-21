@@ -202,6 +202,8 @@ const StatCard: React.FC<StatProps> = ({ value, suffix, label }) => {
 /* ------------------------- AboutWithStatsBlock ------------------------ */
 
 export const AboutWithStatsBlock: React.FC<Props> = ({
+  marqueePhrases,
+  marqueeBadge,
   eyebrow,
   heading,
   description,
@@ -270,6 +272,14 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
   // Fade in just after entry, fade out just before exit.
   const flyOpacity = useTransform(flyProgress, [0, 0.05, 0.92, 1], [0, 1, 1, 0])
 
+  // Scroll-driven horizontal marquee. The strip contains the phrase set twice,
+  // so translating by -50% of its own width lands on a visually identical
+  // position — meaning the strip never reveals empty space at the edges.
+  const marqueeX = useTransform(flyProgress, [0, 1], ['0%', '-50%'])
+  const hasMarquee = Array.isArray(marqueePhrases) && marqueePhrases.length > 0
+  const marqueeBadgeMedia =
+    marqueeBadge && typeof marqueeBadge === 'object' ? (marqueeBadge as MediaType) : null
+
   useEffect(() => {
     if (reduced) return
     const el = sectionRef.current
@@ -295,6 +305,35 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
 
   return (
     <section ref={sectionRef} className="relative flex min-h-screen items-center overflow-hidden">
+      {/* Scroll-driven marquee strip */}
+      {hasMarquee && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 z-2 overflow-hidden py-6 md:py-8"
+        >
+          <motion.div
+            className="flex w-max items-center gap-10 whitespace-nowrap will-change-transform md:gap-14 lg:gap-16"
+            style={{ x: reduced ? 0 : marqueeX }}
+          >
+            {[...marqueePhrases!, ...marqueePhrases!].map((phrase, i) => (
+              <React.Fragment key={`${phrase.id ?? 'phrase'}-${i}`}>
+                <span className="text-4xl font-black uppercase tracking-tight text-foreground md:text-6xl lg:text-7xl">
+                  {phrase.text}
+                </span>
+                {marqueeBadgeMedia && (
+                  <span className="block w-12 shrink-0 md:w-16 lg:w-20">
+                    <Media
+                      resource={marqueeBadgeMedia}
+                      imgClassName="w-full h-auto select-none"
+                    />
+                  </span>
+                )}
+              </React.Fragment>
+            ))}
+          </motion.div>
+        </div>
+      )}
+
       {/* Decorations */}
       {Array.isArray(decorations) &&
         decorations.map((dec, i) => (

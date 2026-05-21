@@ -22,6 +22,34 @@ export const AboutWithStats: Block = {
   },
   fields: [
     {
+      name: 'marqueePhrases',
+      type: 'array',
+      label: 'Marquee Phrases',
+      labels: { singular: 'Phrase', plural: 'Phrases' },
+      admin: {
+        description:
+          'Optional horizontal scrolling text strip at the top of the section. Each phrase is rendered in a row separated by the badge image, and the whole row translates sideways as the user scrolls through the section.',
+      },
+      fields: [
+        {
+          name: 'text',
+          type: 'text',
+          required: true,
+          localized: true,
+          admin: { description: 'Short uppercase phrase (e.g. "CHẤT LƯỢNG").' },
+        },
+      ],
+    },
+    {
+      name: 'marqueeBadge',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description:
+          'Badge image displayed between marquee phrases (e.g. a circular "IEC GAMES STUDIO" stamp). Only shown when Marquee Phrases is configured.',
+      },
+    },
+    {
       name: 'eyebrow',
       type: 'text',
       localized: true,
