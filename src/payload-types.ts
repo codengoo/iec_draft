@@ -1331,17 +1331,102 @@ export interface VisionMissionBlock {
  */
 export interface CoreValuesBlock {
   /**
-   * Small decorative icon shown above the heading.
+   * Small label shown in the pill above the heading.
    */
-  accentIcon?: (string | null) | Media;
+  eyebrow?: string | null;
+  eyebrowIcon?:
+    | (
+        | 'sparkles'
+        | 'diamond'
+        | 'sleep'
+        | 'gamepad'
+        | 'heart'
+        | 'star'
+        | 'users'
+        | 'shield'
+        | 'trophy'
+        | 'bolt'
+        | 'target'
+        | 'palette'
+        | 'rocket'
+        | 'eye'
+        | 'flame'
+        | 'coffee'
+      )
+    | null;
   heading: string;
+  headingHighlight?: string | null;
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
   values?:
     | {
-        label: string;
+        icon?:
+          | (
+              | 'sparkles'
+              | 'diamond'
+              | 'sleep'
+              | 'gamepad'
+              | 'heart'
+              | 'star'
+              | 'users'
+              | 'shield'
+              | 'trophy'
+              | 'bolt'
+              | 'target'
+              | 'palette'
+              | 'rocket'
+              | 'eye'
+              | 'flame'
+              | 'coffee'
+            )
+          | null;
+        title: string;
+        description?: string | null;
         id?: string | null;
       }[]
     | null;
   mascot?: (string | null) | Media;
+  cta?:
+    | {
+        link: {
+          type?: ('reference' | 'route' | 'custom') | null;
+          newTab?: boolean | null;
+          reference?:
+            | ({
+                relationTo: 'pages';
+                value: string | Page;
+              } | null)
+            | ({
+                relationTo: 'posts';
+                value: string | Post;
+              } | null);
+          /**
+           * Pick a built-in section page (route is hardcoded in the app).
+           */
+          route?: ('/' | '/posts' | '/search') | null;
+          url?: string | null;
+          label: string;
+          /**
+           * Choose how the link should be rendered.
+           */
+          appearance?: ('default' | 'outline') | null;
+        };
+        id?: string | null;
+      }[]
+    | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'coreValues';
@@ -2240,15 +2325,36 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
  * via the `definition` "CoreValuesBlock_select".
  */
 export interface CoreValuesBlockSelect<T extends boolean = true> {
-  accentIcon?: T;
+  eyebrow?: T;
+  eyebrowIcon?: T;
   heading?: T;
+  headingHighlight?: T;
+  body?: T;
   values?:
     | T
     | {
-        label?: T;
+        icon?: T;
+        title?: T;
+        description?: T;
         id?: T;
       };
   mascot?: T;
+  cta?:
+    | T
+    | {
+        link?:
+          | T
+          | {
+              type?: T;
+              newTab?: T;
+              reference?: T;
+              route?: T;
+              url?: T;
+              label?: T;
+              appearance?: T;
+            };
+        id?: T;
+      };
   id?: T;
   blockName?: T;
 }

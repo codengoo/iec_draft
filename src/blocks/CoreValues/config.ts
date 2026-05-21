@@ -1,5 +1,33 @@
 import type { Block } from 'payload'
 
+import {
+  FixedToolbarFeature,
+  HeadingFeature,
+  InlineToolbarFeature,
+  lexicalEditor,
+} from '@payloadcms/richtext-lexical'
+
+import { linkGroup } from '../../fields/linkGroup'
+
+const iconOptions = [
+  { label: 'Sparkles', value: 'sparkles' },
+  { label: 'Diamond', value: 'diamond' },
+  { label: 'Sleep (Zzz)', value: 'sleep' },
+  { label: 'Gamepad', value: 'gamepad' },
+  { label: 'Heart', value: 'heart' },
+  { label: 'Star', value: 'star' },
+  { label: 'Users', value: 'users' },
+  { label: 'Shield', value: 'shield' },
+  { label: 'Trophy', value: 'trophy' },
+  { label: 'Bolt', value: 'bolt' },
+  { label: 'Target', value: 'target' },
+  { label: 'Palette', value: 'palette' },
+  { label: 'Rocket', value: 'rocket' },
+  { label: 'Eye', value: 'eye' },
+  { label: 'Flame', value: 'flame' },
+  { label: 'Coffee', value: 'coffee' },
+]
+
 export const CoreValues: Block = {
   slug: 'coreValues',
   interfaceName: 'CoreValuesBlock',
@@ -9,19 +37,45 @@ export const CoreValues: Block = {
   },
   fields: [
     {
-      name: 'accentIcon',
-      type: 'upload',
-      relationTo: 'media',
-      label: 'Accent Icon',
+      name: 'eyebrow',
+      type: 'text',
+      localized: true,
+      defaultValue: 'Core Values',
       admin: {
-        description: 'Small decorative icon shown above the heading.',
+        description: 'Small label shown in the pill above the heading.',
       },
+    },
+    {
+      name: 'eyebrowIcon',
+      type: 'select',
+      defaultValue: 'sparkles',
+      options: iconOptions,
     },
     {
       name: 'heading',
       type: 'text',
       required: true,
       localized: true,
+      label: 'Heading (top line)',
+    },
+    {
+      name: 'headingHighlight',
+      type: 'text',
+      localized: true,
+      label: 'Heading highlight (bottom line, primary color)',
+    },
+    {
+      name: 'body',
+      type: 'richText',
+      localized: true,
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => [
+          ...rootFeatures,
+          HeadingFeature({ enabledHeadingSizes: ['h3', 'h4'] }),
+          FixedToolbarFeature(),
+          InlineToolbarFeature(),
+        ],
+      }),
     },
     {
       name: 'values',
@@ -30,9 +84,20 @@ export const CoreValues: Block = {
       labels: { singular: 'Value', plural: 'Values' },
       fields: [
         {
-          name: 'label',
+          name: 'icon',
+          type: 'select',
+          defaultValue: 'sparkles',
+          options: iconOptions,
+        },
+        {
+          name: 'title',
           type: 'text',
           required: true,
+          localized: true,
+        },
+        {
+          name: 'description',
+          type: 'text',
           localized: true,
         },
       ],
@@ -42,5 +107,13 @@ export const CoreValues: Block = {
       type: 'upload',
       relationTo: 'media',
     },
+    linkGroup({
+      appearances: ['default', 'outline'],
+      overrides: {
+        name: 'cta',
+        maxRows: 1,
+        label: 'CTA',
+      },
+    }),
   ],
 }
