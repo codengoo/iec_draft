@@ -1,6 +1,7 @@
 'use client'
 
 import {
+  IconArrowLeft,
   IconArrowRight,
   IconBriefcase,
   IconBrush,
@@ -14,7 +15,7 @@ import {
 } from '@tabler/icons-react'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
-import React from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import type { CareersHighlightBlock, Job, Media as MediaType } from '@/payload-types'
 
@@ -266,6 +267,85 @@ const JobCard: React.FC<{ job: Job; index: number }> = ({ job, index }) => {
   )
 }
 
+/* ──────────── jobs scroller (horizontal snap + prev/next) ──────────── */
+
+const JobsScroller: React.FC<{ jobs: Job[] }> = ({ jobs }) => {
+  const scrollerRef = useRef<HTMLDivElement>(null)
+  const [canScrollPrev, setCanScrollPrev] = useState(false)
+  const [canScrollNext, setCanScrollNext] = useState(false)
+
+  const updateButtons = useCallback(() => {
+    const el = scrollerRef.current
+    if (!el) return
+    const maxScroll = el.scrollWidth - el.clientWidth
+    setCanScrollPrev(el.scrollLeft > 4)
+    setCanScrollNext(el.scrollLeft < maxScroll - 4)
+  }, [])
+
+  useEffect(() => {
+    updateButtons()
+    const el = scrollerRef.current
+    if (!el) return
+    el.addEventListener('scroll', updateButtons, { passive: true })
+    window.addEventListener('resize', updateButtons)
+    return () => {
+      el.removeEventListener('scroll', updateButtons)
+      window.removeEventListener('resize', updateButtons)
+    }
+  }, [updateButtons, jobs.length])
+
+  const scrollByCard = useCallback((direction: 1 | -1) => {
+    const el = scrollerRef.current
+    if (!el) return
+    const firstItem = el.querySelector<HTMLElement>('[data-job-card]')
+    const gap = 28 // matches lg:gap-7 (1.75rem); close enough for sm gap too
+    const step = (firstItem?.offsetWidth ?? 320) + gap
+    el.scrollBy({ left: step * direction, behavior: 'smooth' })
+  }, [])
+
+  return (
+    <div className="relative">
+      <div
+        ref={scrollerRef}
+        className="-mx-4 overflow-x-auto px-4 py-3 snap-x snap-mandatory scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        <ul className="flex w-max gap-6 lg:gap-7">
+          {jobs.map((job, i) => (
+            <li
+              key={job.id}
+              data-job-card
+              className="w-75 shrink-0 snap-start md:w-85 lg:w-90"
+            >
+              <JobCard job={job} index={i} />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Prev / next buttons — hidden on touch-only narrow screens, visible from md+ */}
+      <button
+        type="button"
+        aria-label="Previous jobs"
+        onClick={() => scrollByCard(-1)}
+        disabled={!canScrollPrev}
+        className="absolute left-1 top-1/2 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[-55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
+      >
+        <IconArrowLeft size={18} stroke={2.4} />
+      </button>
+
+      <button
+        type="button"
+        aria-label="Next jobs"
+        onClick={() => scrollByCard(1)}
+        disabled={!canScrollNext}
+        className="absolute right-1 top-1/2 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
+      >
+        <IconArrowRight size={18} stroke={2.4} />
+      </button>
+    </div>
+  )
+}
+
 /* ──────────── main view ──────────── */
 
 export const CareersHighlightView: React.FC<Props> = ({
@@ -282,30 +362,41 @@ export const CareersHighlightView: React.FC<Props> = ({
     <section className="relative overflow-hidden bg-linear-to-b from-white via-indigo-50/60 to-white py-16 md:py-20 lg:py-24">
       <Decorations />
 
-      {/* Hero illustration — top-right, behind text */}
+      {/* Hero illustration — anchored to the right corner with feathered edges */}
       {heroImage && typeof heroImage === 'object' && (
         <motion.div
           aria-hidden
-          initial={{ opacity: 0, x: 40 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, x: 30, scale: 1.04 }}
+          whileInView={{ opacity: 1, x: 0, scale: 1 }}
           viewport={{ once: true, margin: '-15%' }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="pointer-events-none absolute right-0 top-0 z-0 hidden h-full w-[55%] select-none md:block lg:w-[45%]"
+          transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          className="pointer-events-none absolute right-0 top-0 z-0 hidden h-full w-3/5 select-none md:block lg:w-1/2"
         >
-          <div className="relative h-full w-full">
+          {/* Blurred halo — diffuses the image into the surrounding pastel bg */}
+          <div className="absolute inset-0 scale-110 opacity-50 blur-3xl">
             <Media
               fill
               resource={heroImage}
-              imgClassName="object-contain object-right-top opacity-90"
-              size="(max-width: 1024px) 50vw, 600px"
+              imgClassName="object-cover object-right"
+              size="(max-width: 1024px) 60vw, 50vw"
             />
-            <div
-              aria-hidden
-              className="absolute inset-0 bg-linear-to-r from-white via-white/60 to-transparent"
-            />
-            <div
-              aria-hidden
-              className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-white via-white/70 to-transparent"
+          </div>
+
+          {/* Sharp image with radial mask that feathers all four edges to transparent */}
+          <div
+            className="absolute inset-0"
+            style={{
+              maskImage:
+                'radial-gradient(ellipse 90% 85% at 85% 50%, black 35%, transparent 82%)',
+              WebkitMaskImage:
+                'radial-gradient(ellipse 90% 85% at 85% 50%, black 35%, transparent 82%)',
+            }}
+          >
+            <Media
+              fill
+              resource={heroImage}
+              imgClassName="object-cover object-right"
+              size="(max-width: 1024px) 60vw, 50vw"
             />
           </div>
         </motion.div>
@@ -354,15 +445,10 @@ export const CareersHighlightView: React.FC<Props> = ({
           )}
         </div>
 
-        {/* Cards */}
+        {/* Cards — single horizontal row with snap scrolling */}
         {jobs.length > 0 && (
-          <motion.div
-            variants={container}
-            className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7"
-          >
-            {jobs.map((job, i) => (
-              <JobCard key={job.id} job={job} index={i} />
-            ))}
+          <motion.div variants={container} className="relative mt-12">
+            <JobsScroller jobs={jobs} />
           </motion.div>
         )}
 
