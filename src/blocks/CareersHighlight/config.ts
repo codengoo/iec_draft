@@ -11,11 +11,44 @@ export const CareersHighlight: Block = {
   },
   fields: [
     {
+      name: 'eyebrow',
+      type: 'text',
+      localized: true,
+      defaultValue: 'CAREERS AT IEC GAMES',
+      admin: {
+        description: 'Small uppercase label shown above the heading.',
+      },
+    },
+    {
       name: 'heading',
       type: 'text',
       required: true,
       localized: true,
       defaultValue: 'Build Your Future With Us',
+    },
+    {
+      name: 'headingHighlight',
+      type: 'text',
+      localized: true,
+      defaultValue: 'With Us',
+      admin: {
+        description:
+          'Words from the heading that should be rendered in the primary color (must match the suffix of the heading).',
+      },
+    },
+    {
+      name: 'description',
+      type: 'textarea',
+      localized: true,
+      defaultValue: 'Join the team creating games for millions of players worldwide.',
+    },
+    {
+      name: 'heroImage',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Decorative illustration shown on the right side of the section.',
+      },
     },
     {
       name: 'limit',
@@ -30,7 +63,7 @@ export const CareersHighlight: Block = {
       name: 'ctaLabel',
       type: 'text',
       localized: true,
-      defaultValue: 'Browse Opportunities',
+      defaultValue: 'Explore Careers',
     },
     link({
       appearances: false,

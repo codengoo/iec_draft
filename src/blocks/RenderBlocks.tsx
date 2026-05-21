@@ -22,7 +22,6 @@ import {
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
 import { IECLifeBlock } from '@/blocks/IECLife/Component'
-import { SocialConnectBlock } from '@/blocks/SocialConnect/Component'
 import {
   VisionMissionBlock,
   VisionMissionLeftContent,
@@ -44,7 +43,6 @@ const blockComponents = {
   coreValues: CoreValuesBlock,
   careersHighlight: CareersHighlightBlock,
   featureTabs: FeatureTabsBlock,
-  socialConnect: SocialConnectBlock,
   iecLife: IECLifeBlock,
   categoryShowcase: CategoryShowcaseBlock,
 }

@@ -18,6 +18,13 @@ export const SectionBackground: React.FC = () => {
         className="pointer-events-none absolute inset-x-0 top-0 z-1 h-32 bg-linear-to-b from-white to-transparent dark:from-background"
       />
 
+      {/* Bottom fade — smooth white → transparent so decorations fade out gracefully
+          and the section blends into the section below (e.g. CategoryShowcase). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-1 h-40 bg-linear-to-t from-white via-white/85 to-transparent dark:from-background dark:via-background/85"
+      />
+
       {/* Top-right soft primary blob */}
       <div
         aria-hidden

@@ -344,7 +344,6 @@ export interface Page {
     | CoreValuesBlock
     | CareersHighlightBlock
     | FeatureTabsBlock
-    | SocialConnectBlock
     | IECLifeBlock
     | CategoryShowcaseBlock
   )[];
@@ -1445,7 +1444,20 @@ export interface CoreValuesBlock {
  * via the `definition` "CareersHighlightBlock".
  */
 export interface CareersHighlightBlock {
+  /**
+   * Small uppercase label shown above the heading.
+   */
+  eyebrow?: string | null;
   heading: string;
+  /**
+   * Words from the heading that should be rendered in the primary color (must match the suffix of the heading).
+   */
+  headingHighlight?: string | null;
+  description?: string | null;
+  /**
+   * Decorative illustration shown on the right side of the section.
+   */
+  heroImage?: (string | null) | Media;
   /**
    * How many featured jobs to show (jobs with "Featured Job" enabled).
    */
@@ -1503,16 +1515,6 @@ export interface FeatureTabsBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'featureTabs';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "SocialConnectBlock".
- */
-export interface SocialConnectBlock {
-  heading?: string | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'socialConnect';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2093,7 +2095,6 @@ export interface PagesSelect<T extends boolean = true> {
         coreValues?: T | CoreValuesBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
-        socialConnect?: T | SocialConnectBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;
         categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
       };
@@ -2412,7 +2413,11 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
  * via the `definition` "CareersHighlightBlock_select".
  */
 export interface CareersHighlightBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
   heading?: T;
+  headingHighlight?: T;
+  description?: T;
+  heroImage?: T;
   limit?: T;
   ctaLabel?: T;
   ctaLink?:
@@ -2440,15 +2445,6 @@ export interface FeatureTabsBlockSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "SocialConnectBlock_select".
- */
-export interface SocialConnectBlockSelect<T extends boolean = true> {
-  heading?: T;
   id?: T;
   blockName?: T;
 }
@@ -3271,7 +3267,6 @@ export interface Home {
         | CoreValuesBlock
         | CareersHighlightBlock
         | FeatureTabsBlock
-        | SocialConnectBlock
         | IECLifeBlock
         | CategoryShowcaseBlock
       )[]
@@ -3442,7 +3437,6 @@ export interface HomeSelect<T extends boolean = true> {
         coreValues?: T | CoreValuesBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
-        socialConnect?: T | SocialConnectBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;
         categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
       };
