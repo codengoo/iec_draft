@@ -63,14 +63,12 @@ function pickAccent(index: number): AccentName {
 function pickDepartmentIcon(dept?: string | null) {
   if (!dept) return IconBriefcase
   const d = dept.toLowerCase()
-  if (d.includes('design') && (d.includes('game') || d.includes('level')))
-    return IconDeviceGamepad2
+  if (d.includes('design') && (d.includes('game') || d.includes('level'))) return IconDeviceGamepad2
   if (d.includes('engineer') || d.includes('dev') || d.includes('tech') || d.includes('program'))
     return IconCode
   if (d.includes('art') || d.includes('ui') || d.includes('ux') || d.includes('design'))
     return IconBrush
-  if (d.includes('data') || d.includes('analyt') || d.includes('research'))
-    return IconChartBar
+  if (d.includes('data') || d.includes('analyt') || d.includes('research')) return IconChartBar
   if (d.includes('product') || d.includes('manage') || d.includes('ops')) return IconStack2
   return IconBriefcase
 }
@@ -147,8 +145,7 @@ const Decorations: React.FC = () => {
           backgroundImage:
             'radial-gradient(circle, rgba(129,140,248,0.18) 1.2px, transparent 1.2px)',
           backgroundSize: '24px 24px',
-          maskImage:
-            'radial-gradient(ellipse 75% 60% at 50% 45%, black 40%, transparent 90%)',
+          maskImage: 'radial-gradient(ellipse 75% 60% at 50% 45%, black 40%, transparent 90%)',
           WebkitMaskImage:
             'radial-gradient(ellipse 75% 60% at 50% 45%, black 40%, transparent 90%)',
         }}
@@ -165,9 +162,7 @@ const Decorations: React.FC = () => {
       >
         <motion.div
           animate={reduced ? undefined : { y: [0, -10, 0], rotate: [-8, 8, -8] }}
-          transition={
-            reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }}
         >
           <IconSparkles className="size-7 text-indigo-400/55" stroke={2} />
         </motion.div>
@@ -183,9 +178,7 @@ const Decorations: React.FC = () => {
       >
         <motion.div
           animate={reduced ? undefined : { y: [0, -8, 0], rotate: [6, -6, 6] }}
-          transition={
-            reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         >
           <IconStarFilled className="size-5 text-violet-300/70" />
         </motion.div>
@@ -206,9 +199,7 @@ const HeadingWithHighlight: React.FC<{ text: string; highlight?: string | null }
     const head = trimmed.slice(0, trimmed.length - highlight.length).trimEnd()
     return (
       <>
-        {head && (
-          <span className="block text-slate-900">{head}</span>
-        )}
+        {head && <span className="block text-slate-900">{head}</span>}
         <span className="block text-primary">{highlight}</span>
       </>
     )
@@ -305,21 +296,27 @@ const JobsScroller: React.FC<{ jobs: Job[] }> = ({ jobs }) => {
 
   return (
     <div className="relative">
-      <div
-        ref={scrollerRef}
-        className="-mx-4 overflow-x-auto px-4 py-3 snap-x snap-mandatory scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
-      >
-        <ul className="flex w-max gap-6 lg:gap-7">
-          {jobs.map((job, i) => (
-            <li
-              key={job.id}
-              data-job-card
-              className="w-75 shrink-0 snap-start md:w-85 lg:w-90"
-            >
-              <JobCard job={job} index={i} />
-            </li>
-          ))}
-        </ul>
+      {/* Negative margins offset the inner padding so the row keeps its
+          visual position, while the scroll container itself extends in
+          every direction to give the card shadow + hover lift room
+          before overflow-x:auto clips them. */}
+      <div className="-mx-8 -my-12">
+        <div
+          ref={scrollerRef}
+          className="overflow-x-auto px-8 py-12 snap-x snap-mandatory scrollbar-none [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+        >
+          <ul className="flex w-full gap-6 lg:gap-7">
+            {jobs.map((job, i) => (
+              <li
+                key={job.id}
+                data-job-card
+                className="w-full shrink-0 snap-start md:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3.5rem)/3)]"
+              >
+                <JobCard job={job} index={i} />
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
 
       {/* Prev / next buttons — hidden on touch-only narrow screens, visible from md+ */}
@@ -328,7 +325,7 @@ const JobsScroller: React.FC<{ jobs: Job[] }> = ({ jobs }) => {
         aria-label="Previous jobs"
         onClick={() => scrollByCard(-1)}
         disabled={!canScrollPrev}
-        className="absolute left-1 top-1/2 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[-55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
+        className="absolute left-1 top-1/2 z-20 hidden h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[-55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
       >
         <IconArrowLeft size={18} stroke={2.4} />
       </button>
@@ -338,7 +335,7 @@ const JobsScroller: React.FC<{ jobs: Job[] }> = ({ jobs }) => {
         aria-label="Next jobs"
         onClick={() => scrollByCard(1)}
         disabled={!canScrollNext}
-        className="absolute right-1 top-1/2 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
+        className="absolute right-1 top-1/2 z-20 hidden h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200/80 bg-white text-slate-700 shadow-[0_10px_24px_-10px_rgba(15,23,42,0.25)] transition-all duration-200 hover:translate-x-[55%] hover:bg-primary hover:text-white disabled:cursor-not-allowed disabled:opacity-0 md:inline-flex"
       >
         <IconArrowRight size={18} stroke={2.4} />
       </button>
@@ -372,22 +369,11 @@ export const CareersHighlightView: React.FC<Props> = ({
           transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
           className="pointer-events-none absolute right-0 top-0 z-0 hidden h-full w-3/5 select-none md:block lg:w-1/2"
         >
-          {/* Blurred halo — diffuses the image into the surrounding pastel bg */}
-          <div className="absolute inset-0 scale-110 opacity-50 blur-3xl">
-            <Media
-              fill
-              resource={heroImage}
-              imgClassName="object-cover object-right"
-              size="(max-width: 1024px) 60vw, 50vw"
-            />
-          </div>
-
           {/* Sharp image with radial mask that feathers all four edges to transparent */}
           <div
             className="absolute inset-0"
             style={{
-              maskImage:
-                'radial-gradient(ellipse 90% 85% at 85% 50%, black 35%, transparent 82%)',
+              maskImage: 'radial-gradient(ellipse 90% 85% at 85% 50%, black 35%, transparent 82%)',
               WebkitMaskImage:
                 'radial-gradient(ellipse 90% 85% at 85% 50%, black 35%, transparent 82%)',
             }}
@@ -395,7 +381,7 @@ export const CareersHighlightView: React.FC<Props> = ({
             <Media
               fill
               resource={heroImage}
-              imgClassName="object-cover object-right"
+              imgClassName="object-cover object-center"
               size="(max-width: 1024px) 60vw, 50vw"
             />
           </div>

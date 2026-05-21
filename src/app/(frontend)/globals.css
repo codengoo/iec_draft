@@ -214,6 +214,14 @@
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
   }
+  /* Applied by the landing-page client component to hide the document
+     vertical scrollbar while keeping scroll behaviour intact. */
+  body.landing-no-scrollbar {
+    scrollbar-width: none;
+  }
+  body.landing-no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer components {

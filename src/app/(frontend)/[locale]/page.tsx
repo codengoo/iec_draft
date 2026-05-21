@@ -11,6 +11,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { RenderHero } from '@/heros/RenderHero'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './[slug]/page.client'
+import LandingClient from './landing.client'
 
 type Args = {
   params: Promise<{ locale: string }>
@@ -32,6 +33,7 @@ export default async function HomePage({ params: paramsPromise }: Args) {
   return (
     <article className="pt-16 pb-24">
       <PageClient />
+      <LandingClient />
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
       {hero && <RenderHero {...hero} />}
