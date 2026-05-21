@@ -247,44 +247,6 @@ export const CoreValuesBlock: React.FC<Props> = ({
               <div className="size-96 rounded-full bg-primary/10 blur-3xl" />
             </motion.div>
 
-            {/* Floating spheres — give the 3D depth seen in the mockup */}
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute right-6 top-10 z-0 size-10 rounded-full bg-linear-to-br from-white via-sky-100 to-sky-300/70 shadow-[inset_-6px_-6px_14px_rgba(0,111,238,0.18),0_8px_18px_rgba(0,111,238,0.18)] lg:size-12"
-              animate={{ y: [0, -12, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute right-2 bottom-32 z-0 size-7 rounded-full bg-linear-to-br from-white via-sky-100 to-sky-300/70 shadow-[inset_-4px_-4px_10px_rgba(0,111,238,0.2),0_6px_14px_rgba(0,111,238,0.2)]"
-              animate={{ y: [0, 10, 0] }}
-              transition={{ duration: 3.5, delay: 0.7, repeat: Infinity, ease: 'easeInOut' }}
-            />
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute top-32 left-6 z-0 size-6 rounded-full bg-linear-to-br from-white via-sky-100 to-sky-300/70 shadow-[inset_-3px_-3px_8px_rgba(0,111,238,0.2),0_5px_12px_rgba(0,111,238,0.2)]"
-              animate={{ y: [0, -8, 0] }}
-              transition={{ duration: 3, delay: 1.2, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
-            {/* Tiny sparkles */}
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute top-6 left-12 z-0 text-primary/60"
-              animate={{ y: [0, -6, 0], rotate: [0, 18, 0] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <IconSparkles className="size-4" />
-            </motion.div>
-            <motion.div
-              aria-hidden
-              className="pointer-events-none absolute right-16 top-4 z-0 text-sky-400/70"
-              animate={{ y: [0, -10, 0], rotate: [0, -12, 0] }}
-              transition={{ duration: 3.5, delay: 0.6, repeat: Infinity, ease: 'easeInOut' }}
-            >
-              <IconSparkles className="size-3" />
-            </motion.div>
-
             {/* Mascot */}
             {mascot && typeof mascot === 'object' && (
               <motion.div
@@ -307,20 +269,6 @@ export const CoreValuesBlock: React.FC<Props> = ({
               </motion.div>
             )}
 
-            {/* Pedestal — layered rings to imitate the glowing podium in the mockup */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute bottom-4 left-1/2 z-0 -translate-x-1/2"
-            >
-              {/* Outer halo */}
-              <div className="absolute -inset-x-10 -inset-y-3 rounded-[50%] bg-primary/25 blur-2xl" />
-              {/* Ring stack */}
-              <div className="relative flex flex-col items-center">
-                <div className="h-2 w-72 rounded-[50%] bg-primary/40 blur-md" />
-                <div className="mt-1 h-6 w-72 rounded-[50%] border border-primary/40 bg-linear-to-b from-white/80 to-sky-200/60 shadow-[0_0_30px_8px_rgba(0,111,238,0.25)]" />
-                <div className="mt-1 h-2 w-60 rounded-[50%] bg-primary/30 blur-sm" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
