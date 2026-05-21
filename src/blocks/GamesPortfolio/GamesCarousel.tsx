@@ -18,31 +18,63 @@ function GameCardInner({ game, isCenter }: { game: Game; isCenter: boolean }) {
 
   return (
     <article
-      className={`overflow-hidden rounded-2xl ${
+      className={`group/card overflow-hidden rounded-2xl transition-shadow duration-300 ${
         isCenter
-          ? 'bg-linear-to-b from-[#0d1f40] to-[#060d1e] ring-1 ring-blue-500/20 shadow-[0_28px_72px_-8px_rgba(0,90,255,0.4),0_8px_24px_rgba(0,0,0,0.5)]'
+          ? 'bg-[#060d1e] ring-1 ring-blue-500/30 shadow-[0_28px_72px_-8px_rgba(0,90,255,0.45),0_8px_24px_rgba(0,0,0,0.5)]'
           : 'bg-[#0b0b12] ring-1 ring-white/5 shadow-[0_8px_24px_rgba(0,0,0,0.35)]'
       }`}
     >
       {/* Cover image */}
       {game.cover && typeof game.cover === 'object' && (
-        <div className={`overflow-hidden ${isCenter ? 'aspect-video' : 'aspect-4/3'}`}>
+        <div className="aspect-video overflow-hidden">
           <Media
             resource={game.cover}
-            imgClassName="h-full w-full object-cover transition-transform duration-700"
+            imgClassName={`h-full w-full object-cover transition-transform duration-500 ${
+              isCenter ? 'group-hover/card:scale-105' : ''
+            }`}
           />
         </div>
       )}
 
       {/* Info */}
-      <div className={isCenter ? 'p-6 pb-7' : 'p-4'}>
-        {/* Badges – center card only */}
+      <div
+        className={
+          isCenter
+            ? // Blue-tinted info panel for the centre card
+              'relative border-t border-blue-500/20 bg-linear-to-b from-blue-600/70 to-blue-950/40 p-6 pb-7'
+            : // Side card: tight padding + clear separator
+              'border-1.5 border-t-0 rounded-b-2xl border-white/30 bg-[#0d0d14] px-4 pb-4 pt-3'
+        }
+      >
+        {/* Blue accent line on left edge – centre only */}
+        {isCenter && (
+          <span
+            aria-hidden
+            className="absolute left-0 top-4 h-[calc(100%-2rem)] w-0.75 rounded-r-full bg-linear-to-b from-blue-400 to-blue-600/0"
+          />
+        )}
+
+        {/* Badges */}
         {isCenter && Array.isArray(game.badges) && game.badges.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
             {game.badges.map((badge, i) => (
               <span
                 key={i}
-                className="rounded-full bg-blue-500/20 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-blue-300"
+                className="rounded-full bg-blue-500/25 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-blue-300"
+              >
+                {badge.label}
+              </span>
+            ))}
+          </div>
+        )}
+
+        {/* Side card: compact badge row */}
+        {!isCenter && Array.isArray(game.badges) && game.badges.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-1.5">
+            {game.badges.slice(0, 2).map((badge, i) => (
+              <span
+                key={i}
+                className="rounded-full bg-white/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-widest text-white/50"
               >
                 {badge.label}
               </span>
@@ -51,28 +83,49 @@ function GameCardInner({ game, isCenter }: { game: Game; isCenter: boolean }) {
         )}
 
         <h3
-          className={`font-bold leading-tight text-white ${
-            isCenter ? 'text-xl' : 'line-clamp-2 text-sm'
+          className={`font-bold leading-tight ${
+            isCenter ? 'text-2xl text-white' : 'line-clamp-2 text-lg text-white/80'
           }`}
         >
           {game.title}
         </h3>
 
-        {/* Description – center card only */}
-        {isCenter && game.description && (
-          <p className="mt-2.5 line-clamp-3 text-sm leading-relaxed text-white/55">
+        {/* Description – centre card only */}
+        {game.description && (
+          <p className="mt-2.5 line-clamp-3 text-sm leading-relaxed text-blue-100/50">
             {game.description}
           </p>
         )}
 
-        {/* CTA – center card only */}
+        {/* Downloads */}
+        {game.downloads && (
+          <div
+            className={`flex items-center gap-1.5 ${
+              isCenter ? 'mt-3 text-xs text-blue-200/60' : 'mt-1.5 text-[10px] text-white/40'
+            }`}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              className={isCenter ? 'h-3.5 w-3.5 shrink-0' : 'h-3 w-3 shrink-0'}
+              aria-hidden
+            >
+              <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 1 0-1.09-1.03l-2.955 3.129V2.75Z" />
+              <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
+            </svg>
+            <span>{game.downloads}</span>
+          </div>
+        )}
+
+        {/* CTA – centre card only */}
         {isCenter && href && (
           <a
             href={href}
             target={game.playUrl ? '_blank' : undefined}
             rel={game.playUrl ? 'noreferrer' : undefined}
             onClick={(e) => e.stopPropagation()}
-            className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white ring-1 ring-blue-400/30 transition hover:bg-blue-500"
+            className="mt-5 inline-flex items-center gap-2 rounded-full bg-blue-600 px-5 py-2 text-xs font-semibold text-white ring-1 ring-blue-400/30 transition-all duration-200 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]"
           >
             Play now
             <svg
@@ -112,6 +165,9 @@ export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
 
   const pointerStartX = useRef(0)
   const didDrag = useRef(false)
+  // setPointerCapture redirects pointer events away from child elements,
+  // so we store the original target here to handle card-click navigation.
+  const pointerDownTarget = useRef<Element | null>(null)
 
   const goTo = useCallback(
     (idx: number) => setActiveIdx(Math.max(0, Math.min(idx, games.length - 1))),
@@ -124,6 +180,7 @@ export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
   const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
     e.currentTarget.setPointerCapture(e.pointerId)
     pointerStartX.current = e.clientX
+    pointerDownTarget.current = e.target as Element
     didDrag.current = false
   }, [])
 
@@ -146,9 +203,18 @@ export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
       const delta = e.clientX - pointerStartX.current
       if (delta < -DRAG_THRESHOLD) next()
       else if (delta > DRAG_THRESHOLD) prev()
+      else if (!didDrag.current) {
+        // setPointerCapture makes pointerup fire on the pivot, not the child card,
+        // so onClick on child motion.divs won't fire. Navigate via stored target.
+        const card = pointerDownTarget.current?.closest('[data-card-idx]')
+        if (card) {
+          const idx = parseInt(card.getAttribute('data-card-idx') ?? '-1', 10)
+          if (idx >= 0) goTo(idx)
+        }
+      }
       snapDragBack()
     },
-    [next, prev, snapDragBack],
+    [next, prev, snapDragBack, goTo],
   )
 
   return (
@@ -240,7 +306,7 @@ export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
          * x: trackOffset provides live drag-follow feedback.
          */}
         <motion.div
-          className="relative mx-auto cursor-grab select-none active:cursor-grabbing"
+          className="relative mx-auto cursor-grab select-none active:cursor-grabbing mb-4"
           style={{ height: 480, width: CARD_W, x: trackOffset, overflow: 'visible' }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
@@ -253,29 +319,40 @@ export function GamesCarousel({ games, eyebrow, heading }: CarouselProps) {
             if (abs > 2) return null // only render ±2 around the active card
 
             const isCenter = abs === 0
+            const isSide = abs === 1
 
             return (
               <motion.div
                 key={game.id}
-                className="absolute bottom-0"
+                data-card-idx={idx}
+                className={`absolute bottom-0${isSide ? ' cursor-pointer' : ''}`}
                 style={{
                   width: CARD_W,
                   left: '50%',
                   marginLeft: -CARD_W / 2,
                   originX: 0.5,
-                  originY: 1, // scale from the bottom — keeps card baselines aligned
+                  originY: 0,
                 }}
                 animate={{
                   x: distance * STEP,
-                  scale: isCenter ? 1 : abs === 1 ? 0.77 : 0.62,
-                  opacity: isCenter ? 1 : abs === 1 ? 0.58 : 0,
-                  y: isCenter ? 0 : 18,
-                  zIndex: isCenter ? 10 : abs === 1 ? 5 : 0,
+                  scale: isCenter ? 1 : isSide ? 0.84 : 0.62,
+                  opacity: isCenter ? 1 : isSide ? 0.65 : 0,
+                  // No y-offset: side cards stay within the overflow-hidden boundary
+                  y: 0,
+                  zIndex: isCenter ? 10 : isSide ? 5 : 0,
                 }}
+                whileHover={
+                  isCenter
+                    ? {
+                        scale: 1.03,
+                        y: -16,
+                        transition: { type: 'spring', stiffness: 400, damping: 25 },
+                      }
+                    : isSide
+                      ? { opacity: 0.8, transition: { duration: 0.3 } }
+                      : {}
+                }
                 transition={{ type: 'spring', stiffness: 340, damping: 34, mass: 0.7 }}
-                onClick={() => {
-                  if (!isCenter && !didDrag.current) goTo(idx)
-                }}
               >
                 <GameCardInner game={game} isCenter={isCenter} />
               </motion.div>

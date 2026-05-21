@@ -34,13 +34,13 @@ export function GamesPortfolioShell({ children }: Props) {
           marginRight: reduced ? '1.5rem' : sidePadding,
           borderRadius: reduced ? '1.5rem' : borderRadius,
           background:
-            'radial-gradient(ellipse 80% 60% at 50% 0%, oklch(22% 0.07 260deg) 0%, oklch(10% 0.02 260deg) 70%)',
+            'radial-gradient(ellipse 80% 60% at 50% 0%, oklch(32% 0.10 260deg) 0%, oklch(18% 0.05 260deg) 70%)',
         }}
       >
         {/* Subtle grid texture */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0 opacity-[0.04]"
+          className="pointer-events-none absolute inset-0 opacity-[0.07]"
           style={{
             backgroundImage:
               'linear-gradient(oklch(100% 0 0deg) 1px, transparent 1px), linear-gradient(to right, oklch(100% 0 0deg) 1px, transparent 1px)',
@@ -51,7 +51,7 @@ export function GamesPortfolioShell({ children }: Props) {
         {/* Glow accent */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-0 h-64 w-150 -translate-x-1/2 rounded-full bg-blue-500/10 blur-[80px]"
+          className="pointer-events-none absolute left-1/2 top-0 h-64 w-150 -translate-x-1/2 rounded-full bg-blue-500/20 blur-[80px]"
         />
 
         <div className="relative z-10 flex w-full flex-col items-center justify-center py-10 md:py-14">

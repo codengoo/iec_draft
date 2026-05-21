@@ -24,6 +24,7 @@ export const Games: CollectionConfig = {
     description: true,
     badges: true,
     playUrl: true,
+    downloads: true,
   },
   versions: {
     drafts: {
@@ -77,6 +78,16 @@ export const Games: CollectionConfig = {
       label: 'Play URL',
       admin: {
         description: 'External link to play / download the game.',
+      },
+    },
+    {
+      name: 'downloads',
+      type: 'text',
+      label: 'Downloads',
+      localized: true,
+      admin: {
+        description: 'Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").',
+        placeholder: '10M+',
       },
     },
     {

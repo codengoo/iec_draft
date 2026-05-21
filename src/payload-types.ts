@@ -1206,6 +1206,14 @@ export interface Game {
    * External link to play / download the game.
    */
   playUrl?: string | null;
+  /**
+   * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
+   */
+  downloads?: string | null;
+  /**
+   * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
+   */
+  downloads?: string | null;
   publishedAt?: string | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -2487,6 +2495,7 @@ export interface GamesSelect<T extends boolean = true> {
         id?: T;
       };
   playUrl?: T;
+  downloads?: T;
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
