@@ -25,12 +25,12 @@ export const IECLife: Block = {
       name: 'ctaLabel',
       type: 'text',
       localized: true,
-      defaultValue: 'See More',
+      defaultValue: 'Xem thêm',
     },
     {
       name: 'limit',
       type: 'number',
-      defaultValue: 5,
+      defaultValue: 4,
       admin: {
         description: 'How many recent posts to show (1 featured + the rest in the side list).',
         step: 1,
