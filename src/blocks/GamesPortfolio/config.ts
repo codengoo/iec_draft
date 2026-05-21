@@ -39,14 +39,5 @@ export const GamesPortfolio: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
     },
-    {
-      name: 'limit',
-      type: 'number',
-      defaultValue: 3,
-      admin: {
-        condition: (_, siblingData) => siblingData.populateBy === 'collection',
-        step: 1,
-      },
-    },
   ],
 }

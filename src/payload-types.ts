@@ -1177,7 +1177,6 @@ export interface GamesPortfolioBlock {
   heading: string;
   populateBy?: ('collection' | 'selection') | null;
   selectedGames?: (string | Game)[] | null;
-  limit?: number | null;
   id?: string | null;
   blockName?: string | null;
   blockType: 'gamesPortfolio';
@@ -2139,7 +2138,6 @@ export interface GamesPortfolioBlockSelect<T extends boolean = true> {
   heading?: T;
   populateBy?: T;
   selectedGames?: T;
-  limit?: T;
   id?: T;
   blockName?: T;
 }
