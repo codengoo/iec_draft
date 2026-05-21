@@ -96,46 +96,49 @@ const PhotoCard: React.FC<{ post: Post; className?: string }> = ({ post, classNa
   return (
     <Link
       href={`/posts/${post.slug}`}
-      className={`group relative block overflow-hidden rounded-2xl bg-muted shadow-[0_15px_35px_-15px_rgba(0,0,0,0.25)] ring-1 ring-black/5 transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_25px_50px_-15px_rgba(0,0,0,0.35)] ${className}`}
+      className={`group block rounded-3xl bg-white p-0 shadow-[0_8px_20px_-15px_rgba(0,0,0,0)] ring-1 ring-black/0 transition-all duration-500 ease-out hover:-translate-y-2 hover:p-2 hover:shadow-[0_30px_55px_-15px_rgba(0,0,0,0.32)] hover:ring-black/5 md:hover:p-2.5 ${className}`}
     >
-      <Media
-        fill
-        resource={post.heroImage}
-        imgClassName="object-cover transition-transform duration-700 group-hover:scale-110"
-        size="(max-width: 768px) 100vw, 33vw"
-      />
+      {/* Inner image frame — full bleed by default, pulls in to reveal white frame on hover */}
+      <div className="relative h-full overflow-hidden rounded-3xl bg-muted transition-[border-radius] duration-500 group-hover:rounded-[1.25rem]">
+        <Media
+          fill
+          resource={post.heroImage}
+          imgClassName="object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:-translate-y-1"
+          size="(max-width: 768px) 100vw, 33vw"
+        />
 
-      {/* Persistent gradient — keeps text legible without hover */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 bg-linear-to-t from-slate-900/95 via-slate-900/55 to-slate-900/10 transition-opacity duration-500 group-hover:from-slate-900/95 group-hover:via-slate-900/70"
-      />
+        {/* Persistent gradient — keeps text legible without hover */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-linear-to-t from-slate-900/95 via-slate-900/55 to-slate-900/10 transition-opacity duration-500 group-hover:from-slate-900/95 group-hover:via-slate-900/70"
+        />
 
-      {/* Content overlay — always visible */}
-      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-4 text-white md:p-5">
-        {(tags.length > 0 || date) && (
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-wide md:text-[11px]">
-            {tags.map((t) => (
-              <span key={t.id} className="text-sky-300">
-                #{t.title.replace(/\s+/g, '_')}
-              </span>
-            ))}
-            {tags.length > 0 && date && (
-              <span aria-hidden className="text-white/50">
-                •
-              </span>
-            )}
-            {date && <span className="text-white/80">{date}</span>}
-          </div>
-        )}
-        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-white md:text-base">
-          {post.title}
-        </h3>
-        {excerpt && (
-          <p className="line-clamp-2 max-h-0 overflow-hidden text-[11px] leading-relaxed text-white/75 opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100 md:text-xs">
-            {excerpt}
-          </p>
-        )}
+        {/* Content overlay — always visible */}
+        <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1.5 p-4 text-white md:p-5">
+          {(tags.length > 0 || date) && (
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[10px] font-semibold uppercase tracking-wide md:text-[11px]">
+              {tags.map((t) => (
+                <span key={t.id} className="text-sky-300">
+                  #{t.title.replace(/\s+/g, '_')}
+                </span>
+              ))}
+              {tags.length > 0 && date && (
+                <span aria-hidden className="text-white/50">
+                  •
+                </span>
+              )}
+              {date && <span className="text-white/80">{date}</span>}
+            </div>
+          )}
+          <h3 className="line-clamp-2 text-sm font-bold leading-snug text-white md:text-base">
+            {post.title}
+          </h3>
+          {excerpt && (
+            <p className="line-clamp-2 max-h-0 overflow-hidden text-[11px] leading-relaxed text-white/75 opacity-0 transition-all duration-500 ease-out group-hover:max-h-20 group-hover:opacity-100 md:text-xs">
+              {excerpt}
+            </p>
+          )}
+        </div>
       </div>
     </Link>
   )
@@ -286,8 +289,8 @@ export const CategoryShowcaseView: React.FC<Props> = ({
         variants={container}
       >
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-12 lg:gap-14">
-          {/* LEFT */}
-          <div className="lg:col-span-5">
+          {/* TEXT — right column on lg+, first on mobile for reading flow */}
+          <div className="lg:order-2 lg:col-span-5">
             {eyebrow && (
               <motion.span
                 variants={fadeUp}
@@ -330,9 +333,9 @@ export const CategoryShowcaseView: React.FC<Props> = ({
             )}
           </div>
 
-          {/* RIGHT — photo collage 4 cols × 2 rows */}
+          {/* COLLAGE — left column on lg+ */}
           {posts.length > 0 && (
-            <motion.div className="lg:col-span-7" variants={container}>
+            <motion.div className="lg:order-1 lg:col-span-7" variants={container}>
               <div className="grid auto-rows-[12rem] grid-cols-4 gap-3 md:auto-rows-[16rem] md:gap-4 lg:auto-rows-[19rem]">
                 {/* Slot 1: top-left wide (cols 1-2 × row 1) */}
                 {p1 && (

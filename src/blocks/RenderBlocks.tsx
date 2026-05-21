@@ -50,7 +50,7 @@ const blockComponents = {
 }
 
 // Blocks that manage their own vertical spacing — skip the outer `my-16` wrapper.
-const flushBlocks = new Set(['aboutWithStats', 'iecLife'])
+const flushBlocks = new Set(['aboutWithStats', 'iecLife', 'categoryShowcase'])
 
 export const RenderBlocks: React.FC<{
   blocks: Page['layout'][0][]
