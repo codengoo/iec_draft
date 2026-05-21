@@ -133,7 +133,7 @@ export const PinnedCrossfade: React.FC<PinnedCrossfadeProps> = ({
           {/* Both section grids superimposed via absolute positioning */}
           <div className="container relative h-full w-full">
             {/* FIRST section grid (VisionMission) */}
-            <div className="absolute inset-0 grid grid-cols-12 items-center gap-8">
+            <div className="pointer-events-none absolute inset-0 grid grid-cols-12 items-center gap-8">
               <motion.div
                 className={firstLeftClassName}
                 style={{
@@ -161,7 +161,7 @@ export const PinnedCrossfade: React.FC<PinnedCrossfadeProps> = ({
             </div>
 
             {/* SECOND section grid (CoreValues) */}
-            <div className="absolute inset-0 grid grid-cols-12 items-center gap-10">
+            <div className="pointer-events-none absolute inset-0 grid grid-cols-12 items-center gap-10">
               <motion.div
                 className={secondLeftClassName}
                 style={{

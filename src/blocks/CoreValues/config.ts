@@ -100,6 +100,14 @@ export const CoreValues: Block = {
           type: 'text',
           localized: true,
         },
+        {
+          name: 'image',
+          type: 'upload',
+          relationTo: 'media',
+          admin: {
+            description: 'Optional image shown on the right when this card is hovered.',
+          },
+        },
       ],
     },
     {

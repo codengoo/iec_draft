@@ -14,6 +14,7 @@ import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
 import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
 import {
   CoreValuesBlock,
+  CoreValuesHoverProvider,
   CoreValuesLeftContent,
   CoreValuesRightContent,
 } from '@/blocks/CoreValues/Component'
@@ -76,22 +77,25 @@ export const RenderBlocks: React.FC<{
 
         const { blockType } = block
 
-        // Paired VM + CV → pinned staggered slide-up
+        // Paired VM + CV → pinned staggered slide-up.
+        // CoreValuesHoverProvider wraps the whole pair so Left cards and Right
+        // image swap share a single hover state across the layered grids.
         if (pairs.has(index)) {
           const cvIndex = pairs.get(index)!
           const cvBlock = blocks[cvIndex]
           return (
-            <PinnedCrossfade
-              key={index}
-              // @ts-expect-error block props are validated by Payload schema
-              firstLeft={<VisionMissionLeftContent {...block} />}
-              // @ts-expect-error block props are validated by Payload schema
-              firstRight={<VisionMissionRightContent {...block} />}
-              // @ts-expect-error block props are validated by Payload schema
-              secondLeft={<CoreValuesLeftContent {...cvBlock} />}
-              // @ts-expect-error block props are validated by Payload schema
-              secondRight={<CoreValuesRightContent {...cvBlock} />}
-            />
+            <CoreValuesHoverProvider key={index}>
+              <PinnedCrossfade
+                // @ts-expect-error block props are validated by Payload schema
+                firstLeft={<VisionMissionLeftContent {...block} />}
+                // @ts-expect-error block props are validated by Payload schema
+                firstRight={<VisionMissionRightContent {...block} />}
+                // @ts-expect-error block props are validated by Payload schema
+                secondLeft={<CoreValuesLeftContent {...cvBlock} />}
+                // @ts-expect-error block props are validated by Payload schema
+                secondRight={<CoreValuesRightContent {...cvBlock} />}
+              />
+            </CoreValuesHoverProvider>
           )
         }
 

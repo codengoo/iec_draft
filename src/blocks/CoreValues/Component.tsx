@@ -21,11 +21,11 @@ import {
   IconZzz,
   type IconProps,
 } from '@tabler/icons-react'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import Link from 'next/link'
-import React from 'react'
+import React, { createContext, useContext, useState } from 'react'
 
-import type { CoreValuesBlock as Props } from '@/payload-types'
+import type { CoreValuesBlock as Props, Media as MediaType } from '@/payload-types'
 
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
@@ -102,10 +102,34 @@ function resolveLinkHref(link: CtaLink): string {
   return link.url ?? '#'
 }
 
-/**
- * Left column content — eyebrow + 2-line heading + body + 2x2 value cards + CTA.
- * Used standalone inside CoreValuesBlock, and by PinnedCrossfade.
- */
+/* ─────────────────────────────────────────────────────────────────
+   Hover context — shared state between Left cards and Right image.
+   Must wrap both Left and Right sub-components.
+   ───────────────────────────────────────────────────────────────── */
+
+type CoreValuesHoverState = {
+  hoveredIndex: number | null
+  setHoveredIndex: (i: number | null) => void
+}
+
+const CoreValuesHoverContext = createContext<CoreValuesHoverState>({
+  hoveredIndex: null,
+  setHoveredIndex: () => {},
+})
+
+export const CoreValuesHoverProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
+  return (
+    <CoreValuesHoverContext.Provider value={{ hoveredIndex, setHoveredIndex }}>
+      {children}
+    </CoreValuesHoverContext.Provider>
+  )
+}
+
+/* ─────────────────────────────────────────────────────────────────
+   Left content
+   ───────────────────────────────────────────────────────────────── */
+
 export const CoreValuesLeftContent: React.FC<Props> = ({
   eyebrow,
   eyebrowIcon,
@@ -116,6 +140,7 @@ export const CoreValuesLeftContent: React.FC<Props> = ({
   cta,
 }) => {
   const primaryLink = cta?.[0]?.link
+  const { setHoveredIndex } = useContext(CoreValuesHoverContext)
 
   return (
     <>
@@ -146,13 +171,25 @@ export const CoreValuesLeftContent: React.FC<Props> = ({
       {Array.isArray(values) && values.length > 0 && (
         <ul className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2">
           {values.map((value, i) => (
-            <li key={value.id ?? i}>
-              <div className="group flex h-full items-start gap-4 rounded-2xl border border-white/60 bg-white/80 p-5 shadow-[0_20px_50px_-25px_rgba(0,111,238,0.35)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_-20px_rgba(0,111,238,0.55)] dark:border-white/10 dark:bg-white/5">
-                <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/15 to-sky-200/40 text-primary ring-1 ring-primary/15">
+            <li
+              key={value.id ?? i}
+              onMouseEnter={() => setHoveredIndex(i)}
+              onMouseLeave={() => setHoveredIndex(null)}
+              onFocus={() => setHoveredIndex(i)}
+              onBlur={() => setHoveredIndex(null)}
+            >
+              <div className="group flex h-full items-start gap-4 rounded-2xl border border-white/60 bg-white/80 p-5 shadow-[0_20px_50px_-25px_rgba(0,111,238,0.35)] backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-primary/30 hover:shadow-[0_24px_60px_-20px_rgba(0,111,238,0.55)] dark:border-white/10 dark:bg-white/5">
+                <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-2xl bg-linear-to-br from-primary/15 to-sky-200/40 text-primary ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-110 group-hover:from-primary/25 group-hover:to-sky-300/60">
                   <Icon name={value.icon} className="size-6" stroke={2.2} />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-sm font-extrabold uppercase tracking-wider text-foreground">
+                  <p
+                    className="bg-clip-text text-sm font-extrabold uppercase tracking-wider text-foreground transition-colors duration-300 group-hover:text-transparent"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(120deg, #006FEE 0%, #38BDF8 55%, #0EA5E9 100%)',
+                    }}
+                  >
                     {value.title}
                   </p>
                   {value.description && (
@@ -186,14 +223,22 @@ export const CoreValuesLeftContent: React.FC<Props> = ({
   )
 }
 
-/**
- * Right column content — mascot with halo glow.
- * Used standalone inside CoreValuesBlock, and by PinnedCrossfade.
- */
-export const CoreValuesRightContent: React.FC<Props> = ({ mascot }) => {
+/* ─────────────────────────────────────────────────────────────────
+   Right content — mascot by default; swaps to hovered card's image
+   ───────────────────────────────────────────────────────────────── */
+
+export const CoreValuesRightContent: React.FC<Props> = ({ mascot, values }) => {
+  const { hoveredIndex } = useContext(CoreValuesHoverContext)
+
+  const hoveredValue = hoveredIndex !== null && values ? values[hoveredIndex] : null
+  const hoveredImage =
+    hoveredValue?.image && typeof hoveredValue.image === 'object'
+      ? (hoveredValue.image as MediaType)
+      : null
+
   return (
     <div className="relative flex min-h-112 items-center justify-center">
-      {/* Big soft halo behind mascot */}
+      {/* Big soft halo behind everything */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0 flex items-center justify-center"
@@ -203,41 +248,74 @@ export const CoreValuesRightContent: React.FC<Props> = ({ mascot }) => {
         <div className="size-96 rounded-full bg-primary/10 blur-3xl" />
       </motion.div>
 
-      {/* Mascot */}
+      {/* Mascot — fades & shrinks slightly when a card is hovered */}
       {mascot && typeof mascot === 'object' && (
         <motion.div
           className="drop-shadow-2xl relative z-10"
-          animate={{ y: [0, -14, 0] }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+          animate={{
+            y: hoveredImage ? 0 : [0, -14, 0],
+            opacity: hoveredImage ? 0 : 1,
+            scale: hoveredImage ? 0.9 : 1,
+          }}
+          transition={
+            hoveredImage
+              ? { duration: 0.4, ease: 'easeOut' }
+              : { duration: 3.5, repeat: Infinity, ease: 'easeInOut' }
+          }
         >
           <Media resource={mascot} imgClassName="h-auto w-72 select-none md:w-80 lg:w-96" />
         </motion.div>
       )}
+
+      {/* Hovered card image — bo góc mềm, soft shadow, floating */}
+      <AnimatePresence mode="wait">
+        {hoveredImage && (
+          <motion.div
+            key={hoveredIndex}
+            className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center"
+            initial={{ opacity: 0, y: 30, scale: 0.92 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
+            <motion.div
+              className="overflow-hidden rounded-4xl shadow-[0_30px_80px_-20px_rgba(0,111,238,0.45),0_10px_30px_-12px_rgba(0,0,0,0.18)] ring-1 ring-white/50 backdrop-blur-sm"
+              animate={{ y: [0, -12, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              <Media
+                resource={hoveredImage}
+                imgClassName="block h-auto w-72 select-none md:w-80 lg:w-96"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
 
-/**
- * Full section — used for standalone rendering (when the block is NOT paired
- * with a preceding VisionMission block). Includes background, container, and
- * grid layout. When paired, PinnedCrossfade renders Left/Right sub-components
- * directly and supplies its own background.
- */
+/* ─────────────────────────────────────────────────────────────────
+   Full block — standalone (wraps both sub-components in Provider)
+   ───────────────────────────────────────────────────────────────── */
+
 export const CoreValuesBlock: React.FC<Props> = (props) => {
   return (
-    <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-b from-sky-50/60 via-background to-background py-20 lg:py-28">
-      <SectionBackground />
+    <CoreValuesHoverProvider>
+      <section className="relative flex min-h-screen items-center overflow-hidden bg-linear-to-b from-sky-50/60 via-background to-background py-20 lg:py-28">
+        <SectionBackground />
 
-      <div className="container relative w-full">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
-            <CoreValuesLeftContent {...props} />
-          </div>
-          <div className="lg:col-span-5">
-            <CoreValuesRightContent {...props} />
+        <div className="container relative w-full">
+          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-10">
+            <div className="lg:col-span-7">
+              <CoreValuesLeftContent {...props} />
+            </div>
+            <div className="lg:col-span-5">
+              <CoreValuesRightContent {...props} />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </CoreValuesHoverProvider>
   )
 }
