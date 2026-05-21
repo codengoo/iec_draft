@@ -346,6 +346,7 @@ export interface Page {
     | FeatureTabsBlock
     | SocialConnectBlock
     | IECLifeBlock
+    | CategoryShowcaseBlock
   )[];
   meta?: {
     title?: string | null;
@@ -1531,6 +1532,47 @@ export interface IECLifeBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock".
+ */
+export interface CategoryShowcaseBlock {
+  /**
+   * Small uppercase label shown above the heading.
+   */
+  eyebrow?: string | null;
+  heading: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Only posts in this category will be shown in the block.
+   */
+  category: string | Category;
+  /**
+   * How many posts to show as pill rows in the left column.
+   */
+  pillsCount?: number | null;
+  /**
+   * Optional CTA label shown under the pill list.
+   */
+  ctaLabel?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'categoryShowcase';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "jobs".
  */
 export interface Job {
@@ -2057,6 +2099,7 @@ export interface PagesSelect<T extends boolean = true> {
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         socialConnect?: T | SocialConnectBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;
+        categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
       };
   meta?:
     | T
@@ -2422,6 +2465,20 @@ export interface IECLifeBlockSelect<T extends boolean = true> {
   heading?: T;
   ctaLabel?: T;
   limit?: T;
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "CategoryShowcaseBlock_select".
+ */
+export interface CategoryShowcaseBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  description?: T;
+  category?: T;
+  pillsCount?: T;
+  ctaLabel?: T;
   id?: T;
   blockName?: T;
 }
@@ -3221,6 +3278,7 @@ export interface Home {
         | FeatureTabsBlock
         | SocialConnectBlock
         | IECLifeBlock
+        | CategoryShowcaseBlock
       )[]
     | null;
   _status?: ('draft' | 'published') | null;
@@ -3391,6 +3449,7 @@ export interface HomeSelect<T extends boolean = true> {
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         socialConnect?: T | SocialConnectBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;
+        categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
       };
   _status?: T;
   updatedAt?: T;

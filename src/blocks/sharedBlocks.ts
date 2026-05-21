@@ -8,6 +8,7 @@ import { SendUsCV } from '@/blocks/SendUsCV/config'
 
 import { AboutWithStats } from '@/blocks/AboutWithStats/config'
 import { CareersHighlight } from '@/blocks/CareersHighlight/config'
+import { CategoryShowcase } from '@/blocks/CategoryShowcase/config'
 import { CoreValues } from '@/blocks/CoreValues/config'
 import { FeatureTabs } from '@/blocks/FeatureTabs/config'
 import { GamesPortfolio } from '@/blocks/GamesPortfolio/config'
@@ -35,4 +36,5 @@ export const sharedLayoutBlocks = [
   FeatureTabs,
   SocialConnect,
   IECLife,
+  CategoryShowcase,
 ]

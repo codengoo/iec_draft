@@ -12,6 +12,7 @@ import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 
 import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
 import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
+import { CategoryShowcaseBlock } from '@/blocks/CategoryShowcase/Component'
 import {
   CoreValuesBlock,
   CoreValuesHoverProvider,
@@ -45,6 +46,7 @@ const blockComponents = {
   featureTabs: FeatureTabsBlock,
   socialConnect: SocialConnectBlock,
   iecLife: IECLifeBlock,
+  categoryShowcase: CategoryShowcaseBlock,
 }
 
 // Blocks that manage their own vertical spacing — skip the outer `my-16` wrapper.
