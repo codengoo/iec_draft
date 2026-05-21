@@ -1099,9 +1099,9 @@ export interface AboutWithStatsBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * Small illustration shown beside the description text.
+   * Image displayed beside the description (e.g. a team / event photo). Rendered with rounded corners, soft shadow, and a slight tilt for a casual feel.
    */
-  mascot?: (string | null) | Media;
+  supportImage?: (string | null) | Media;
   /**
    * Optional second mascot (e.g. a mascot in an airplane) that flies across the section as the user scrolls — enters from one side, arcs through the middle, exits on the other side.
    */
@@ -2094,7 +2094,7 @@ export interface AboutWithStatsBlockSelect<T extends boolean = true> {
   eyebrow?: T;
   heading?: T;
   description?: T;
-  mascot?: T;
+  supportImage?: T;
   flyingMascot?: T;
   cta?:
     | T

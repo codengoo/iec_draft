@@ -207,7 +207,7 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
   eyebrow,
   heading,
   description,
-  mascot,
+  supportImage,
   flyingMascot,
   cta,
   stats,
@@ -322,10 +322,7 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
                 </span>
                 {marqueeBadgeMedia && (
                   <span className="block w-12 shrink-0 md:w-16 lg:w-20">
-                    <Media
-                      resource={marqueeBadgeMedia}
-                      imgClassName="w-full h-auto select-none"
-                    />
+                    <Media resource={marqueeBadgeMedia} imgClassName="w-full h-auto select-none" />
                   </span>
                 )}
               </React.Fragment>
@@ -374,7 +371,7 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
       )}
 
       <motion.div
-        className="container relative w-full py-16 md:py-20 lg:py-24"
+        className="container relative w-full pt-28 pb-16 md:pt-44 md:pb-20 lg:pt-48 lg:pb-24"
         variants={container}
         initial="hidden"
         whileInView="visible"
@@ -406,19 +403,22 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
               </motion.div>
             )}
 
-            <div className="flex flex-col gap-8 md:flex-row md:items-start md:gap-8">
-              {mascot && typeof mascot === 'object' && (
-                <motion.div variants={item} className="w-32 shrink-0 md:w-40 lg:w-44">
+            <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-10 lg:gap-12">
+              {supportImage && typeof supportImage === 'object' && (
+                <motion.div variants={item} className="w-56 shrink-0 self-center md:w-64 lg:w-72">
                   <motion.div
-                    animate={reduced ? undefined : { y: [0, -8, 0] }}
+                    className="group relative -rotate-3 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-[1.03]"
+                    animate={reduced ? undefined : { y: [0, -10, 0] }}
                     transition={
-                      reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }
+                      reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
                     }
                   >
-                    <Media
-                      resource={mascot}
-                      imgClassName="w-full h-auto select-none drop-shadow-md"
-                    />
+                    <div className="overflow-hidden rounded-[28px] shadow-[0_25px_50px_-12px_rgba(0,111,238,0.25),0_10px_24px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
+                      <Media
+                        resource={supportImage}
+                        imgClassName="block aspect-[4/5] w-full h-full object-cover select-none"
+                      />
+                    </div>
                   </motion.div>
                 </motion.div>
               )}

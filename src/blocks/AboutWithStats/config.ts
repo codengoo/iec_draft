@@ -91,11 +91,13 @@ export const AboutWithStats: Block = {
       }),
     },
     {
-      name: 'mascot',
+      name: 'supportImage',
+      label: 'Support Image',
       type: 'upload',
       relationTo: 'media',
       admin: {
-        description: 'Small illustration shown beside the description text.',
+        description:
+          'Image displayed beside the description (e.g. a team / event photo). Rendered with rounded corners, soft shadow, and a slight tilt for a casual feel.',
       },
     },
     {
