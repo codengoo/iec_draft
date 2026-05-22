@@ -47,20 +47,35 @@ const buildMinio = (): Plugin => {
 }
 
 // Loads a service-account JSON either from a file path (GCS_KEY_FILE) or an
-// inline JSON string (GCS_CREDENTIALS). Inline takes priority so the same env
-// var works in environments that don't support filesystem secrets.
+// inline base64-encoded JSON string (GCS_CREDENTIALS). Inline takes priority so
+// the same env var works in environments that don't support filesystem secrets.
+// Base64 is required for inline because raw JSON containing newlines/quotes
+// gets mangled when piped through Docker/Coolify env variable layers.
 const loadGcsCredentials = (): StorageOptions => {
   const inline = process.env.GCS_CREDENTIALS
   const keyFile = process.env.GCS_KEY_FILE
   const projectId = process.env.GCS_PROJECT_ID
 
   if (inline) {
+    const trimmed = inline.trim()
+    if (trimmed.startsWith('{')) {
+      throw new Error(
+        '[storage] GCS_CREDENTIALS must be base64-encoded JSON, not raw JSON. ' +
+          'Encode the service-account key with: base64 -w0 key.json',
+      )
+    }
+    let decoded: string
+    try {
+      decoded = Buffer.from(trimmed, 'base64').toString('utf8')
+    } catch {
+      throw new Error('[storage] GCS_CREDENTIALS is not valid base64.')
+    }
     let parsed: Record<string, unknown>
     try {
-      parsed = JSON.parse(inline)
+      parsed = JSON.parse(decoded)
     } catch {
       throw new Error(
-        '[storage] GCS_CREDENTIALS must be a valid JSON string (service account key).',
+        '[storage] GCS_CREDENTIALS must decode to a valid JSON service-account key.',
       )
     }
     return {
