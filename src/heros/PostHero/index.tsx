@@ -4,6 +4,7 @@ import { formatDateTime } from 'src/utilities/formatDateTime'
 import type { Post } from '@/payload-types'
 
 import { Media } from '@/components/Media'
+import { ShareIconButton } from '@/components/ShareWidget/ShareIconButton'
 import { formatAuthors } from '@/utilities/formatAuthors'
 
 export const PostHero: React.FC<{
@@ -76,6 +77,7 @@ export const PostHero: React.FC<{
                     {formatDateTime(publishedAt)}
                   </time>
                 )}
+                <ShareIconButton tone="light" shareText={title} />
               </div>
             </div>
           </div>

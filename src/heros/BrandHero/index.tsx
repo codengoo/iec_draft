@@ -20,6 +20,7 @@ import type { Home, Page, Media as MediaType } from '@/payload-types'
 import { Media } from '@/components/Media'
 import { ShareWidget, type SharePlatformKey } from '@/components/ShareWidget'
 import { VideoPopup } from '@/components/VideoPopup'
+import { useTransparentHeader } from '@/providers/TransparentHeader'
 import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type BrandHeroProps = NonNullable<Page['hero']> | NonNullable<Home['hero']>
@@ -163,6 +164,12 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
 }) => {
   const reduced = useReducedMotion()
   const primaryLink = cta?.[0]?.link
+  const { setTransparent } = useTransparentHeader()
+
+  useEffect(() => {
+    setTransparent(true)
+    return () => setTransparent(false)
+  }, [setTransparent])
 
   const qrLogoUrl =
     share?.qrLogo && typeof share.qrLogo === 'object' ? getMediaUrl(share.qrLogo.url) : undefined
@@ -202,7 +209,10 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
   }, [mouseX, mouseY, reduced])
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden">
+    <section
+      ref={sectionRef}
+      className="relative -mt-50 flex min-h-screen items-center overflow-hidden"
+    >
       {/* Background gradient */}
       <div
         aria-hidden
@@ -280,7 +290,7 @@ export const BrandHero: React.FC<BrandHeroProps> = ({
           />
         ))}
 
-      <div className="container relative py-20 md:py-28 lg:py-32">
+      <div className="container relative w-full py-24 md:py-28 lg:py-32">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12">
           <motion.div
             className="lg:col-span-7"
