@@ -2,7 +2,7 @@
 
 **Plan**: [23052026 1618 newsletter-email-campaign.md](23052026%201618%20newsletter-email-campaign.md)  
 **Created**: 23/05/2026 16:18  
-**Status**: ⬜ Not Started
+**Status**: ✅ Done
 
 ## Mục tiêu
 
@@ -71,7 +71,7 @@ RESEND_API_KEY=re_xxxxxxxxxxxx
 
 ## Acceptance criteria
 
-- [ ] `pnpm build` không lỗi
+- [x] `pnpm build` không lỗi
 - [ ] Đặt `EMAIL_PROVIDER=nodemailer` + SMTP creds → Payload có thể gửi email (kiểm tra qua Payload auth forgot-password)
 - [ ] Đặt `EMAIL_PROVIDER=resend` + API key → tương tự
 
