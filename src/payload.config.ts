@@ -20,6 +20,7 @@ import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
 import { sendCampaignEndpoint } from './endpoints/sendCampaign'
 import { unsubscribeEndpoint } from './endpoints/unsubscribe'
+import { Career } from './Career/config'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Home } from './Home/config'
@@ -88,7 +89,7 @@ export default buildConfig({
   ],
   cors: [getServerSideURL()].filter(Boolean),
   endpoints: [unsubscribeEndpoint, sendCampaignEndpoint],
-  globals: [Header, Footer, Home],
+  globals: [Header, Footer, Home, Career],
   localization: {
     locales: [
       { label: 'English', code: 'en' },

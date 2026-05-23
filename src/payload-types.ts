@@ -127,11 +127,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     home: Home;
+    career: Career;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
+    career: CareerSelect<false> | CareerSelect<true>;
   };
   locale: 'en' | 'vi';
   widgets: {
@@ -3377,6 +3379,195 @@ export interface Home {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "career".
+ */
+export interface Career {
+  id: string;
+  hero: {
+    type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact' | 'videoHero' | 'brandHero';
+    richText?: {
+      root: {
+        type: string;
+        children: {
+          type: any;
+          version: number;
+          [k: string]: unknown;
+        }[];
+        direction: ('ltr' | 'rtl') | null;
+        format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+        indent: number;
+        version: number;
+      };
+      [k: string]: unknown;
+    } | null;
+    links?:
+      | {
+          link: {
+            type?: ('reference' | 'route' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
+            url?: string | null;
+            label: string;
+            /**
+             * Choose how the link should be rendered.
+             */
+            appearance?: ('default' | 'outline') | null;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    media?: (string | null) | Media;
+    videoSource?: ('upload' | 'youtube') | null;
+    videoFile?: (string | null) | Media;
+    /**
+     * Enter the full YouTube URL (e.g. https://www.youtube.com/watch?v=xxxxx)
+     */
+    youtubeUrl?: string | null;
+    /**
+     * Main heading displayed in the overlay area
+     */
+    heading?: string | null;
+    /**
+     * Subtitle / description text below the heading
+     */
+    subtitle?: string | null;
+    /**
+     * Content displayed inside the overlay area (left 2/3 of the screen)
+     */
+    overlayContent?:
+      | (CallToActionBlock | ContentBlock | MediaBlock | BannerBlock | CodeBlock | PolicyTabsBlock)[]
+      | null;
+    primaryButtonLabel?: string | null;
+    primaryButtonUrl?: string | null;
+    secondaryButtonLabel?: string | null;
+    secondaryButtonUrl?: string | null;
+    /**
+     * YouTube or direct video URL to open in a popup when the play button is clicked
+     */
+    videoPopupUrl?: string | null;
+    /**
+     * Small label above the heading (e.g. "Gaming Studio").
+     */
+    eyebrow?: string | null;
+    /**
+     * Large brand heading (e.g. "IEC Games").
+     */
+    brandHeading?: string | null;
+    /**
+     * Supporting paragraph under the heading.
+     */
+    tagline?: string | null;
+    /**
+     * Each stat shows a number that counts up from 0 when scrolled into view, followed by a unit suffix (e.g. value=2.5, suffix="B+", label="Total Downloads" → "2.5B+").
+     */
+    inlineStats?:
+      | {
+          /**
+           * Numeric value (e.g. 2.5, 50, 20).
+           */
+          value: number;
+          /**
+           * Unit / sign appended to the number (e.g. "B+", "M+", "+", "%").
+           */
+          suffix?: string | null;
+          label: string;
+          id?: string | null;
+        }[]
+      | null;
+    mascot?: (string | null) | Media;
+    /**
+     * Primary call-to-action button (e.g. "Explore us") shown next to the share / video buttons.
+     */
+    cta?:
+      | {
+          link: {
+            type?: ('reference' | 'route' | 'custom') | null;
+            newTab?: boolean | null;
+            reference?:
+              | ({
+                  relationTo: 'pages';
+                  value: string | Page;
+                } | null)
+              | ({
+                  relationTo: 'posts';
+                  value: string | Post;
+                } | null);
+            /**
+             * Pick a built-in section page (route is hardcoded in the app).
+             */
+            route?: ('/' | '/posts' | '/search') | null;
+            url?: string | null;
+            label: string;
+          };
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Optional. YouTube / Vimeo URL or direct .mp4 link. When set, a play button appears next to the CTA and opens the video in a popup.
+     */
+    introVideoUrl?: string | null;
+    /**
+     * QR / share popup next to the CTA. Pick which platforms to expose, an optional centre logo, and a colour preset for the QR code.
+     */
+    share?: {
+      enabledPlatforms?: ('facebook' | 'x' | 'linkedin' | 'messenger' | 'telegram' | 'whatsapp' | 'email')[] | null;
+      /**
+       * Image rendered at the centre of the QR code (use the site logo). The colour theme of the QR is chosen by the visitor inside the share popup.
+       */
+      qrLogo?: (string | null) | Media;
+    };
+    /**
+     * Floating 3D / illustrated objects scattered around the hero. Each item has an image, a position, and an optional size %.
+     */
+    decorations?:
+      | {
+          image: string | Media;
+          position: 'topLeft' | 'topRight' | 'bottomLeft' | 'bottomRight' | 'middleLeft' | 'middleRight';
+          /**
+           * Width as % of hero
+           */
+          sizePercent?: number | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  layout?:
+    | (
+        | CallToActionBlock
+        | ContentBlock
+        | MediaBlock
+        | ArchiveBlock
+        | FormBlock
+        | JobBoardBlock
+        | SendUsCVBlock
+        | AboutWithStatsBlock
+        | GamesPortfolioBlock
+        | VisionMissionBlock
+        | CoreValuesBlock
+        | CareersHighlightBlock
+        | FeatureTabsBlock
+        | IECLifeBlock
+        | CategoryShowcaseBlock
+      )[]
+    | null;
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -3436,6 +3627,120 @@ export interface FooterSelect<T extends boolean = true> {
  * via the `definition` "home_select".
  */
 export interface HomeSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        type?: T;
+        richText?: T;
+        links?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    route?: T;
+                    url?: T;
+                    label?: T;
+                    appearance?: T;
+                  };
+              id?: T;
+            };
+        media?: T;
+        videoSource?: T;
+        videoFile?: T;
+        youtubeUrl?: T;
+        heading?: T;
+        subtitle?: T;
+        overlayContent?:
+          | T
+          | {
+              cta?: T | CallToActionBlockSelect<T>;
+              content?: T | ContentBlockSelect<T>;
+              mediaBlock?: T | MediaBlockSelect<T>;
+              banner?: T | BannerBlockSelect<T>;
+              code?: T | CodeBlockSelect<T>;
+              policyTabs?: T | PolicyTabsBlockSelect<T>;
+            };
+        primaryButtonLabel?: T;
+        primaryButtonUrl?: T;
+        secondaryButtonLabel?: T;
+        secondaryButtonUrl?: T;
+        videoPopupUrl?: T;
+        eyebrow?: T;
+        brandHeading?: T;
+        tagline?: T;
+        inlineStats?:
+          | T
+          | {
+              value?: T;
+              suffix?: T;
+              label?: T;
+              id?: T;
+            };
+        mascot?: T;
+        cta?:
+          | T
+          | {
+              link?:
+                | T
+                | {
+                    type?: T;
+                    newTab?: T;
+                    reference?: T;
+                    route?: T;
+                    url?: T;
+                    label?: T;
+                  };
+              id?: T;
+            };
+        introVideoUrl?: T;
+        share?:
+          | T
+          | {
+              enabledPlatforms?: T;
+              qrLogo?: T;
+            };
+        decorations?:
+          | T
+          | {
+              image?: T;
+              position?: T;
+              sizePercent?: T;
+              id?: T;
+            };
+      };
+  layout?:
+    | T
+    | {
+        cta?: T | CallToActionBlockSelect<T>;
+        content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
+        archive?: T | ArchiveBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+        jobBoard?: T | JobBoardBlockSelect<T>;
+        sendUsCV?: T | SendUsCVBlockSelect<T>;
+        aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
+        gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
+        visionMission?: T | VisionMissionBlockSelect<T>;
+        coreValues?: T | CoreValuesBlockSelect<T>;
+        careersHighlight?: T | CareersHighlightBlockSelect<T>;
+        featureTabs?: T | FeatureTabsBlockSelect<T>;
+        iecLife?: T | IECLifeBlockSelect<T>;
+        categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "career_select".
+ */
+export interface CareerSelect<T extends boolean = true> {
   hero?:
     | T
     | {
