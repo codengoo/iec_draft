@@ -77,6 +77,7 @@ export interface Config {
     'job-applications': JobApplication;
     social: Social;
     games: Game;
+    subscribers: Subscriber;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -104,6 +105,7 @@ export interface Config {
     'job-applications': JobApplicationsSelect<false> | JobApplicationsSelect<true>;
     social: SocialSelect<false> | SocialSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
+    subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1690,6 +1692,22 @@ export interface Social {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers".
+ */
+export interface Subscriber {
+  id: string;
+  email: string;
+  name?: string | null;
+  source?: ('job_application' | 'form_submission') | null;
+  subscribed?: boolean | null;
+  unsubscribeToken?: string | null;
+  subscribedAt?: string | null;
+  unsubscribedAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1925,6 +1943,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'games';
         value: string | Game;
+      } | null)
+    | ({
+        relationTo: 'subscribers';
+        value: string | Subscriber;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2725,6 +2747,21 @@ export interface GamesSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "subscribers_select".
+ */
+export interface SubscribersSelect<T extends boolean = true> {
+  email?: T;
+  name?: T;
+  source?: T;
+  subscribed?: T;
+  unsubscribeToken?: T;
+  subscribedAt?: T;
+  unsubscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

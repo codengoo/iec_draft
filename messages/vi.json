@@ -109,5 +109,13 @@
       "position": "Vị trí bạn quan tâm",
       "positionPlaceholder": "Ví dụ: Game Designer, Marketing, hoặc thế mạnh của bạn"
     }
+  },
+  "Unsubscribe": {
+    "title": "Hủy đăng ký",
+    "success": "Bạn đã hủy đăng ký thành công.",
+    "successDescription": "Bạn sẽ không còn nhận email từ chúng tôi nữa.",
+    "alreadyUnsubscribed": "Bạn đã hủy đăng ký trước đó.",
+    "invalidToken": "Link hủy đăng ký không hợp lệ hoặc đã hết hạn.",
+    "backHome": "Về trang chủ"
   }
 }

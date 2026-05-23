@@ -5,6 +5,7 @@ import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 import { defaultLexical } from '@/fields/defaultLexical'
+import { emailAdapter } from './adapters/email'
 import { Categories } from './collections/Categories'
 import { Games } from './collections/Games'
 import { JobApplications } from './collections/JobApplications'
@@ -13,13 +14,14 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Social } from './collections/Social'
+import { Subscribers } from './collections/Subscribers'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
+import { unsubscribeEndpoint } from './endpoints/unsubscribe'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { Home } from './Home/config'
 import { plugins } from './plugins'
-import { getEmailAdapter } from './utilities/email/getAdapter'
 import { getServerSideURL } from './utilities/getURL'
 
 const filename = fileURLToPath(import.meta.url)
@@ -64,12 +66,25 @@ export default buildConfig({
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
-  email: getEmailAdapter(),
+  email: emailAdapter(),
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Tags, Users, Jobs, JobApplications, Social, Games],
+  collections: [
+    Pages,
+    Posts,
+    Media,
+    Categories,
+    Tags,
+    Users,
+    Jobs,
+    JobApplications,
+    Social,
+    Games,
+    Subscribers,
+  ],
   cors: [getServerSideURL()].filter(Boolean),
+  endpoints: [unsubscribeEndpoint],
   globals: [Header, Footer, Home],
   localization: {
     locales: [

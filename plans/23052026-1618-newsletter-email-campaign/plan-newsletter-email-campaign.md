@@ -18,8 +18,8 @@ Hỗ trợ gửi campaign thủ công và tự động khi có Job/Post mới. T
 | # | File | Nội dung | Status |
 |---|------|----------|--------|
 | 1 | [phase-1-email-infrastructure.md](phase-1-email-infrastructure.md) | Cài email adapter, cấu hình payload | ✅ Done |
-| 2 | [23052026 1618 phase-2-subscribers.md](23052026%201618%20phase-2-subscribers.md) | Subscribers collection + sync hooks | ⬜ Not Started |
-| 3 | [23052026 1618 phase-3-unsubscribe.md](23052026%201618%20phase-3-unsubscribe.md) | Unsubscribe endpoint + page | ⬜ Not Started |
+| 2 | [phase-2-subscribers.md](phase-2-subscribers.md) | Subscribers collection + sync hooks | ✅ Done |
+| 3 | [23052026 1618 phase-3-unsubscribe.md](23052026%201618%20phase-3-unsubscribe.md) | Unsubscribe endpoint + page | ✅ Done |
 | 4 | [23052026 1618 phase-4-email-campaigns.md](23052026%201618%20phase-4-email-campaigns.md) | EmailCampaigns collection + templates + send | ⬜ Not Started |
 | 5 | [23052026 1618 phase-5-automation.md](23052026%201618%20phase-5-automation.md) | Auto-notify hooks khi publish Job/Post | ⬜ Not Started |
 

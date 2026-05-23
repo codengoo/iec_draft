@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { authenticated } from '../../access/authenticated'
 import { denormalizeJob } from './hooks/denormalize'
+import { syncSubscriber } from './hooks/syncSubscriber'
 
 export const JobApplications: CollectionConfig = {
   slug: 'job-applications',
@@ -25,6 +26,7 @@ export const JobApplications: CollectionConfig = {
   },
   hooks: {
     beforeChange: [denormalizeJob],
+    afterChange: [syncSubscriber],
   },
   fields: [
     {
