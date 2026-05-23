@@ -11,6 +11,7 @@ import {
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
 import { revalidateJob, revalidateJobDelete } from './hooks/revalidateJob'
+import { notifyJobSubscribers } from './hooks/notifySubscribers'
 
 export const Jobs: CollectionConfig = {
   slug: 'jobs',
@@ -33,7 +34,7 @@ export const Jobs: CollectionConfig = {
     maxPerDoc: 25,
   },
   hooks: {
-    afterChange: [revalidateJob],
+    afterChange: [revalidateJob, notifyJobSubscribers],
     afterDelete: [revalidateJobDelete],
   },
   fields: [
