@@ -24,9 +24,9 @@ export const notifyJobSubscribers: CollectionAfterChangeHook<Job> = async ({
     const title =
       typeof rawTitle === 'string'
         ? rawTitle
-        : (rawTitle as Record<string, string> | undefined)?.en ??
+        : ((rawTitle as Record<string, string> | undefined)?.en ??
           Object.values(rawTitle as Record<string, string>)[0] ??
-          String(doc.id)
+          String(doc.id))
 
     const campaign = await req.payload.create({
       collection: 'email-campaigns',

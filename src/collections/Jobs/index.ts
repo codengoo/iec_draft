@@ -10,8 +10,8 @@ import {
 
 import { anyone } from '../../access/anyone'
 import { authenticated } from '../../access/authenticated'
-import { revalidateJob, revalidateJobDelete } from './hooks/revalidateJob'
 import { notifyJobSubscribers } from './hooks/notifySubscribers'
+import { revalidateJob, revalidateJobDelete } from './hooks/revalidateJob'
 
 export const Jobs: CollectionConfig = {
   slug: 'jobs',

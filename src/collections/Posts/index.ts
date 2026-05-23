@@ -15,9 +15,9 @@ import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { notifyPostSubscribers } from './hooks/notifySubscribers'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
-import { notifyPostSubscribers } from './hooks/notifySubscribers'
 
 import {
   MetaDescriptionField,
