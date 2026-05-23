@@ -1,10 +1,10 @@
-import type { PayloadRequest } from 'payload'
 import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
+import type { PayloadRequest } from 'payload'
 
 import { getUnsubscribeUrl } from './getUnsubscribeUrl'
+import { manualTemplate } from './templates/manual'
 import { newJobTemplate } from './templates/newJob'
 import { newPostTemplate } from './templates/newPost'
-import { manualTemplate } from './templates/manual'
 
 const BATCH_SIZE = 50
 const BATCH_DELAY_MS = 200
@@ -52,18 +52,35 @@ export async function sendCampaign({
 
   // 4. Resolve subject tokens
   let resolvedSubject = campaign.subject ?? ''
-  if (campaign.type === 'new_job' && campaign.relatedJob && typeof campaign.relatedJob === 'object') {
+  if (
+    campaign.type === 'new_job' &&
+    campaign.relatedJob &&
+    typeof campaign.relatedJob === 'object'
+  ) {
     const job = campaign.relatedJob as { id: string | number; title?: string }
-    resolvedSubject = resolveSubjectTokens(resolvedSubject, { 'job.title': String(job.title ?? '') })
-  } else if (campaign.type === 'new_post' && campaign.relatedPost && typeof campaign.relatedPost === 'object') {
+    resolvedSubject = resolveSubjectTokens(resolvedSubject, {
+      'job.title': String(job.title ?? ''),
+    })
+  } else if (
+    campaign.type === 'new_post' &&
+    campaign.relatedPost &&
+    typeof campaign.relatedPost === 'object'
+  ) {
     const post = campaign.relatedPost as { title?: string }
-    resolvedSubject = resolveSubjectTokens(resolvedSubject, { 'post.title': String(post.title ?? '') })
+    resolvedSubject = resolveSubjectTokens(resolvedSubject, {
+      'post.title': String(post.title ?? ''),
+    })
   }
 
   // 5. Fetch all active subscribers (paginated)
   let page = 1
   let hasMore = true
-  const allSubscribers: Array<{ id: string | number; email: string; name?: string | null; unsubscribeToken?: string | null }> = []
+  const allSubscribers: Array<{
+    id: string | number
+    email: string
+    name?: string | null
+    unsubscribeToken?: string | null
+  }> = []
 
   while (hasMore) {
     const result = await payload.find({
@@ -115,8 +132,16 @@ export async function sendCampaign({
         let html = ''
         let subject = resolvedSubject
 
-        if (campaign.type === 'new_job' && campaign.relatedJob && typeof campaign.relatedJob === 'object') {
-          const job = campaign.relatedJob as { id: string | number; title?: string; description?: string }
+        if (
+          campaign.type === 'new_job' &&
+          campaign.relatedJob &&
+          typeof campaign.relatedJob === 'object'
+        ) {
+          const job = campaign.relatedJob as {
+            id: string | number
+            title?: string
+            description?: string
+          }
           const result = newJobTemplate({
             job: { id: job.id, title: String(job.title ?? ''), description: job.description },
             subscriber,
@@ -125,10 +150,22 @@ export async function sendCampaign({
           })
           html = result.html
           if (!subject) subject = result.subject
-        } else if (campaign.type === 'new_post' && campaign.relatedPost && typeof campaign.relatedPost === 'object') {
-          const post = campaign.relatedPost as { title?: string; excerpt?: string | null; slug?: string }
+        } else if (
+          campaign.type === 'new_post' &&
+          campaign.relatedPost &&
+          typeof campaign.relatedPost === 'object'
+        ) {
+          const post = campaign.relatedPost as {
+            title?: string
+            excerpt?: string | null
+            slug?: string
+          }
           const result = newPostTemplate({
-            post: { title: String(post.title ?? ''), excerpt: post.excerpt, slug: String(post.slug ?? '') },
+            post: {
+              title: String(post.title ?? ''),
+              excerpt: post.excerpt,
+              slug: String(post.slug ?? ''),
+            },
             subscriber,
             unsubscribeUrl,
             siteUrl,

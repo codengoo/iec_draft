@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
 import { toast, useDocumentInfo, useFormFields } from '@payloadcms/ui'
+import React, { useState } from 'react'
 
 export const SendButton: React.FC = () => {
   const [loading, setLoading] = useState(false)
@@ -28,7 +28,11 @@ export const SendButton: React.FC = () => {
         body: JSON.stringify({ campaignId: String(id) }),
       })
 
-      const data = (await res.json()) as { success?: boolean; recipientCount?: number; error?: string }
+      const data = (await res.json()) as {
+        success?: boolean
+        recipientCount?: number
+        error?: string
+      }
 
       if (res.ok && data.success) {
         toast.success(`Đã gửi thành công đến ${data.recipientCount ?? 0} subscribers.`)

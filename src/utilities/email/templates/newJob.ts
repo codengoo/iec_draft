@@ -11,12 +11,10 @@ type NewJobTemplateArgs = {
   siteUrl: string
 }
 
-export function newJobTemplate({
-  job,
-  subscriber,
-  unsubscribeUrl,
-  siteUrl,
-}: NewJobTemplateArgs): { html: string; subject: string } {
+export function newJobTemplate({ job, subscriber, unsubscribeUrl, siteUrl }: NewJobTemplateArgs): {
+  html: string
+  subject: string
+} {
   const subject = `[IEC] Cơ hội việc làm mới: ${job.title}`
   const greeting = subscriber.name ? `Xin chào <strong>${subscriber.name}</strong>,` : 'Xin chào,'
 

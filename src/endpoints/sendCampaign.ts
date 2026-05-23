@@ -46,7 +46,10 @@ export const sendCampaignEndpoint: Endpoint = {
 
     try {
       const result = await sendCampaign({ campaignId, req })
-      return Response.json({ success: true, recipientCount: result.recipientCount }, { status: 200 })
+      return Response.json(
+        { success: true, recipientCount: result.recipientCount },
+        { status: 200 },
+      )
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to send campaign'
       return Response.json({ error: message }, { status: 500 })

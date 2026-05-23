@@ -15,7 +15,9 @@ export function manualTemplate({
   siteUrl,
 }: ManualTemplateArgs): { html: string; subject: string } {
   // subject is passed through to the caller; template just wraps body in base layout
-  const greeting = subscriber.name ? `<p style="margin:0 0 16px;">Xin chào <strong>${subscriber.name}</strong>,</p>` : ''
+  const greeting = subscriber.name
+    ? `<p style="margin:0 0 16px;">Xin chào <strong>${subscriber.name}</strong>,</p>`
+    : ''
 
   const wrappedBody = `${greeting}${bodyHtml}`
 
