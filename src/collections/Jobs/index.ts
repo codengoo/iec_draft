@@ -45,6 +45,16 @@ export const Jobs: CollectionConfig = {
       localized: true,
     },
     {
+      name: 'isFeatured',
+      type: 'checkbox',
+      defaultValue: false,
+      label: 'Featured Job',
+      admin: {
+        position: 'sidebar',
+        description: 'Show this job in the CareersHighlight block on the home page.',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {

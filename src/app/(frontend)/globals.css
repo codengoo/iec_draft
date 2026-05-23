@@ -214,6 +214,27 @@
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
   }
+  /* Applied by the landing-page client component to hide the document
+     vertical scrollbar while keeping scroll behaviour intact. */
+  body.landing-no-scrollbar {
+    scrollbar-width: none;
+  }
+  body.landing-no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-
+@layer components {
+  /* Bold spans inside elements with this class get the brand gradient + a soft brand-colored glow.
+     Used by the AboutWithStats heading and any other place that wants the same treatment. */
+  .brand-gradient-bold :is(strong, b) {
+    background-image: linear-gradient(120deg, #006FEE 0%, #38BDF8 55%, #0EA5E9 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
+    filter: drop-shadow(0 8px 18px rgba(0, 111, 238, 0.35))
+      drop-shadow(0 2px 4px rgba(56, 189, 248, 0.25));
+  }
+}

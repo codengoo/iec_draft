@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 
 import { defaultLexical } from '@/fields/defaultLexical'
 import { Categories } from './collections/Categories'
+import { Games } from './collections/Games'
 import { JobApplications } from './collections/JobApplications'
 import { Jobs } from './collections/Jobs'
 import { Media } from './collections/Media'
@@ -16,6 +17,7 @@ import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
+import { Home } from './Home/config'
 import { plugins } from './plugins'
 import { getEmailAdapter } from './utilities/email/getAdapter'
 import { getServerSideURL } from './utilities/getURL'
@@ -66,9 +68,9 @@ export default buildConfig({
   db: mongooseAdapter({
     url: process.env.DATABASE_URL || '',
   }),
-  collections: [Pages, Posts, Media, Categories, Tags, Users, Jobs, JobApplications, Social],
+  collections: [Pages, Posts, Media, Categories, Tags, Users, Jobs, JobApplications, Social, Games],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, Home],
   localization: {
     locales: [
       { label: 'English', code: 'en' },

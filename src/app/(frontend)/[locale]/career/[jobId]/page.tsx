@@ -21,6 +21,7 @@ import RichText from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import { JobApplyModal } from '@/components/JobApplyModal'
 import { Reveal, RevealGroup, RevealItem } from '@/components/Reveal'
+import { ShareButtonOutline } from '@/components/ShareWidget/ShareButtonOutline'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { cn } from '@/utilities/ui'
 
@@ -130,26 +131,33 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
 
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-12 items-start">
           <main className="min-w-0">
-            <Reveal direction="up" distance={28} duration={0.6}>
+            <Reveal direction="up" distance={28} duration={0.6} once={false}>
               <Section
                 variant="jobDescription"
                 title={t('jobDescription')}
                 data={job.jobDescription}
               />
             </Reveal>
-            <Reveal direction="up" distance={28} duration={0.6} delay={0.05}>
+            <Reveal direction="up" distance={28} duration={0.6} delay={0.05} once={false}>
               <Section
                 variant="qualifications"
                 title={t('qualifications')}
                 data={job.qualifications}
               />
             </Reveal>
-            <Reveal direction="up" distance={28} duration={0.6} delay={0.1}>
+            <Reveal direction="up" distance={28} duration={0.6} delay={0.1} once={false}>
               <Section variant="benefits" title={t('benefits')} data={job.benefits} last />
             </Reveal>
           </main>
 
-          <Reveal as="aside" direction="left" distance={32} delay={0.2} className="lg:sticky lg:top-24">
+          <Reveal
+            as="aside"
+            direction="left"
+            distance={32}
+            delay={0.2}
+            once={false}
+            className="lg:sticky lg:top-24"
+          >
             <div className="rounded-2xl border border-gray-200 bg-white shadow-sm p-6">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500 mb-5">
                 {t('jobSummary')}
@@ -223,6 +231,7 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
                     </a>
                   </Button>
                 )}
+                <ShareButtonOutline label={t('shareJob')} shareText={job.title} />
               </div>
             </div>
           </Reveal>

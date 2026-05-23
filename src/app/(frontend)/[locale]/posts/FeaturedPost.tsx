@@ -41,12 +41,12 @@ export const FeaturedPost: React.FC<{ post: FeaturedPostData }> = ({ post }) => 
       {/* Decorative gradient glow behind card */}
       <div
         aria-hidden
-        className="absolute -inset-1 rounded-2xl bg-linear-to-r from-indigo-500/30 via-blue-500/20 to-purple-500/30 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-90"
+        className="absolute -inset-1 rounded-4xl bg-linear-to-r from-indigo-500/30 via-blue-500/20 to-purple-500/30 opacity-60 blur-2xl transition-opacity duration-500 group-hover:opacity-90"
       />
 
       <Card
-        radius="lg"
-        className="relative grid grid-cols-12 overflow-hidden border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl min-h-[60vh]"
+        radius="none"
+        className="relative grid grid-cols-12 overflow-hidden rounded-4xl border border-border shadow-xl transition-shadow duration-500 group-hover:shadow-2xl min-h-[60vh]"
       >
         {/* Left: hero image — 2/3 of card width */}
         <div className="col-span-8 relative bg-muted overflow-hidden">
