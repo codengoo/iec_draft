@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { emailAdapter } from './adapters/email'
 import { Categories } from './collections/Categories'
+import { EmailCampaigns } from './collections/EmailCampaigns'
 import { Games } from './collections/Games'
 import { JobApplications } from './collections/JobApplications'
 import { Jobs } from './collections/Jobs'
@@ -17,6 +18,7 @@ import { Social } from './collections/Social'
 import { Subscribers } from './collections/Subscribers'
 import { Tags } from './collections/Tags'
 import { Users } from './collections/Users'
+import { sendCampaignEndpoint } from './endpoints/sendCampaign'
 import { unsubscribeEndpoint } from './endpoints/unsubscribe'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -82,9 +84,10 @@ export default buildConfig({
     Social,
     Games,
     Subscribers,
+    EmailCampaigns,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  endpoints: [unsubscribeEndpoint],
+  endpoints: [unsubscribeEndpoint, sendCampaignEndpoint],
   globals: [Header, Footer, Home],
   localization: {
     locales: [

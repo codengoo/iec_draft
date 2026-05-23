@@ -78,6 +78,7 @@ export interface Config {
     social: Social;
     games: Game;
     subscribers: Subscriber;
+    'email-campaigns': EmailCampaign;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -106,6 +107,7 @@ export interface Config {
     social: SocialSelect<false> | SocialSelect<true>;
     games: GamesSelect<false> | GamesSelect<true>;
     subscribers: SubscribersSelect<false> | SubscribersSelect<true>;
+    'email-campaigns': EmailCampaignsSelect<false> | EmailCampaignsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1708,6 +1710,45 @@ export interface Subscriber {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-campaigns".
+ */
+export interface EmailCampaign {
+  id: string;
+  name: string;
+  /**
+   * Supports tokens: {{job.title}}, {{post.title}}
+   */
+  subject: string;
+  /**
+   * Short preview text shown in email clients
+   */
+  previewText?: string | null;
+  type: 'manual' | 'new_job' | 'new_post';
+  body?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  relatedJob?: (string | null) | Job;
+  relatedPost?: (string | null) | Post;
+  status?: ('draft' | 'sending' | 'sent') | null;
+  sentAt?: string | null;
+  recipientCount?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1947,6 +1988,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'subscribers';
         value: string | Subscriber;
+      } | null)
+    | ({
+        relationTo: 'email-campaigns';
+        value: string | EmailCampaign;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2760,6 +2805,24 @@ export interface SubscribersSelect<T extends boolean = true> {
   unsubscribeToken?: T;
   subscribedAt?: T;
   unsubscribedAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "email-campaigns_select".
+ */
+export interface EmailCampaignsSelect<T extends boolean = true> {
+  name?: T;
+  subject?: T;
+  previewText?: T;
+  type?: T;
+  body?: T;
+  relatedJob?: T;
+  relatedPost?: T;
+  status?: T;
+  sentAt?: T;
+  recipientCount?: T;
   updatedAt?: T;
   createdAt?: T;
 }
