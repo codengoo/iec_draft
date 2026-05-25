@@ -28,6 +28,7 @@ import {
   useScroll,
   useSpring,
   useTransform,
+  type MotionValue,
 } from 'framer-motion'
 import Link from 'next/link'
 import React, { useEffect, useRef, useState } from 'react'
@@ -128,8 +129,8 @@ type ValueItem = NonNullable<Props['values']>[number]
 
 const ValueCard: React.FC<{
   value: ValueItem
-  animOpacity: ReturnType<typeof useTransform>
-  animY: ReturnType<typeof useTransform>
+  animOpacity: MotionValue<number>
+  animY: MotionValue<number>
 }> = ({ value, animOpacity, animY }) => {
   const [expanded, setExpanded] = useState(false)
   const image = value.image && typeof value.image === 'object' ? (value.image as MediaType) : null
@@ -143,28 +144,24 @@ const ValueCard: React.FC<{
       onFocus={() => setExpanded(true)}
       onBlur={() => setExpanded(false)}
     >
-      <div className="group overflow-hidden rounded-2xl border border-white/60 bg-white/85 p-4 shadow-[0_16px_40px_-20px_rgba(0,111,238,0.25)] backdrop-blur-md transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-[0_20px_50px_-16px_rgba(0,111,238,0.45)] dark:border-white/10 dark:bg-white/5">
-        {/* Header */}
-        <div className="flex items-start gap-3">
-          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary/15 to-sky-200/40 text-primary ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-110">
-            <Icon name={value.icon} className="size-5" stroke={2.2} />
+      <div className="group overflow-hidden rounded-2xl bg-white/88 p-5 shadow-[0_12px_32px_-12px_rgba(0,111,238,0.22)] backdrop-blur-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_48px_-12px_rgba(0,111,238,0.42)] dark:bg-slate-900/75">
+        {/* Icon + title row */}
+        <div className="flex items-center gap-4">
+          <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-full bg-primary text-white shadow-[0_6px_20px_-4px_rgba(0,111,238,0.55)] transition-transform duration-300 group-hover:scale-110">
+            <Icon name={value.icon} className="size-6" stroke={2} />
           </span>
-          <div className="min-w-0 pt-0.5">
-            <p
-              className="bg-clip-text text-sm font-extrabold uppercase tracking-wider text-foreground transition-colors duration-300 group-hover:text-transparent"
-              style={{
-                backgroundImage: 'linear-gradient(120deg, #006FEE 0%, #38BDF8 55%, #0EA5E9 100%)',
-              }}
-            >
+          <div className="flex min-w-0 flex-1 items-center gap-3">
+            <p className="shrink-0 text-sm font-extrabold uppercase tracking-wider text-primary">
               {value.title}
             </p>
-            {value.description && (
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                {value.description}
-              </p>
-            )}
+            <div className="h-px flex-1 rounded-full bg-primary/25" />
           </div>
         </div>
+
+        {/* Description */}
+        {value.description && (
+          <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{value.description}</p>
+        )}
 
         {/* Expandable image section */}
         <AnimatePresence>
@@ -172,7 +169,7 @@ const ValueCard: React.FC<{
             <motion.div
               key="img"
               initial={{ opacity: 0, height: 0, marginTop: 0 }}
-              animate={{ opacity: 1, height: 'auto', marginTop: 12 }}
+              animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
               exit={{ opacity: 0, height: 0, marginTop: 0 }}
               transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
               className="overflow-hidden"
@@ -181,7 +178,7 @@ const ValueCard: React.FC<{
                 <Media resource={image} imgClassName="block h-auto w-full select-none" />
               </div>
               {value.imageCaption && (
-                <p className="mt-2.5 text-center text-xs leading-relaxed text-muted-foreground/80">
+                <p className="mt-3 text-center text-base font-semibold leading-snug text-foreground/80">
                   {value.imageCaption}
                 </p>
               )}
@@ -205,6 +202,7 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
   mission,
   mascot,
   valuesEyebrow,
+  valuesDescription,
   values,
   cta,
 }) => {
@@ -346,21 +344,30 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                     pointerEvents: phase2Pointer,
                   }}
                 >
-                  {/* Eyebrow label */}
+                  {/* Heading — fixed at top center */}
                   {valuesEyebrow && (
-                    <motion.p
-                      className="mb-6 text-xs font-semibold uppercase tracking-[0.25em] text-primary/70"
-                      initial={{ opacity: 0 }}
-                      style={{ opacity: phase2Opacity }}
-                    >
-                      {valuesEyebrow}
-                    </motion.p>
+                    <div className="absolute inset-x-0 top-8 flex flex-col items-center gap-1.5">
+                      <h2
+                        className="bg-clip-text text-5xl font-black uppercase tracking-[0.18em] text-transparent drop-shadow-sm md:text-6xl"
+                        style={{
+                          backgroundImage:
+                            'linear-gradient(120deg, #0055d4 0%, #006FEE 35%, #38BDF8 70%, #0EA5E9 100%)',
+                        }}
+                      >
+                        {valuesEyebrow}
+                      </h2>
+                      {valuesDescription && (
+                        <p className="text-sm font-medium text-muted-foreground/80 md:text-base">
+                          {valuesDescription}
+                        </p>
+                      )}
+                    </div>
                   )}
 
-                  {/* Three-column grid: left values | mascot | right values */}
-                  <div className="flex w-full items-center justify-center gap-6">
-                    {/* Left values */}
-                    <ul className="flex w-72 flex-col gap-3 xl:w-80">
+                  {/* Constellation: mascot fills center, cards overlap from sides */}
+                  <div className="relative flex h-120 w-full items-center justify-center xl:h-130">
+                    {/* Left values — absolute, overlapping mascot */}
+                    <ul className="absolute left-0 top-1/2 z-10 flex w-88 -translate-y-1/2 flex-col gap-3">
                       {leftValues.map((v, i) => (
                         <ValueCard
                           key={v.id ?? i}
@@ -371,8 +378,8 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                       ))}
                     </ul>
 
-                    {/* Center — mascot zooms in as scroll progresses */}
-                    <div className="relative flex shrink-0 items-center justify-center">
+                    {/* Center — mascot very large, fills background */}
+                    <div className="pointer-events-none relative flex shrink-0 items-center justify-center">
                       {/* Glow orb primary */}
                       <motion.div
                         aria-hidden
@@ -380,13 +387,13 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                         animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
                         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
                       >
-                        <div className="size-72 rounded-full bg-primary/15 blur-3xl" />
+                        <div className="size-140 rounded-full bg-primary/10 blur-3xl" />
                       </motion.div>
                       {/* Glow orb secondary */}
                       <motion.div
                         aria-hidden
                         className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.25, 0.6, 0.25] }}
+                        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.55, 0.2] }}
                         transition={{
                           duration: 3.5,
                           delay: 0.8,
@@ -394,18 +401,12 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                           ease: 'easeInOut',
                         }}
                       >
-                        <div className="size-56 rounded-full bg-sky-300/25 blur-2xl" />
+                        <div className="size-96 rounded-full bg-sky-300/20 blur-2xl" />
                       </motion.div>
-
-                      {/* Pedestal shadow */}
-                      <div
-                        aria-hidden
-                        className="pointer-events-none absolute bottom-0 left-1/2 h-4 w-48 -translate-x-1/2 rounded-full bg-primary/20 blur-lg"
-                      />
 
                       {/* Mascot */}
                       {hasMascot && (
-                        <motion.div className="relative z-10" style={{ scale: mascotScale }}>
+                        <motion.div className="relative z-0" style={{ scale: mascotScale }}>
                           <motion.div
                             className="drop-shadow-2xl"
                             animate={{ y: [0, -14, 0] }}
@@ -413,15 +414,15 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                           >
                             <Media
                               resource={mascot}
-                              imgClassName="h-auto w-56 select-none md:w-64 lg:w-72"
+                              imgClassName="h-auto w-[34rem] select-none xl:w-[42rem] 2xl:w-[48rem]"
                             />
                           </motion.div>
                         </motion.div>
                       )}
                     </div>
 
-                    {/* Right values */}
-                    <ul className="flex w-72 flex-col gap-3 xl:w-80">
+                    {/* Right values — absolute, overlapping mascot */}
+                    <ul className="absolute right-0 top-1/2 z-10 flex w-88 -translate-y-1/2 flex-col gap-3">
                       {rightValues.map((v, i) => (
                         <ValueCard
                           key={v.id ?? i}

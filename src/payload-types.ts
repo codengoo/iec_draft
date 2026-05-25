@@ -1324,6 +1324,10 @@ export interface CoreValuesShowcaseBlock {
    */
   mascot?: (string | null) | Media;
   valuesEyebrow?: string | null;
+  /**
+   * Short subtitle shown below the Core Values heading.
+   */
+  valuesDescription?: string | null;
   values?:
     | {
         icon?:
@@ -2304,6 +2308,7 @@ export interface CoreValuesShowcaseBlockSelect<T extends boolean = true> {
   mission?: T;
   mascot?: T;
   valuesEyebrow?: T;
+  valuesDescription?: T;
   values?:
     | T
     | {

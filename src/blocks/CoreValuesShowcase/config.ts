@@ -112,6 +112,13 @@ export const CoreValuesShowcase: Block = {
       label: 'Values eyebrow label',
     },
     {
+      name: 'valuesDescription',
+      type: 'text',
+      localized: true,
+      label: 'Values description',
+      admin: { description: 'Short subtitle shown below the Core Values heading.' },
+    },
+    {
       name: 'values',
       type: 'array',
       maxRows: 6,
