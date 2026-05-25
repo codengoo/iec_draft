@@ -2,7 +2,6 @@ import type { Metadata } from 'next/types'
 
 import { CardPostData } from '@/components/Card'
 import { CollectionArchive } from '@/components/CollectionArchive'
-import { Search } from '@/search/Component'
 import configPromise from '@payload-config'
 import { getTranslations } from 'next-intl/server'
 import { getPayload } from 'payload'
@@ -66,10 +65,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none text-center">
           <h1 className="mb-8 lg:mb-16">{t('title')}</h1>
-
-          <div className="max-w-[50rem] mx-auto">
-            <Search />
-          </div>
         </div>
       </div>
 

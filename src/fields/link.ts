@@ -18,6 +18,7 @@ export const appearanceOptions: Record<LinkAppearances, { label: string; value: 
 export const staticRouteOptions: { label: string; value: string }[] = [
   { label: 'Home', value: '/' },
   { label: 'Posts (listing)', value: '/posts' },
+  { label: 'Career', value: '/career' },
   { label: 'Search', value: '/search' },
 ]
 

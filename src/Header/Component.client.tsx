@@ -12,9 +12,11 @@ import { HeaderNav } from './Nav'
 
 interface HeaderClientProps {
   data: Header
+  logoSrc?: string | null
+  logoAlt?: string | null
 }
 
-export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
+export const HeaderClient: React.FC<HeaderClientProps> = ({ data, logoSrc, logoAlt }) => {
   const pathname = usePathname()
   const isPostsPage = /(^|\/)posts(\/|$)/.test(pathname)
   const { transparent } = useTransparentHeader()
@@ -32,7 +34,13 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         <div className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}>
           <div className={isTransparent ? 'flex-1' : ''}>
             <Link href="/">
-              <Logo loading="eager" priority="high" className="invert" />
+              <Logo
+                loading="eager"
+                priority="high"
+                className="invert"
+                src={logoSrc}
+                alt={logoAlt}
+              />
             </Link>
           </div>
           <HeaderNav data={data} centered={isTransparent} />

@@ -66,8 +66,9 @@ function getSocialBrandColor(platform: Social['platform']): string {
 
 export async function Footer() {
   const locale = (await getLocale()) as 'en' | 'vi'
-  const [footerData, payload] = await Promise.all([
+  const [footerData, generalData, payload] = await Promise.all([
     getCachedGlobal('footer', 1, locale)(),
+    getCachedGlobal('general', 1, locale)(),
     getPayload({ config: configPromise }),
   ])
 
@@ -80,6 +81,14 @@ export async function Footer() {
 
   const socials = socialDocs as Social[]
   const navItems = footerData?.navItems || []
+
+  // Resolve logo from General Settings
+  const logoMedia =
+    generalData?.logo && typeof generalData.logo === 'object'
+      ? (generalData.logo as { url?: string; alt?: string; width?: number; height?: number })
+      : null
+  const logoSrc = logoMedia?.url ?? null
+  const logoAlt = logoMedia?.alt || (generalData?.companyName as string | undefined) || 'IEC Logo'
 
   return (
     <footer
@@ -138,7 +147,11 @@ export async function Footer() {
             {/* Logo */}
             <div className="shrink-0 flex flex-col items-start md:items-end gap-3">
               <Link href="/" className="inline-block">
-                <Logo className="brightness-0 invert w-48 md:w-64 max-w-none h-auto" />
+                <Logo
+                  className="brightness-0 invert w-48 md:w-64 max-w-none h-auto"
+                  src={logoSrc}
+                  alt={logoAlt}
+                />
               </Link>
               {footerData.logoSubtitle && (
                 <p className="text-xs md:text-sm text-white/75 leading-relaxed max-w-xs whitespace-pre-line md:text-right">

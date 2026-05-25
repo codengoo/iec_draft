@@ -128,12 +128,14 @@ export interface Config {
     footer: Footer;
     home: Home;
     career: Career;
+    general: General;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     home: HomeSelect<false> | HomeSelect<true>;
     career: CareerSelect<false> | CareerSelect<true>;
+    general: GeneralSelect<false> | GeneralSelect<true>;
   };
   locale: 'en' | 'vi';
   widgets: {
@@ -210,7 +212,7 @@ export interface Page {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
             /**
@@ -300,7 +302,7 @@ export interface Page {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
           };
@@ -647,7 +649,7 @@ export interface CallToActionBlock {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
           /**
@@ -701,7 +703,7 @@ export interface ContentBlock {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
           /**
@@ -1163,7 +1165,7 @@ export interface AboutWithStatsBlock {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
         };
@@ -1406,7 +1408,7 @@ export interface CoreValuesShowcaseBlock {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
           /**
@@ -1460,7 +1462,7 @@ export interface CareersHighlightBlock {
     /**
      * Pick a built-in section page (route is hardcoded in the app).
      */
-    route?: ('/' | '/posts' | '/search') | null;
+    route?: ('/' | '/posts' | '/career' | '/search') | null;
     url?: string | null;
   };
   id?: string | null;
@@ -3117,7 +3119,7 @@ export interface Header {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
         };
@@ -3161,7 +3163,7 @@ export interface Footer {
           /**
            * Pick a built-in section page (route is hardcoded in the app).
            */
-          route?: ('/' | '/posts' | '/search') | null;
+          route?: ('/' | '/posts' | '/career' | '/search') | null;
           url?: string | null;
           label: string;
         };
@@ -3211,7 +3213,7 @@ export interface Home {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
             /**
@@ -3301,7 +3303,7 @@ export interface Home {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
           };
@@ -3400,7 +3402,7 @@ export interface Career {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
             /**
@@ -3490,7 +3492,7 @@ export interface Career {
             /**
              * Pick a built-in section page (route is hardcoded in the app).
              */
-            route?: ('/' | '/posts' | '/search') | null;
+            route?: ('/' | '/posts' | '/career' | '/search') | null;
             url?: string | null;
             label: string;
           };
@@ -3546,6 +3548,35 @@ export interface Career {
       )[]
     | null;
   _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general".
+ */
+export interface General {
+  id: string;
+  /**
+   * Used in emails, browser tab, and meta tags.
+   */
+  companyName: string;
+  /**
+   * Main logo displayed in the header and emails.
+   */
+  logo?: (string | null) | Media;
+  /**
+   * Browser tab icon. Recommended: 32×32 or 64×64 PNG/ICO.
+   */
+  favicon?: (string | null) | Media;
+  /**
+   * Short slogan displayed under the logo or in meta tags.
+   */
+  tagline?: string | null;
+  /**
+   * Default meta description for SEO. Keep under 160 characters.
+   */
+  description?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3829,6 +3860,20 @@ export interface CareerSelect<T extends boolean = true> {
         categoryShowcase?: T | CategoryShowcaseBlockSelect<T>;
       };
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "general_select".
+ */
+export interface GeneralSelect<T extends boolean = true> {
+  companyName?: T;
+  logo?: T;
+  favicon?: T;
+  tagline?: T;
+  description?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
