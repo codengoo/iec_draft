@@ -121,5 +121,15 @@
     "alreadyUnsubscribed": "You have already unsubscribed.",
     "invalidToken": "This unsubscribe link is invalid or has expired.",
     "backHome": "Back to homepage"
+  },
+  "NewsletterSignup": {
+    "emailPlaceholder": "Your email address",
+    "namePlaceholder": "Your name (optional)",
+    "submit": "Subscribe",
+    "submitting": "Subscribing…",
+    "successTitle": "You're in!",
+    "successBody": "Thanks for subscribing. We'll send you the latest updates straight to your inbox.",
+    "privacy": "We respect your privacy. Unsubscribe at any time.",
+    "errorEmail": "Please enter a valid email address."
   }
 }

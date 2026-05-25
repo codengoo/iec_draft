@@ -4,6 +4,7 @@ import { Content } from '@/blocks/Content/config'
 import { FormBlock } from '@/blocks/Form/config'
 import { JobBoard } from '@/blocks/JobBoard/config'
 import { MediaBlock } from '@/blocks/MediaBlock/config'
+import { NewsletterSignup } from '@/blocks/NewsletterSignup/config'
 import { SendUsCV } from '@/blocks/SendUsCV/config'
 
 import { AboutWithStats } from '@/blocks/AboutWithStats/config'
@@ -26,6 +27,7 @@ export const sharedLayoutBlocks = [
   FormBlock,
   JobBoard,
   SendUsCV,
+  NewsletterSignup,
   AboutWithStats,
   GamesPortfolio,
   CoreValuesShowcase,

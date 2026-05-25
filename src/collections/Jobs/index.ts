@@ -69,6 +69,17 @@ export const Jobs: CollectionConfig = {
       },
     },
     {
+      name: 'notifySubscribers',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Notify subscribers',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Automatically send a promotional email to all subscribers when this job is first published.',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {

@@ -121,5 +121,15 @@
     "alreadyUnsubscribed": "Bạn đã hủy đăng ký trước đó.",
     "invalidToken": "Link hủy đăng ký không hợp lệ hoặc đã hết hạn.",
     "backHome": "Về trang chủ"
+  },
+  "NewsletterSignup": {
+    "emailPlaceholder": "Địa chỉ email của bạn",
+    "namePlaceholder": "Tên của bạn (tùy chọn)",
+    "submit": "Đăng ký",
+    "submitting": "Đang đăng ký…",
+    "successTitle": "Đăng ký thành công!",
+    "successBody": "Cảm ơn bạn đã đăng ký. Chúng tôi sẽ gửi các cập nhật mới nhất đến hộp thư của bạn.",
+    "privacy": "Chúng tôi tôn trọng quyền riêng tư của bạn. Hủy đăng ký bất cứ lúc nào.",
+    "errorEmail": "Vui lòng nhập địa chỉ email hợp lệ."
   }
 }

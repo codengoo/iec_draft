@@ -39,6 +39,7 @@ export const Subscribers: CollectionConfig = {
       options: [
         { label: 'Job Application', value: 'job_application' },
         { label: 'Form Submission', value: 'form_submission' },
+        { label: 'Newsletter Signup', value: 'newsletter' },
       ],
     },
     {

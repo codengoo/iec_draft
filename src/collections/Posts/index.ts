@@ -201,6 +201,17 @@ export const Posts: CollectionConfig<'posts'> = {
       hasMany: true,
       relationTo: 'users',
     },
+    {
+      name: 'notifySubscribers',
+      type: 'checkbox',
+      defaultValue: true,
+      label: 'Notify subscribers',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Automatically send a promotional email to all subscribers when this post is first published.',
+      },
+    },
     // This field is only used to populate the user data via the `populateAuthors` hook
     // This is because the `user` collection has access control locked to protect user privacy
     // GraphQL will also not return mutated user data that differs from the underlying schema

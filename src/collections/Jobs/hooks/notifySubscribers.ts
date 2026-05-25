@@ -17,6 +17,7 @@ export const notifyJobSubscribers: CollectionAfterChangeHook<Job> = async ({
   // For update operations, only fire on the publish transition
   if (!isNowPublished) return doc
   if (operation === 'update' && wasAlreadyPublished) return doc
+  if (doc.notifySubscribers === false) return doc
 
   try {
     // Resolve localized title (prefer en, fallback to first string found)

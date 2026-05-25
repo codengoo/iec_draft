@@ -8,6 +8,7 @@ import { ContentBlock } from '@/blocks/Content/Component'
 import { FormBlock } from '@/blocks/Form/Component'
 import { JobBoardBlock } from '@/blocks/JobBoard/Component'
 import { MediaBlock } from '@/blocks/MediaBlock/Component'
+import { NewsletterSignupBlock } from '@/blocks/NewsletterSignup/Component'
 import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 
 import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
@@ -26,6 +27,7 @@ const blockComponents = {
   jobBoard: JobBoardBlock,
   mediaBlock: MediaBlock,
   sendUsCV: SendUsCVBlock,
+  newsletterSignup: NewsletterSignupBlock,
   aboutWithStats: AboutWithStatsBlock,
   gamesPortfolio: GamesPortfolioBlock,
   coreValuesShowcase: CoreValuesShowcaseBlock,

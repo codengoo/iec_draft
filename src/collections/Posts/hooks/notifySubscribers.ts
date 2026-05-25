@@ -15,6 +15,7 @@ export const notifyPostSubscribers: CollectionAfterChangeHook<Post> = async ({
 
   if (!isNowPublished) return doc
   if (operation === 'update' && wasAlreadyPublished) return doc
+  if (doc.notifySubscribers === false) return doc
 
   try {
     const campaign = await req.payload.create({

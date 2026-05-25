@@ -344,6 +344,7 @@ export interface Page {
     | FormBlock
     | JobBoardBlock
     | SendUsCVBlock
+    | NewsletterSignupBlock
     | AboutWithStatsBlock
     | GamesPortfolioBlock
     | CoreValuesShowcaseBlock
@@ -406,6 +407,10 @@ export interface Post {
   };
   publishedAt?: string | null;
   authors?: (string | User)[] | null;
+  /**
+   * Automatically send a promotional email to all subscribers when this post is first published.
+   */
+  notifySubscribers?: boolean | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -1047,6 +1052,21 @@ export interface SendUsCVBlock {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterSignupBlock".
+ */
+export interface NewsletterSignupBlock {
+  /**
+   * Small label above the heading, e.g. "Stay in the loop"
+   */
+  eyebrow?: string | null;
+  heading: string;
+  subtitle?: string | null;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'newsletterSignup';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "AboutWithStatsBlock".
  */
 export interface AboutWithStatsBlock {
@@ -1546,6 +1566,10 @@ export interface Job {
    * Manually pin up to 3 related jobs shown at the bottom of this posting. Leave empty to auto-suggest jobs from the same department.
    */
   relatedJobs?: (string | Job)[] | null;
+  /**
+   * Automatically send a promotional email to all subscribers when this job is first published.
+   */
+  notifySubscribers?: boolean | null;
   department: string;
   location: string;
   employmentType?: ('fullTime' | 'partTime' | 'contract' | 'internship') | null;
@@ -1666,7 +1690,7 @@ export interface Subscriber {
   id: string;
   email: string;
   name?: string | null;
-  source?: ('job_application' | 'form_submission') | null;
+  source?: ('job_application' | 'form_submission' | 'newsletter') | null;
   subscribed?: boolean | null;
   unsubscribeToken?: string | null;
   subscribedAt?: string | null;
@@ -2122,6 +2146,7 @@ export interface PagesSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         jobBoard?: T | JobBoardBlockSelect<T>;
         sendUsCV?: T | SendUsCVBlockSelect<T>;
+        newsletterSignup?: T | NewsletterSignupBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
         coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
@@ -2295,6 +2320,17 @@ export interface SendUsCVBlockSelect<T extends boolean = true> {
         avatar?: T;
         id?: T;
       };
+  id?: T;
+  blockName?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "NewsletterSignupBlock_select".
+ */
+export interface NewsletterSignupBlockSelect<T extends boolean = true> {
+  eyebrow?: T;
+  heading?: T;
+  subtitle?: T;
   id?: T;
   blockName?: T;
 }
@@ -2500,6 +2536,7 @@ export interface PostsSelect<T extends boolean = true> {
       };
   publishedAt?: T;
   authors?: T;
+  notifySubscribers?: T;
   populatedAuthors?:
     | T
     | {
@@ -2668,6 +2705,7 @@ export interface JobsSelect<T extends boolean = true> {
   title?: T;
   isFeatured?: T;
   relatedJobs?: T;
+  notifySubscribers?: T;
   department?: T;
   location?: T;
   employmentType?: T;
@@ -3305,6 +3343,7 @@ export interface Home {
         | FormBlock
         | JobBoardBlock
         | SendUsCVBlock
+        | NewsletterSignupBlock
         | AboutWithStatsBlock
         | GamesPortfolioBlock
         | CoreValuesShowcaseBlock
@@ -3493,6 +3532,7 @@ export interface Career {
         | FormBlock
         | JobBoardBlock
         | SendUsCVBlock
+        | NewsletterSignupBlock
         | AboutWithStatsBlock
         | GamesPortfolioBlock
         | CoreValuesShowcaseBlock
@@ -3662,6 +3702,7 @@ export interface HomeSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         jobBoard?: T | JobBoardBlockSelect<T>;
         sendUsCV?: T | SendUsCVBlockSelect<T>;
+        newsletterSignup?: T | NewsletterSignupBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
         coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
@@ -3775,6 +3816,7 @@ export interface CareerSelect<T extends boolean = true> {
         formBlock?: T | FormBlockSelect<T>;
         jobBoard?: T | JobBoardBlockSelect<T>;
         sendUsCV?: T | SendUsCVBlockSelect<T>;
+        newsletterSignup?: T | NewsletterSignupBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
         coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
