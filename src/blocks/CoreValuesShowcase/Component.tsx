@@ -154,7 +154,9 @@ const ValueCard: React.FC<{
 
   return (
     <motion.li
-      className={positionStyle ? 'absolute list-none pointer-events-auto hover:z-50' : 'w-full list-none'}
+      className={
+        positionStyle ? 'absolute list-none pointer-events-auto hover:z-50' : 'w-full list-none'
+      }
       style={{ opacity: animOpacity, y: animY, ...positionStyle }}
       initial={{ rotate: rotateInit }}
       animate={{ rotate: rotateInit }}
