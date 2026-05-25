@@ -129,7 +129,12 @@ function GameCardInner({ game, isCenter }: { game: Game; isCenter: boolean }) {
                 className="inline-flex items-center gap-2 rounded-xl bg-black px-4 py-2 ring-1 ring-white/15 transition-all duration-200 hover:ring-white/35 hover:shadow-[0_0_16px_rgba(0,0,0,0.6)]"
               >
                 {/* Apple logo */}
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0 text-white" aria-hidden>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5 shrink-0 text-white"
+                  aria-hidden
+                >
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                 </svg>
                 <div className="flex flex-col leading-none">
@@ -146,12 +151,32 @@ function GameCardInner({ game, isCenter }: { game: Game; isCenter: boolean }) {
                 className="inline-flex items-center gap-2 rounded-xl bg-black px-4 py-2 ring-1 ring-white/15 transition-all duration-200 hover:ring-white/35 hover:shadow-[0_0_16px_rgba(0,0,0,0.6)]"
               >
                 {/* Google Play logo */}
-                <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 shrink-0" aria-hidden>
-                  <path d="M3.18 23.76c.3.17.64.24.99.2l12.7-11.7-2.76-2.76L3.18 23.76z" fill="#EA4335"/>
-                  <path d="M20.9 10.09 18.1 8.49l-3.11 2.87 3.11 3.11 2.82-1.63a1.61 1.61 0 0 0 0-2.75z" fill="#FBBC04"/>
-                  <path d="M3.17.24a1.6 1.6 0 0 0-.99 1.51v20.5l10.93-10.93L3.17.24z" fill="#4285F4"/>
-                  <path d="M14.11 12 3.18 1.07c-.01 0-.01-.01-.01-.01l10.93 10.2L14.11 12z" fill="#34A853"/>
-                  <path d="M3.17.24l10.94 10.93.9-.83L6.31.17A1.65 1.65 0 0 0 3.17.24z" fill="#34A853"/>
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5 shrink-0"
+                  aria-hidden
+                >
+                  <path
+                    d="M3.18 23.76c.3.17.64.24.99.2l12.7-11.7-2.76-2.76L3.18 23.76z"
+                    fill="#EA4335"
+                  />
+                  <path
+                    d="M20.9 10.09 18.1 8.49l-3.11 2.87 3.11 3.11 2.82-1.63a1.61 1.61 0 0 0 0-2.75z"
+                    fill="#FBBC04"
+                  />
+                  <path
+                    d="M3.17.24a1.6 1.6 0 0 0-.99 1.51v20.5l10.93-10.93L3.17.24z"
+                    fill="#4285F4"
+                  />
+                  <path
+                    d="M14.11 12 3.18 1.07c-.01 0-.01-.01-.01-.01l10.93 10.2L14.11 12z"
+                    fill="#34A853"
+                  />
+                  <path
+                    d="M3.17.24l10.94 10.93.9-.83L6.31.17A1.65 1.65 0 0 0 3.17.24z"
+                    fill="#34A853"
+                  />
                 </svg>
                 <div className="flex flex-col leading-none">
                   <span className="text-[9px] text-white/60">GET IT ON</span>
