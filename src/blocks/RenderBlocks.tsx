@@ -13,21 +13,10 @@ import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { AboutWithStatsBlock } from '@/blocks/AboutWithStats/Component'
 import { CareersHighlightBlock } from '@/blocks/CareersHighlight/Component'
 import { CategoryShowcaseBlock } from '@/blocks/CategoryShowcase/Component'
-import {
-  CoreValuesBlock,
-  CoreValuesHoverProvider,
-  CoreValuesLeftContent,
-  CoreValuesRightContent,
-} from '@/blocks/CoreValues/Component'
+import { CoreValuesShowcaseBlock } from '@/blocks/CoreValuesShowcase/Component'
 import { FeatureTabsBlock } from '@/blocks/FeatureTabs/Component'
 import { GamesPortfolioBlock } from '@/blocks/GamesPortfolio/Component'
 import { IECLifeBlock } from '@/blocks/IECLife/Component'
-import {
-  VisionMissionBlock,
-  VisionMissionLeftContent,
-  VisionMissionRightContent,
-} from '@/blocks/VisionMission/Component'
-import { PinnedCrossfade } from '@/components/PinnedCrossfade'
 
 const blockComponents = {
   archive: ArchiveBlock,
@@ -39,8 +28,7 @@ const blockComponents = {
   sendUsCV: SendUsCVBlock,
   aboutWithStats: AboutWithStatsBlock,
   gamesPortfolio: GamesPortfolioBlock,
-  visionMission: VisionMissionBlock,
-  coreValues: CoreValuesBlock,
+  coreValuesShowcase: CoreValuesShowcaseBlock,
   careersHighlight: CareersHighlightBlock,
   featureTabs: FeatureTabsBlock,
   iecLife: IECLifeBlock,
@@ -59,45 +47,10 @@ export const RenderBlocks: React.FC<{
 
   if (!hasBlocks) return null
 
-  // Detect adjacent VisionMission → CoreValues pairs. The CV slot is skipped
-  // from its own render position because PinnedCrossfade renders both at once.
-  const pairs = new Map<number, number>()
-  const skipIndices = new Set<number>()
-  for (let i = 0; i < blocks.length - 1; i++) {
-    if (blocks[i].blockType === 'visionMission' && blocks[i + 1].blockType === 'coreValues') {
-      pairs.set(i, i + 1)
-      skipIndices.add(i + 1)
-    }
-  }
-
   return (
     <Fragment>
       {blocks.map((block, index) => {
-        if (skipIndices.has(index)) return null
-
         const { blockType } = block
-
-        // Paired VM + CV → pinned staggered slide-up.
-        // CoreValuesHoverProvider wraps the whole pair so Left cards and Right
-        // image swap share a single hover state across the layered grids.
-        if (pairs.has(index)) {
-          const cvIndex = pairs.get(index)!
-          const cvBlock = blocks[cvIndex]
-          return (
-            <CoreValuesHoverProvider key={index}>
-              <PinnedCrossfade
-                // @ts-expect-error block props are validated by Payload schema
-                firstLeft={<VisionMissionLeftContent {...block} />}
-                // @ts-expect-error block props are validated by Payload schema
-                firstRight={<VisionMissionRightContent {...block} />}
-                // @ts-expect-error block props are validated by Payload schema
-                secondLeft={<CoreValuesLeftContent {...cvBlock} />}
-                // @ts-expect-error block props are validated by Payload schema
-                secondRight={<CoreValuesRightContent {...cvBlock} />}
-              />
-            </CoreValuesHoverProvider>
-          )
-        }
 
         if (blockType && blockType in blockComponents) {
           const Block = blockComponents[blockType]
