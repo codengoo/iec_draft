@@ -9,7 +9,7 @@ import {
   useDisclosure,
 } from '@heroui/react'
 import { IconCheck, IconFile, IconLoader2, IconPaperclip, IconX } from '@tabler/icons-react'
-import { useRef, useState, useTransition } from 'react'
+import { useEffect, useRef, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
 import { submitJobApplication } from '@/actions/submitJobApplication'
@@ -83,6 +83,13 @@ export function JobApplyModal({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const isGeneral = !jobId
+
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
   const {
     register,
@@ -179,10 +186,7 @@ export function JobApplyModal({
         isDismissable={!isPending}
       >
         <ModalContent>
-          <ModalHeader className="flex flex-col gap-1 border-b border-gray-100">
-            <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-              {labels.title}
-            </span>
+          <ModalHeader className="flex flex-col gap-0.5 border-b border-gray-100">
             {jobTitle && <span className="text-xl font-semibold text-gray-900">{jobTitle}</span>}
             <span className="text-sm font-normal text-gray-500">{labels.subtitle}</span>
           </ModalHeader>
@@ -201,8 +205,8 @@ export function JobApplyModal({
               </div>
             </ModalBody>
           ) : (
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <ModalBody className="py-6 space-y-4">
+            <form onSubmit={handleSubmit(onSubmit)} className="contents">
+              <ModalBody className="py-4 space-y-3">
                 <div>
                   <Label htmlFor="fullName">
                     {labels.fullName} <RequiredMark />
