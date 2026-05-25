@@ -1,19 +1,14 @@
 'use client'
 
-import {
-  IconConfetti,
-  IconHeartFilled,
-  IconSparkles,
-  IconStarFilled,
-} from '@tabler/icons-react'
+import { IconConfetti, IconHeartFilled, IconSparkles, IconStarFilled } from '@tabler/icons-react'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
 
 import type { Category, Post, Tag } from '@/payload-types'
 
-import { IconArrowUpRight } from '@tabler/icons-react'
 import { Media } from '@/components/Media'
+import { IconArrowUpRight } from '@tabler/icons-react'
 
 /* ──────────── helpers ──────────── */
 
@@ -122,9 +117,7 @@ const FloatingIcon: React.FC<{
                 rotate,
               }
         }
-        transition={
-          reduced ? undefined : { duration, repeat: Infinity, ease: 'easeInOut', delay }
-        }
+        transition={reduced ? undefined : { duration, repeat: Infinity, ease: 'easeInOut', delay }}
       >
         {children}
       </motion.div>
@@ -140,8 +133,8 @@ const ConfettiDots: React.FC<{ className: string; color: string; count?: number 
   const reduced = useReducedMotion()
   // Deterministic pseudo-random positions to keep SSR/CSR markup stable
   const dots = Array.from({ length: count }, (_, i) => {
-    const x = ((i * 73) % 100)
-    const y = ((i * 41 + 17) % 100)
+    const x = (i * 73) % 100
+    const y = (i * 41 + 17) % 100
     const size = 6 + ((i * 11) % 10)
     return { x, y, size, i }
   })
@@ -430,8 +423,7 @@ export const IECLifeView: React.FC<Props> = ({ posts, eyebrow, heading, ctaLabel
               <h2
                 className="bg-clip-text text-4xl font-black uppercase leading-none tracking-tight text-transparent md:text-5xl lg:text-6xl"
                 style={{
-                  backgroundImage:
-                    'linear-gradient(120deg, #0a4bb1 0%, #1d6fe4 50%, #0ea5e9 100%)',
+                  backgroundImage: 'linear-gradient(120deg, #0a4bb1 0%, #1d6fe4 50%, #0ea5e9 100%)',
                   filter:
                     'drop-shadow(0 8px 18px rgba(10, 75, 177, 0.35)) drop-shadow(0 2px 4px rgba(14, 165, 233, 0.25))',
                 }}

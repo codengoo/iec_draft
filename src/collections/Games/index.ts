@@ -25,6 +25,8 @@ export const Games: CollectionConfig = {
     badges: true,
     playUrl: true,
     downloads: true,
+    appStoreUrl: true,
+    googlePlayUrl: true,
   },
   versions: {
     drafts: {
@@ -78,6 +80,22 @@ export const Games: CollectionConfig = {
       label: 'Play URL',
       admin: {
         description: 'External link to play / download the game.',
+      },
+    },
+    {
+      name: 'appStoreUrl',
+      type: 'text',
+      label: 'App Store URL',
+      admin: {
+        description: 'Apple App Store link.',
+      },
+    },
+    {
+      name: 'googlePlayUrl',
+      type: 'text',
+      label: 'Google Play URL',
+      admin: {
+        description: 'Google Play Store link.',
       },
     },
     {

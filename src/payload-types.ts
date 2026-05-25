@@ -1219,6 +1219,14 @@ export interface Game {
    */
   playUrl?: string | null;
   /**
+   * Apple App Store link.
+   */
+  appStoreUrl?: string | null;
+  /**
+   * Google Play Store link.
+   */
+  googlePlayUrl?: string | null;
+  /**
    * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
    */
   downloads?: string | null;
@@ -2733,6 +2741,8 @@ export interface GamesSelect<T extends boolean = true> {
         id?: T;
       };
   playUrl?: T;
+  appStoreUrl?: T;
+  googlePlayUrl?: T;
   downloads?: T;
   publishedAt?: T;
   generateSlug?: T;
