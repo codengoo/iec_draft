@@ -123,6 +123,19 @@ function renderHeading(text: string) {
   )
 }
 
+/* ── Constellation card positions ───────────────────── */
+
+/** Predefined absolute positions & initial tilts for up to 6 cards in the
+ *  scattered constellation layout (desktop Phase 2). */
+const CARD_POSITIONS: Array<{ style: React.CSSProperties; rotate: number }> = [
+  { style: { left: '5%', top: '12%', width: '22rem' }, rotate: -5 }, // 0 left-top
+  { style: { left: '2%', bottom: '12%', width: '22rem' }, rotate: -3 }, // 1 left-bottom
+  { style: { right: '5%', top: '16%', width: '22rem' }, rotate: 4 }, // 2 right-top
+  { style: { right: '2%', bottom: '12%', width: '22rem' }, rotate: 6 }, // 3 right-bottom
+  { style: { left: '20%', bottom: '2%', width: '20rem' }, rotate: -2 }, // 4 overflow
+  { style: { right: '20%', bottom: '2%', width: '20rem' }, rotate: 3 }, // 5 overflow
+]
+
 /* ── Value card ─────────────────────────────────────── */
 
 type ValueItem = NonNullable<Props['values']>[number]
@@ -131,14 +144,22 @@ const ValueCard: React.FC<{
   value: ValueItem
   animOpacity: MotionValue<number>
   animY: MotionValue<number>
-}> = ({ value, animOpacity, animY }) => {
+  /** Initial tilt angle (deg). On hover the card springs to 0. */
+  rotateInit?: number
+  /** When provided, card is absolutely positioned using these CSS values. */
+  positionStyle?: React.CSSProperties
+}> = ({ value, animOpacity, animY, rotateInit = 0, positionStyle }) => {
   const [expanded, setExpanded] = useState(false)
   const image = value.image && typeof value.image === 'object' ? (value.image as MediaType) : null
 
   return (
     <motion.li
-      className="w-full list-none"
-      style={{ opacity: animOpacity, y: animY }}
+      className={positionStyle ? 'absolute list-none pointer-events-auto' : 'w-full list-none'}
+      style={{ opacity: animOpacity, y: animY, ...positionStyle }}
+      initial={{ rotate: rotateInit }}
+      animate={{ rotate: rotateInit }}
+      whileHover={{ rotate: 0 }}
+      transition={{ type: 'spring', stiffness: 280, damping: 22 }}
       onMouseEnter={() => setExpanded(true)}
       onMouseLeave={() => setExpanded(false)}
       onFocus={() => setExpanded(true)}
@@ -364,20 +385,8 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                     </div>
                   )}
 
-                  {/* Constellation: mascot fills center, cards overlap from sides */}
+                  {/* Constellation: mascot fills center, cards scattered around */}
                   <div className="relative flex h-120 w-full items-center justify-center xl:h-130">
-                    {/* Left values — absolute, overlapping mascot */}
-                    <ul className="absolute left-0 top-1/2 z-10 flex w-88 -translate-y-1/2 flex-col gap-3">
-                      {leftValues.map((v, i) => (
-                        <ValueCard
-                          key={v.id ?? i}
-                          value={v}
-                          animOpacity={valueAnims[i].animOpacity}
-                          animY={valueAnims[i].animY}
-                        />
-                      ))}
-                    </ul>
-
                     {/* Center — mascot very large, fills background */}
                     <div className="pointer-events-none relative flex shrink-0 items-center justify-center">
                       {/* Glow orb primary */}
@@ -421,17 +430,25 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                       )}
                     </div>
 
-                    {/* Right values — absolute, overlapping mascot */}
-                    <ul className="absolute right-0 top-1/2 z-10 flex w-88 -translate-y-1/2 flex-col gap-3">
-                      {rightValues.map((v, i) => (
-                        <ValueCard
-                          key={v.id ?? i}
-                          value={v}
-                          animOpacity={valueAnims[i + half].animOpacity}
-                          animY={valueAnims[i + half].animY}
-                        />
-                      ))}
-                    </ul>
+                    {/* Scattered cards — individually positioned around mascot */}
+                    {valuesList.length > 0 && (
+                      <ul className="pointer-events-none absolute inset-0">
+                        {valuesList.map((v, i) => {
+                          const pos = CARD_POSITIONS[i]
+                          if (!pos) return null
+                          return (
+                            <ValueCard
+                              key={v.id ?? i}
+                              value={v}
+                              animOpacity={valueAnims[i].animOpacity}
+                              animY={valueAnims[i].animY}
+                              rotateInit={pos.rotate}
+                              positionStyle={pos.style}
+                            />
+                          )
+                        })}
+                      </ul>
+                    )}
                   </div>
                 </motion.div>
               </div>
