@@ -85,6 +85,53 @@ const popIn: Variants = {
   },
 }
 
+/* ──────────── ripple button ──────────── */
+
+const RIPPLE_GRADIENT = 'linear-gradient(120deg, #E11D48 0%, #EC4899 55%, #FB923C 100%)'
+
+const RippleLink: React.FC<{ href: string; label: string }> = ({ href, label }) => {
+  const [ripples, setRipples] = React.useState<Array<{ x: number; y: number; id: number }>>([])
+
+  const addRipple = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const id = Date.now()
+    setRipples((prev) => [...prev, { x, y, id }])
+    setTimeout(() => setRipples((prev) => prev.filter((r) => r.id !== id)), 800)
+  }
+
+  return (
+    <Link
+      href={href}
+      onMouseEnter={addRipple}
+      className="group relative inline-flex items-center justify-between gap-4 overflow-hidden rounded-full bg-slate-900 px-7 py-4 text-sm font-semibold text-white shadow-[0_14px_30px_-12px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_36px_-12px_rgba(225,29,72,0.55)] md:text-base"
+    >
+      {/* Persistent gradient background on hover */}
+      <span
+        aria-hidden
+        className="absolute inset-0 opacity-0 transition-opacity duration-400 group-hover:opacity-100"
+        style={{ background: RIPPLE_GRADIENT }}
+      />
+      {ripples.map((r) => (
+        <motion.span
+          key={r.id}
+          aria-hidden
+          className="pointer-events-none absolute rounded-full"
+          style={{ left: r.x, top: r.y, background: RIPPLE_GRADIENT }}
+          initial={{ width: 0, height: 0, x: '-50%', y: '-50%', opacity: 0.85 }}
+          animate={{ width: 480, height: 480, x: '-50%', y: '-50%', opacity: 0 }}
+          transition={{ duration: 0.75, ease: 'easeOut' }}
+        />
+      ))}
+      <span className="relative z-10">{label}</span>
+      <span className="relative z-10 inline-flex size-8 items-center justify-center rounded-full bg-white/15 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:bg-white/25">
+        <IconArrowRight className="size-4" stroke={2.4} />
+      </span>
+    </Link>
+  )
+}
+
 /* ──────────── photo card ──────────── */
 
 const PhotoCard: React.FC<{ post: Post; className?: string }> = ({ post, className = '' }) => {
@@ -167,8 +214,7 @@ const Decorations: React.FC = () => {
           backgroundImage:
             'radial-gradient(circle, rgba(244,114,182,0.22) 1.2px, transparent 1.2px)',
           backgroundSize: '22px 22px',
-          maskImage:
-            'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 90%)',
+          maskImage: 'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 90%)',
           WebkitMaskImage:
             'radial-gradient(ellipse 70% 60% at 50% 50%, black 40%, transparent 90%)',
         }}
@@ -179,8 +225,7 @@ const Decorations: React.FC = () => {
         aria-hidden
         className="pointer-events-none absolute right-12 top-20 hidden h-36 w-36 opacity-70 lg:block"
         style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(225,29,72,0.4) 1.5px, transparent 1.5px)',
+          backgroundImage: 'radial-gradient(circle, rgba(225,29,72,0.4) 1.5px, transparent 1.5px)',
           backgroundSize: '12px 12px',
         }}
       />
@@ -188,8 +233,7 @@ const Decorations: React.FC = () => {
         aria-hidden
         className="pointer-events-none absolute bottom-24 left-10 hidden h-32 w-32 opacity-70 lg:block"
         style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(236,72,153,0.4) 1.5px, transparent 1.5px)',
+          backgroundImage: 'radial-gradient(circle, rgba(236,72,153,0.4) 1.5px, transparent 1.5px)',
           backgroundSize: '12px 12px',
         }}
       />
@@ -253,9 +297,7 @@ const Decorations: React.FC = () => {
       >
         <motion.div
           animate={reduced ? undefined : { y: [0, -10, 0], rotate: [-8, 8, -8] }}
-          transition={
-            reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }}
         >
           <IconSparkles className="size-8 text-rose-400/55" stroke={2} />
         </motion.div>
@@ -272,9 +314,7 @@ const Decorations: React.FC = () => {
       >
         <motion.div
           animate={reduced ? undefined : { y: [0, -8, 0], rotate: [6, -6, 6] }}
-          transition={
-            reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={reduced ? undefined : { duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
         >
           <IconStarFilled className="size-6 text-pink-300/65" />
         </motion.div>
@@ -320,7 +360,13 @@ export const CategoryShowcaseView: React.FC<Props> = ({
             {heading && (
               <motion.h2
                 variants={fadeUp}
-                className="text-3xl font-black leading-[1.1] tracking-tight text-slate-900 md:text-4xl lg:text-5xl"
+                className="text-3xl font-black leading-[1.1] tracking-tight md:text-4xl lg:text-5xl"
+                style={{
+                  background: 'linear-gradient(120deg, #E11D48 0%, #EC4899 55%, #FB923C 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
               >
                 {heading}
               </motion.h2>
@@ -337,15 +383,7 @@ export const CategoryShowcaseView: React.FC<Props> = ({
 
             {ctaLabel && (
               <motion.div variants={fadeUp} className="mt-8">
-                <Link
-                  href="/posts"
-                  className="group inline-flex items-center justify-between gap-4 rounded-full bg-slate-900 px-7 py-4 text-sm font-semibold text-white shadow-[0_14px_30px_-12px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-slate-800 hover:shadow-[0_18px_36px_-12px_rgba(15,23,42,0.75)] md:text-base"
-                >
-                  <span>{ctaLabel}</span>
-                  <span className="inline-flex size-8 items-center justify-center rounded-full bg-white/15 text-white transition-transform duration-300 group-hover:translate-x-1 group-hover:bg-white/25">
-                    <IconArrowRight className="size-4" stroke={2.4} />
-                  </span>
-                </Link>
+                <RippleLink href="/posts" label={ctaLabel} />
               </motion.div>
             )}
           </div>
@@ -353,17 +391,14 @@ export const CategoryShowcaseView: React.FC<Props> = ({
           {/* COLLAGE — left column on lg+ */}
           {posts.length > 0 && (
             <motion.div className="lg:order-1 lg:col-span-8" variants={container}>
-              <div className="grid auto-rows-[12rem] grid-cols-4 gap-3 md:auto-rows-[16rem] md:gap-4 lg:auto-rows-[19rem]">
-                {/* Slot 1: top-left wide (cols 1-2 × row 1) */}
+              <div className="grid auto-rows-[14rem] grid-cols-2 gap-3 md:auto-rows-[17rem] md:grid-cols-3 md:gap-4 lg:auto-rows-[20rem]">
+                {/* Slot 1: top-left large (cols 1-2 × row 1) */}
                 {p1 && (
-                  <motion.div
-                    variants={popIn}
-                    className="col-span-2 row-span-1 md:col-span-2 md:row-span-1"
-                  >
+                  <motion.div variants={popIn} className="col-span-2 row-span-1">
                     <PhotoCard post={p1} className="h-full w-full" />
                   </motion.div>
                 )}
-                {/* Slot 2: top-mid narrow (col 3 × row 1) */}
+                {/* Slot 2: top-right (col 3 × row 1) */}
                 {p2 && (
                   <motion.div
                     variants={popIn}
@@ -372,31 +407,19 @@ export const CategoryShowcaseView: React.FC<Props> = ({
                     <PhotoCard post={p2} className="h-full w-full" />
                   </motion.div>
                 )}
-                {/* Slot 3: right tall (col 4 × rows 1-2) */}
+                {/* Slot 3: bottom-left (col 1 × row 2) */}
                 {p3 && (
-                  <motion.div
-                    variants={popIn}
-                    className="col-span-2 row-span-1 md:col-span-1 md:row-span-2"
-                  >
+                  <motion.div variants={popIn} className="col-span-1 row-span-1">
                     <PhotoCard post={p3} className="h-full w-full" />
                   </motion.div>
                 )}
-                {/* Slot 4: bottom-left narrow (col 1 × row 2) */}
+                {/* Slot 4: bottom-right wide — spans cols 2-3 (merged from 2 cards) */}
                 {p4 && (
                   <motion.div
                     variants={popIn}
-                    className="col-span-2 row-span-1 md:col-span-1 md:row-span-1"
+                    className="col-span-1 row-span-1 md:col-span-2 md:row-span-1"
                   >
                     <PhotoCard post={p4} className="h-full w-full" />
-                  </motion.div>
-                )}
-                {/* Slot 5: bottom-mid wide (cols 2-3 × row 2) */}
-                {p5 && (
-                  <motion.div
-                    variants={popIn}
-                    className="col-span-2 row-span-1 md:col-span-2 md:row-span-1"
-                  >
-                    <PhotoCard post={p5} className="h-full w-full" />
                   </motion.div>
                 )}
               </div>

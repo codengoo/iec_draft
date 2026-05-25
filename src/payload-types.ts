@@ -346,8 +346,7 @@ export interface Page {
     | SendUsCVBlock
     | AboutWithStatsBlock
     | GamesPortfolioBlock
-    | VisionMissionBlock
-    | CoreValuesBlock
+    | CoreValuesShowcaseBlock
     | CareersHighlightBlock
     | FeatureTabsBlock
     | IECLifeBlock
@@ -1105,9 +1104,21 @@ export interface AboutWithStatsBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * Image displayed beside the description (e.g. a team / event photo). Rendered with rounded corners, soft shadow, and a slight tilt for a casual feel.
+   * Image or video displayed beside the description. If a video is uploaded, it will not autoplay — a play button appears on hover.
    */
   supportImage?: (string | null) | Media;
+  /**
+   * Select whether to upload a video file or paste a YouTube link for the right column.
+   */
+  featureVideoSource?: ('upload' | 'youtube') | null;
+  /**
+   * Upload a video or image file to display in the right column.
+   */
+  featureVideo?: (string | null) | Media;
+  /**
+   * Paste any YouTube URL (watch, share, or embed). Autoplays muted when scrolled into view.
+   */
+  featureVideoYoutubeUrl?: string | null;
   /**
    * Optional second mascot (e.g. a mascot in an airplane) that flies across the section as the user scrolls — enters from one side, arcs through the middle, exits on the other side.
    */
@@ -1213,6 +1224,14 @@ export interface Game {
    */
   playUrl?: string | null;
   /**
+   * Apple App Store link.
+   */
+  appStoreUrl?: string | null;
+  /**
+   * Google Play Store link.
+   */
+  googlePlayUrl?: string | null;
+  /**
    * Số lượt tải hiển thị trên card (ví dụ: "10M+", "500K+").
    */
   downloads?: string | null;
@@ -1228,114 +1247,9 @@ export interface Game {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "VisionMissionBlock".
+ * via the `definition` "CoreValuesShowcaseBlock".
  */
-export interface VisionMissionBlock {
-  /**
-   * Small label shown in the pill above the heading.
-   */
-  eyebrow?: string | null;
-  eyebrowIcon?:
-    | (
-        | 'gamepad'
-        | 'users'
-        | 'star'
-        | 'heart'
-        | 'sparkles'
-        | 'shield'
-        | 'trophy'
-        | 'bolt'
-        | 'target'
-        | 'palette'
-        | 'rocket'
-        | 'eye'
-      )
-    | null;
-  /**
-   * Any "&" character in the heading is highlighted in primary color.
-   */
-  heading: string;
-  body?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Small feature pills shown below the body (e.g. SÁNG TẠO, KẾT NỐI, GIÁ TRỊ).
-   */
-  features?:
-    | {
-        icon?:
-          | (
-              | 'gamepad'
-              | 'users'
-              | 'star'
-              | 'heart'
-              | 'sparkles'
-              | 'shield'
-              | 'trophy'
-              | 'bolt'
-              | 'target'
-              | 'palette'
-              | 'rocket'
-              | 'eye'
-            )
-          | null;
-        title: string;
-        description?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  mascot?: (string | null) | Media;
-  vision?: string | null;
-  mission?: string | null;
-  cta?:
-    | {
-        link: {
-          type?: ('reference' | 'route' | 'custom') | null;
-          newTab?: boolean | null;
-          reference?:
-            | ({
-                relationTo: 'pages';
-                value: string | Page;
-              } | null)
-            | ({
-                relationTo: 'posts';
-                value: string | Post;
-              } | null);
-          /**
-           * Pick a built-in section page (route is hardcoded in the app).
-           */
-          route?: ('/' | '/posts' | '/search') | null;
-          url?: string | null;
-          label: string;
-          /**
-           * Choose how the link should be rendered.
-           */
-          appearance?: ('default' | 'outline') | null;
-        };
-        id?: string | null;
-      }[]
-    | null;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'visionMission';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CoreValuesBlock".
- */
-export interface CoreValuesBlock {
+export interface CoreValuesShowcaseBlock {
   /**
    * Small label shown in the pill above the heading.
    */
@@ -1360,8 +1274,10 @@ export interface CoreValuesBlock {
         | 'coffee'
       )
     | null;
+  /**
+   * Any "&" is highlighted in primary color.
+   */
   heading: string;
-  headingHighlight?: string | null;
   body?: {
     root: {
       type: string;
@@ -1377,6 +1293,47 @@ export interface CoreValuesBlock {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Small feature pills shown below the body.
+   */
+  features?:
+    | {
+        icon?:
+          | (
+              | 'sparkles'
+              | 'diamond'
+              | 'sleep'
+              | 'gamepad'
+              | 'heart'
+              | 'star'
+              | 'users'
+              | 'shield'
+              | 'trophy'
+              | 'bolt'
+              | 'target'
+              | 'palette'
+              | 'rocket'
+              | 'eye'
+              | 'flame'
+              | 'coffee'
+            )
+          | null;
+        title: string;
+        description?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  vision?: string | null;
+  mission?: string | null;
+  /**
+   * Character shown in the center of the scroll animation.
+   */
+  mascot?: (string | null) | Media;
+  valuesEyebrow?: string | null;
+  /**
+   * Short subtitle shown below the Core Values heading.
+   */
+  valuesDescription?: string | null;
   values?:
     | {
         icon?:
@@ -1402,17 +1359,16 @@ export interface CoreValuesBlock {
         title: string;
         description?: string | null;
         /**
-         * Optional image shown on the right when this card is hovered.
+         * Image revealed when this card is hovered/expanded.
          */
         image?: (string | null) | Media;
         /**
-         * Short caption shown right below the hovered image.
+         * Caption shown below the expanded image.
          */
         imageCaption?: string | null;
         id?: string | null;
       }[]
     | null;
-  mascot?: (string | null) | Media;
   cta?:
     | {
         link: {
@@ -1443,7 +1399,7 @@ export interface CoreValuesBlock {
     | null;
   id?: string | null;
   blockName?: string | null;
-  blockType: 'coreValues';
+  blockType: 'coreValuesShowcase';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2160,8 +2116,7 @@ export interface PagesSelect<T extends boolean = true> {
         sendUsCV?: T | SendUsCVBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
-        visionMission?: T | VisionMissionBlockSelect<T>;
-        coreValues?: T | CoreValuesBlockSelect<T>;
+        coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;
@@ -2351,6 +2306,9 @@ export interface AboutWithStatsBlockSelect<T extends boolean = true> {
   heading?: T;
   description?: T;
   supportImage?: T;
+  featureVideoSource?: T;
+  featureVideo?: T;
+  featureVideoYoutubeUrl?: T;
   flyingMascot?: T;
   cta?:
     | T
@@ -2400,9 +2358,9 @@ export interface GamesPortfolioBlockSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "VisionMissionBlock_select".
+ * via the `definition` "CoreValuesShowcaseBlock_select".
  */
-export interface VisionMissionBlockSelect<T extends boolean = true> {
+export interface CoreValuesShowcaseBlockSelect<T extends boolean = true> {
   eyebrow?: T;
   eyebrowIcon?: T;
   heading?: T;
@@ -2415,38 +2373,11 @@ export interface VisionMissionBlockSelect<T extends boolean = true> {
         description?: T;
         id?: T;
       };
-  mascot?: T;
   vision?: T;
   mission?: T;
-  cta?:
-    | T
-    | {
-        link?:
-          | T
-          | {
-              type?: T;
-              newTab?: T;
-              reference?: T;
-              route?: T;
-              url?: T;
-              label?: T;
-              appearance?: T;
-            };
-        id?: T;
-      };
-  id?: T;
-  blockName?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CoreValuesBlock_select".
- */
-export interface CoreValuesBlockSelect<T extends boolean = true> {
-  eyebrow?: T;
-  eyebrowIcon?: T;
-  heading?: T;
-  headingHighlight?: T;
-  body?: T;
+  mascot?: T;
+  valuesEyebrow?: T;
+  valuesDescription?: T;
   values?:
     | T
     | {
@@ -2457,7 +2388,6 @@ export interface CoreValuesBlockSelect<T extends boolean = true> {
         imageCaption?: T;
         id?: T;
       };
-  mascot?: T;
   cta?:
     | T
     | {
@@ -2787,6 +2717,8 @@ export interface GamesSelect<T extends boolean = true> {
         id?: T;
       };
   playUrl?: T;
+  appStoreUrl?: T;
+  googlePlayUrl?: T;
   downloads?: T;
   publishedAt?: T;
   generateSlug?: T;
@@ -3365,8 +3297,7 @@ export interface Home {
         | SendUsCVBlock
         | AboutWithStatsBlock
         | GamesPortfolioBlock
-        | VisionMissionBlock
-        | CoreValuesBlock
+        | CoreValuesShowcaseBlock
         | CareersHighlightBlock
         | FeatureTabsBlock
         | IECLifeBlock
@@ -3724,8 +3655,7 @@ export interface HomeSelect<T extends boolean = true> {
         sendUsCV?: T | SendUsCVBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
-        visionMission?: T | VisionMissionBlockSelect<T>;
-        coreValues?: T | CoreValuesBlockSelect<T>;
+        coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;

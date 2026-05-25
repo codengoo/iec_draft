@@ -9,11 +9,10 @@ import { SendUsCV } from '@/blocks/SendUsCV/config'
 import { AboutWithStats } from '@/blocks/AboutWithStats/config'
 import { CareersHighlight } from '@/blocks/CareersHighlight/config'
 import { CategoryShowcase } from '@/blocks/CategoryShowcase/config'
-import { CoreValues } from '@/blocks/CoreValues/config'
+import { CoreValuesShowcase } from '@/blocks/CoreValuesShowcase/config'
 import { FeatureTabs } from '@/blocks/FeatureTabs/config'
 import { GamesPortfolio } from '@/blocks/GamesPortfolio/config'
 import { IECLife } from '@/blocks/IECLife/config'
-import { VisionMission } from '@/blocks/VisionMission/config'
 
 /**
  * Blocks available on both the Pages collection and the Home global,
@@ -29,8 +28,7 @@ export const sharedLayoutBlocks = [
   SendUsCV,
   AboutWithStats,
   GamesPortfolio,
-  VisionMission,
-  CoreValues,
+  CoreValuesShowcase,
   CareersHighlight,
   FeatureTabs,
   IECLife,

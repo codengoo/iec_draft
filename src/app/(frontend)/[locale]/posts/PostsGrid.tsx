@@ -126,7 +126,7 @@ export function PostsGrid({ initialPosts, initialTotal, categories }: Props) {
         variants={containerVariants}
         initial="hidden"
         animate="show"
-        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 transition-opacity duration-200 ${isPending ? 'opacity-50' : 'opacity-100'}`}
+        className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 ${isPending ? 'opacity-50' : 'opacity-100'}`}
       >
         <AnimatePresence mode="popLayout">
           {posts.length > 0 ? (

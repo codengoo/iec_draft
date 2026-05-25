@@ -1,19 +1,14 @@
 'use client'
 
-import {
-  IconConfetti,
-  IconHeartFilled,
-  IconSparkles,
-  IconStarFilled,
-} from '@tabler/icons-react'
+import { IconConfetti, IconHeartFilled, IconSparkles, IconStarFilled } from '@tabler/icons-react'
 import { motion, useReducedMotion, type Variants } from 'framer-motion'
 import Link from 'next/link'
 import React from 'react'
 
 import type { Category, Post, Tag } from '@/payload-types'
 
-import { IconArrowUpRight } from '@tabler/icons-react'
 import { Media } from '@/components/Media'
+import { IconArrowUpRight } from '@tabler/icons-react'
 
 /* ──────────── helpers ──────────── */
 
@@ -122,9 +117,7 @@ const FloatingIcon: React.FC<{
                 rotate,
               }
         }
-        transition={
-          reduced ? undefined : { duration, repeat: Infinity, ease: 'easeInOut', delay }
-        }
+        transition={reduced ? undefined : { duration, repeat: Infinity, ease: 'easeInOut', delay }}
       >
         {children}
       </motion.div>
@@ -140,8 +133,8 @@ const ConfettiDots: React.FC<{ className: string; color: string; count?: number 
   const reduced = useReducedMotion()
   // Deterministic pseudo-random positions to keep SSR/CSR markup stable
   const dots = Array.from({ length: count }, (_, i) => {
-    const x = ((i * 73) % 100)
-    const y = ((i * 41 + 17) % 100)
+    const x = (i * 73) % 100
+    const y = (i * 41 + 17) % 100
     const size = 6 + ((i * 11) % 10)
     return { x, y, size, i }
   })
@@ -208,21 +201,21 @@ const Decorations: React.FC = () => (
     {/* Soft pastel blobs */}
     <div
       aria-hidden
-      className="pointer-events-none absolute -top-32 -right-32 h-112 w-md rounded-full bg-rose-200/30 blur-3xl"
+      className="pointer-events-none absolute -top-32 -right-32 h-112 w-md rounded-full bg-blue-200/30 blur-3xl"
     />
     <div
       aria-hidden
-      className="pointer-events-none absolute -bottom-40 -left-32 h-128 w-lg rounded-full bg-amber-100/40 blur-3xl"
+      className="pointer-events-none absolute -bottom-40 -left-32 h-128 w-lg rounded-full bg-sky-100/40 blur-3xl"
     />
 
     {/* Outline circles */}
     <div
       aria-hidden
-      className="pointer-events-none absolute -top-20 right-12 hidden h-72 w-72 rounded-full border-2 border-rose-200/60 lg:block lg:h-96 lg:w-96"
+      className="pointer-events-none absolute -top-20 right-12 hidden h-72 w-72 rounded-full border-2 border-blue-200/60 lg:block lg:h-96 lg:w-96"
     />
     <div
       aria-hidden
-      className="pointer-events-none absolute -bottom-24 -left-24 hidden h-72 w-72 rounded-full border-2 border-amber-200/50 lg:block lg:h-88 lg:w-88"
+      className="pointer-events-none absolute -bottom-24 -left-24 hidden h-72 w-72 rounded-full border-2 border-sky-200/50 lg:block lg:h-88 lg:w-88"
     />
 
     {/* ── DOT GRIDS — sprinkled across corners ── */}
@@ -230,14 +223,14 @@ const Decorations: React.FC = () => (
     {/* Top-left cluster */}
     <DotGrid
       className="left-4 top-8 h-24 w-32 md:left-8 md:top-12 md:h-36 md:w-48"
-      color="rgba(244,114,182,0.45)"
+      color="rgba(96,165,250,0.45)"
       size={1.5}
       gap={12}
       opacity={0.65}
     />
     <DotGrid
       className="left-2 top-32 hidden h-20 w-20 md:block md:left-6 md:top-40 lg:left-12 lg:h-28 lg:w-28"
-      color="rgba(251,113,133,0.5)"
+      color="rgba(59,130,246,0.5)"
       size={2}
       gap={16}
       opacity={0.5}
@@ -246,14 +239,14 @@ const Decorations: React.FC = () => (
     {/* Top-right cluster */}
     <DotGrid
       className="right-4 top-20 h-28 w-32 md:right-10 md:top-28 md:h-40 md:w-48 lg:right-16"
-      color="rgba(225,29,72,0.4)"
+      color="rgba(14,165,233,0.4)"
       size={1.5}
       gap={12}
       opacity={0.55}
     />
     <DotGrid
       className="right-8 top-2 hidden h-16 w-32 md:block md:h-20 md:w-44 lg:right-32"
-      color="rgba(251,146,60,0.5)"
+      color="rgba(56,189,248,0.5)"
       size={2}
       gap={14}
       opacity={0.6}
@@ -262,7 +255,7 @@ const Decorations: React.FC = () => (
     {/* Middle-left */}
     <DotGrid
       className="left-2 top-1/2 hidden h-24 w-16 -translate-y-1/2 md:block md:h-32 md:w-20 lg:left-6 lg:w-24"
-      color="rgba(244,114,182,0.4)"
+      color="rgba(96,165,250,0.4)"
       size={1.5}
       gap={14}
       opacity={0.5}
@@ -271,7 +264,7 @@ const Decorations: React.FC = () => (
     {/* Middle-right */}
     <DotGrid
       className="right-2 top-1/2 hidden h-24 w-16 -translate-y-1/2 md:block md:h-32 md:w-20 lg:right-6 lg:w-24"
-      color="rgba(251,113,133,0.4)"
+      color="rgba(59,130,246,0.4)"
       size={1.5}
       gap={14}
       opacity={0.5}
@@ -280,14 +273,14 @@ const Decorations: React.FC = () => (
     {/* Bottom-left cluster */}
     <DotGrid
       className="bottom-4 left-4 h-28 w-32 md:bottom-10 md:left-8 md:h-40 md:w-48 lg:left-16"
-      color="rgba(251,146,60,0.45)"
+      color="rgba(96,165,250,0.45)"
       size={1.5}
       gap={12}
       opacity={0.6}
     />
     <DotGrid
       className="bottom-28 left-2 hidden h-16 w-20 md:block md:bottom-36 md:left-6 md:h-20 md:w-28 lg:bottom-44"
-      color="rgba(244,114,182,0.5)"
+      color="rgba(59,130,246,0.5)"
       size={2}
       gap={14}
       opacity={0.5}
@@ -296,14 +289,14 @@ const Decorations: React.FC = () => (
     {/* Bottom-right cluster */}
     <DotGrid
       className="bottom-6 right-4 h-28 w-32 md:bottom-12 md:right-10 md:h-40 md:w-48 lg:right-20"
-      color="rgba(225,29,72,0.4)"
+      color="rgba(14,165,233,0.4)"
       size={1.5}
       gap={12}
       opacity={0.6}
     />
     <DotGrid
       className="bottom-32 right-2 hidden h-16 w-20 md:block md:bottom-40 md:right-6 md:h-20 md:w-28 lg:bottom-52"
-      color="rgba(251,146,60,0.5)"
+      color="rgba(56,189,248,0.5)"
       size={2}
       gap={14}
       opacity={0.5}
@@ -312,22 +305,22 @@ const Decorations: React.FC = () => (
     {/* ── Confetti — pulsing accent dots over the grids ── */}
     <ConfettiDots
       className="top-6 left-8 h-32 w-40 hidden md:block"
-      color="rgba(244,114,182,0.7)"
+      color="rgba(96,165,250,0.7)"
       count={6}
     />
     <ConfettiDots
       className="top-10 right-12 h-32 w-40 hidden md:block"
-      color="rgba(251,146,60,0.65)"
+      color="rgba(56,189,248,0.65)"
       count={5}
     />
     <ConfettiDots
       className="bottom-12 left-10 h-32 w-40 hidden md:block"
-      color="rgba(251,113,133,0.65)"
+      color="rgba(59,130,246,0.65)"
       count={5}
     />
     <ConfettiDots
       className="bottom-10 right-8 h-32 w-40 hidden md:block"
-      color="rgba(225,29,72,0.55)"
+      color="rgba(14,165,233,0.55)"
       count={6}
     />
 
@@ -338,7 +331,7 @@ const Decorations: React.FC = () => (
       duration={5.5}
       rotate={[-10, 10]}
     >
-      <IconSparkles className="size-9 text-rose-400/80 lg:size-12" stroke={2} />
+      <IconSparkles className="size-9 text-blue-400/80 lg:size-12" stroke={2} />
     </FloatingIcon>
 
     <FloatingIcon
@@ -347,7 +340,7 @@ const Decorations: React.FC = () => (
       duration={4.5}
       rotate={[8, -8]}
     >
-      <IconStarFilled className="size-7 text-amber-400/80 lg:size-10" />
+      <IconStarFilled className="size-7 text-sky-400/80 lg:size-10" />
     </FloatingIcon>
 
     <FloatingIcon
@@ -356,7 +349,7 @@ const Decorations: React.FC = () => (
       duration={5}
       rotate={[-12, 6]}
     >
-      <IconHeartFilled className="size-7 text-pink-400/85 lg:size-9" />
+      <IconHeartFilled className="size-7 text-blue-500/85 lg:size-9" />
     </FloatingIcon>
 
     <FloatingIcon
@@ -365,7 +358,7 @@ const Decorations: React.FC = () => (
       duration={6}
       rotate={[6, -10]}
     >
-      <IconConfetti className="size-9 text-orange-400/85 lg:size-12" stroke={2} />
+      <IconConfetti className="size-9 text-sky-500/85 lg:size-12" stroke={2} />
     </FloatingIcon>
   </>
 )
@@ -408,7 +401,7 @@ export const IECLifeView: React.FC<Props> = ({ posts, eyebrow, heading, ctaLabel
   const [featured, ...rest] = posts
 
   return (
-    <section className="relative mx-4 my-8 overflow-hidden rounded-[2rem] bg-[#FFF5F0] py-16 md:mx-8 md:my-12 md:rounded-[2.5rem] md:py-20 lg:mx-12 lg:my-16 lg:rounded-[3rem] lg:py-24">
+    <section className="relative mx-4 my-8 overflow-hidden rounded-[2rem] bg-[#EBF3FF] py-16 md:mx-8 md:my-12 md:rounded-[2.5rem] md:py-20 lg:mx-12 lg:my-16 lg:rounded-[3rem] lg:py-24">
       <Decorations />
 
       <motion.div
@@ -430,10 +423,9 @@ export const IECLifeView: React.FC<Props> = ({ posts, eyebrow, heading, ctaLabel
               <h2
                 className="bg-clip-text text-4xl font-black uppercase leading-none tracking-tight text-transparent md:text-5xl lg:text-6xl"
                 style={{
-                  backgroundImage:
-                    'linear-gradient(120deg, #E11D48 0%, #EC4899 55%, #FB923C 100%)',
+                  backgroundImage: 'linear-gradient(120deg, #0a4bb1 0%, #1d6fe4 50%, #0ea5e9 100%)',
                   filter:
-                    'drop-shadow(0 8px 18px rgba(225, 29, 72, 0.3)) drop-shadow(0 2px 4px rgba(251, 146, 60, 0.25))',
+                    'drop-shadow(0 8px 18px rgba(10, 75, 177, 0.35)) drop-shadow(0 2px 4px rgba(14, 165, 233, 0.25))',
                 }}
               >
                 {heading}

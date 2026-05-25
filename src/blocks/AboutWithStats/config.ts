@@ -63,8 +63,7 @@ export const AboutWithStats: Block = {
       required: true,
       localized: true,
       admin: {
-        description:
-          'Bolded words/phrases will be rendered with the brand gradient color.',
+        description: 'Bolded words/phrases will be rendered with the brand gradient color.',
       },
       editor: lexicalEditor({
         features: () => [
@@ -92,12 +91,45 @@ export const AboutWithStats: Block = {
     },
     {
       name: 'supportImage',
-      label: 'Support Image',
+      label: 'Support Image / Video',
       type: 'upload',
       relationTo: 'media',
       admin: {
         description:
-          'Image displayed beside the description (e.g. a team / event photo). Rendered with rounded corners, soft shadow, and a slight tilt for a casual feel.',
+          'Image or video displayed beside the description. If a video is uploaded, it will not autoplay — a play button appears on hover.',
+      },
+    },
+    {
+      name: 'featureVideoSource',
+      label: 'Feature Video (Right Column) — Video Source',
+      type: 'select',
+      options: [
+        { label: 'Upload', value: 'upload' },
+        { label: 'YouTube URL', value: 'youtube' },
+      ],
+      admin: {
+        description:
+          'Select whether to upload a video file or paste a YouTube link for the right column.',
+      },
+    },
+    {
+      name: 'featureVideo',
+      label: 'Feature Video (Right Column) — Video File',
+      type: 'upload',
+      relationTo: 'media',
+      admin: {
+        description: 'Upload a video or image file to display in the right column.',
+        condition: (_, siblingData) => siblingData?.featureVideoSource === 'upload',
+      },
+    },
+    {
+      name: 'featureVideoYoutubeUrl',
+      label: 'Feature Video (Right Column) — YouTube URL',
+      type: 'text',
+      admin: {
+        description:
+          'Paste any YouTube URL (watch, share, or embed). Autoplays muted when scrolled into view.',
+        condition: (_, siblingData) => siblingData?.featureVideoSource === 'youtube',
       },
     },
     {
@@ -143,7 +175,10 @@ export const AboutWithStats: Block = {
             {
               name: 'suffix',
               type: 'text',
-              admin: { width: '25%', description: 'Unit / sign appended to the number (e.g. "+", "M+", "%").' },
+              admin: {
+                width: '25%',
+                description: 'Unit / sign appended to the number (e.g. "+", "M+", "%").',
+              },
             },
             {
               name: 'label',
@@ -162,8 +197,7 @@ export const AboutWithStats: Block = {
       label: 'Decorations',
       maxRows: 6,
       admin: {
-        description:
-          'Optional floating 3D / illustrated objects scattered around the section.',
+        description: 'Optional floating 3D / illustrated objects scattered around the section.',
       },
       fields: [
         {
