@@ -26,11 +26,10 @@ export const HeaderClient: React.FC<HeaderClientProps> = ({ data }) => {
         'relative z-20 bg-transparent',
         !isTransparent && 'border-b border-gray-200/70',
       )}
+      style={{ fontFamily: 'var(--font-space-grotesk, system-ui, sans-serif)' }}
     >
       <div className="container">
-        <div
-          className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}
-        >
+        <div className={cn('flex items-center', isTransparent ? 'py-12' : 'py-8 justify-between')}>
           <div className={isTransparent ? 'flex-1' : ''}>
             <Link href="/">
               <Logo loading="eager" priority="high" className="invert" />
