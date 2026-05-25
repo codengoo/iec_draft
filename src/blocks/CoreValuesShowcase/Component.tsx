@@ -255,8 +255,10 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
   const phase2Opacity = useTransform(progress, [0.35, 0.55], [0, 1])
   const phase2Pointer = useTransform(phase2Opacity, (v) => (v > 0.5 ? 'auto' : 'none'))
 
-  // Mascot zoom (driven by progress, applied inside phase 2)
+  // Mascot zoom + horizontal drift — single unified entity across both phases
   const mascotScale = useTransform(progress, [0.1, 0.55], [0.45, 1])
+  // Drifts from Phase 1 right-column position toward center as Phase 2 arrives
+  const mascotX = useTransform(progress, [0, 0.5], [130, 0])
 
   // Per-value staggered entrance — pre-declared for max 6 values (hooks rule)
   const v0o = useTransform(progress, [0.45, 0.6], [0, 1])
@@ -385,50 +387,30 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                     </div>
                   )}
 
-                  {/* Constellation: mascot fills center, cards scattered around */}
+                  {/* Constellation: cards scattered around — mascot is the separate floating layer */}
                   <div className="relative flex h-120 w-full items-center justify-center xl:h-130">
-                    {/* Center — mascot very large, fills background */}
-                    <div className="pointer-events-none relative flex shrink-0 items-center justify-center">
-                      {/* Glow orb primary */}
-                      <motion.div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                        animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
-                        transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                      >
-                        <div className="size-140 rounded-full bg-primary/10 blur-3xl" />
-                      </motion.div>
-                      {/* Glow orb secondary */}
-                      <motion.div
-                        aria-hidden
-                        className="pointer-events-none absolute inset-0 flex items-center justify-center"
-                        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.55, 0.2] }}
-                        transition={{
-                          duration: 3.5,
-                          delay: 0.8,
-                          repeat: Infinity,
-                          ease: 'easeInOut',
-                        }}
-                      >
-                        <div className="size-96 rounded-full bg-sky-300/20 blur-2xl" />
-                      </motion.div>
-
-                      {/* Mascot */}
-                      {hasMascot && (
-                        <motion.div className="relative z-0" style={{ scale: mascotScale }}>
-                          <motion.div
-                            className="drop-shadow-2xl"
-                            animate={{ y: [0, -14, 0] }}
-                            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-                          >
-                            <Media
-                              resource={mascot}
-                              imgClassName="h-auto w-[34rem] select-none xl:w-[42rem] 2xl:w-[48rem]"
-                            />
-                          </motion.div>
-                        </motion.div>
-                      )}
-                    </div>
+                    {/* Phase 2 glow orbs — centered atmosphere */}
+                    <motion.div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.8, 0.4] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                    >
+                      <div className="size-140 rounded-full bg-primary/10 blur-3xl" />
+                    </motion.div>
+                    <motion.div
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                      animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.55, 0.2] }}
+                      transition={{
+                        duration: 3.5,
+                        delay: 0.8,
+                        repeat: Infinity,
+                        ease: 'easeInOut',
+                      }}
+                    >
+                      <div className="size-96 rounded-full bg-sky-300/20 blur-2xl" />
+                    </motion.div>
 
                     {/* Scattered cards — individually positioned around mascot */}
                     {valuesList.length > 0 && (
@@ -451,6 +433,26 @@ export const CoreValuesShowcaseBlock: React.FC<Props> = ({
                     )}
                   </div>
                 </motion.div>
+
+                {/* ── Single mascot entity — outside phase1 blur & phase2 fade wrappers ──
+                     Scales from small (Phase 1 right-col) to large (Phase 2 center)
+                     via mascotScale + mascotX. Never blurred. */}
+                {hasMascot && (
+                  <div className="pointer-events-none absolute inset-0 z-10 flex items-center justify-center">
+                    <motion.div style={{ scale: mascotScale, x: mascotX }}>
+                      <motion.div
+                        className="drop-shadow-2xl"
+                        animate={{ y: [0, -14, 0] }}
+                        transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+                      >
+                        <Media
+                          resource={mascot}
+                          imgClassName="h-auto w-[34rem] select-none xl:w-[42rem] 2xl:w-[48rem]"
+                        />
+                      </motion.div>
+                    </motion.div>
+                  </div>
+                )}
               </div>
             </section>
           </div>
@@ -570,21 +572,7 @@ function VMRightContent({ mascot, vision, mission }: VMRightProps) {
           <div className="h-56 w-56 rounded-full bg-sky-300/35 blur-2xl" />
         </motion.div>
 
-        {/* Pedestal */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute bottom-6 left-1/2 h-6 w-56 -translate-x-1/2 rounded-full bg-primary/20 blur-md"
-        />
-
-        {hasMascot && (
-          <motion.div
-            className="drop-shadow-2xl relative z-10"
-            animate={{ y: [0, -16, 0] }}
-            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
-          >
-            <Media resource={mascot} imgClassName="h-auto w-64 select-none md:w-72 lg:w-80" />
-          </motion.div>
-        )}
+        {/* (mascot rendered as a single floating entity outside phase wrappers) */}
       </div>
 
       {/* Vision + Mission cards */}
