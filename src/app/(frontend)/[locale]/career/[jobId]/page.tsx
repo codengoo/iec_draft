@@ -89,10 +89,20 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
   const employmentTypeLabel = job.employmentType ? t(`type.${job.employmentType}` as const) : null
 
   // Extract admin-pinned related jobs (depth=1 populates them as Job objects)
-  const rawRelated = (job as Job & { relatedJobs?: unknown[] }).relatedJobs
+  const rawRelated = job.relatedJobs
   const pinnedRelatedJobs: RelatedJobItem[] | null =
     Array.isArray(rawRelated) && rawRelated.length > 0
-      ? (rawRelated as (string | Job[])[]).filter((r): r is Job => typeof r === 'object' && r !== null).slice(0, 3).map((r) => ({ id: String((r as Job).id), title: (r as Job).title, department: (r as Job).department, location: (r as Job).location, salaryLabel: (r as Job).salaryLabel ?? null, linkedinUrl: (r as Job).linkedinUrl ?? null }))
+      ? (rawRelated as (string | Job[])[])
+          .filter((r): r is Job => typeof r === 'object' && r !== null)
+          .slice(0, 3)
+          .map((r) => ({
+            id: String((r as Job).id),
+            title: (r as Job).title,
+            department: (r as Job).department,
+            location: (r as Job).location,
+            salaryLabel: (r as Job).salaryLabel ?? null,
+            linkedinUrl: (r as Job).linkedinUrl ?? null,
+          }))
       : null
 
   return (
@@ -406,8 +416,10 @@ function Section({
 
 function relatedDeptIcon(dept: string) {
   const d = dept.toLowerCase()
-  if (d.includes('engineer') || d.includes('dev') || d.includes('tech')) return <IconCode size={14} />
-  if (d.includes('art') || d.includes('design') || d.includes('ui') || d.includes('ux')) return <IconBrush size={14} />
+  if (d.includes('engineer') || d.includes('dev') || d.includes('tech'))
+    return <IconCode size={14} />
+  if (d.includes('art') || d.includes('design') || d.includes('ui') || d.includes('ux'))
+    return <IconBrush size={14} />
   return <IconStack2 size={14} />
 }
 
@@ -446,10 +458,7 @@ async function RelatedJobsSection({
       overrideAccess: false,
       locale: locale as 'en' | 'vi',
       where: {
-        and: [
-          { department: { equals: department } },
-          { id: { not_equals: currentJobId } },
-        ],
+        and: [{ department: { equals: department } }, { id: { not_equals: currentJobId } }],
       },
     })
     docs = result.docs.map((j) => ({

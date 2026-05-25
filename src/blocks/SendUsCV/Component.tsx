@@ -1,9 +1,9 @@
+import type { Media, SendUsCVBlock as SendUsCVBlockProps, Social } from '@/payload-types'
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
 import { getTranslations } from 'next-intl/server'
+import { getPayload } from 'payload'
 import React from 'react'
-import type { SendUsCVBlock as SendUsCVBlockProps, Media, Social } from '@/payload-types'
-import { SendUsCVClient, type SocialItem, type ApplyLabels } from './SendUsCVClient'
+import { SendUsCVClient, type ApplyLabels, type SocialItem } from './SendUsCVClient'
 
 export const SendUsCVBlock: React.FC<SendUsCVBlockProps & { id?: string }> = async ({
   heading,

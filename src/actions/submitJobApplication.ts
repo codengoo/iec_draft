@@ -10,9 +10,7 @@ const ALLOWED_MIME_TYPES = new Set([
 ])
 const MAX_FILE_BYTES = 10 * 1024 * 1024 // 10 MB
 
-export type SubmitResult =
-  | { ok: true }
-  | { ok: false; error: string; field?: string }
+export type SubmitResult = { ok: true } | { ok: false; error: string; field?: string }
 
 export async function submitJobApplication(formData: FormData): Promise<SubmitResult> {
   const rawJobId = String(formData.get('jobId') ?? '').trim()
@@ -62,10 +60,18 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
   }
   if (additionalLink.length > 0) {
     if (additionalLink.length > 500) {
-      return { ok: false, error: 'Additional link is too long (max 500 characters).', field: 'additionalLink' }
+      return {
+        ok: false,
+        error: 'Additional link is too long (max 500 characters).',
+        field: 'additionalLink',
+      }
     }
     if (!/^https?:\/\//i.test(additionalLink)) {
-      return { ok: false, error: 'Additional link must be a valid URL (starting with http:// or https://).', field: 'additionalLink' }
+      return {
+        ok: false,
+        error: 'Additional link must be a valid URL (starting with http:// or https://).',
+        field: 'additionalLink',
+      }
     }
   }
 

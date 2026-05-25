@@ -1,17 +1,17 @@
 'use client'
 
-import Image from 'next/image'
-import { motion } from 'framer-motion'
 import {
-  IconBrandLinkedin,
+  IconBrandDiscord,
   IconBrandFacebook,
   IconBrandInstagram,
-  IconBrandYoutube,
-  IconBrandTwitter,
+  IconBrandLinkedin,
   IconBrandTiktok,
-  IconBrandDiscord,
+  IconBrandTwitter,
+  IconBrandYoutube,
   IconSend,
 } from '@tabler/icons-react'
+import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 import { JobApplyModal } from '@/components/JobApplyModal'
 
@@ -268,9 +268,7 @@ export function SendUsCVClient({
                 ))}
               </div>
             )}
-            {innovatorLabel && (
-              <span className="text-sm text-gray-300">{innovatorLabel}</span>
-            )}
+            {innovatorLabel && <span className="text-sm text-gray-300">{innovatorLabel}</span>}
           </div>
         )}
       </div>

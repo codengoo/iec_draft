@@ -8,13 +8,7 @@ import {
   ModalHeader,
   useDisclosure,
 } from '@heroui/react'
-import {
-  IconCheck,
-  IconFile,
-  IconLoader2,
-  IconPaperclip,
-  IconX,
-} from '@tabler/icons-react'
+import { IconCheck, IconFile, IconLoader2, IconPaperclip, IconX } from '@tabler/icons-react'
 import { useRef, useState, useTransition } from 'react'
 import { useForm } from 'react-hook-form'
 
@@ -68,7 +62,8 @@ type Props = {
   trigger?: React.ReactNode
 }
 
-const ACCEPT = '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+const ACCEPT =
+  '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
 const MAX_BYTES = 10 * 1024 * 1024
 
 export function JobApplyModal({
@@ -188,9 +183,7 @@ export function JobApplyModal({
             <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
               {labels.title}
             </span>
-            {jobTitle && (
-              <span className="text-xl font-semibold text-gray-900">{jobTitle}</span>
-            )}
+            {jobTitle && <span className="text-xl font-semibold text-gray-900">{jobTitle}</span>}
             <span className="text-sm font-normal text-gray-500">{labels.subtitle}</span>
           </ModalHeader>
 
@@ -202,11 +195,7 @@ export function JobApplyModal({
                 </div>
                 <h3 className="text-lg font-semibold text-gray-900">{labels.successTitle}</h3>
                 <p className="text-sm text-gray-600 max-w-md">{labels.successBody}</p>
-                <Button
-                  variant="outline"
-                  className="mt-4"
-                  onClick={() => handleOpenChange(false)}
-                >
+                <Button variant="outline" className="mt-4" onClick={() => handleOpenChange(false)}>
                   {labels.close}
                 </Button>
               </div>
@@ -399,5 +388,9 @@ function CVPicker({
 }
 
 function RequiredMark() {
-  return <span className="text-red-500" aria-hidden>*</span>
+  return (
+    <span className="text-red-500" aria-hidden>
+      *
+    </span>
+  )
 }
