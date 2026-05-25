@@ -77,7 +77,8 @@ export const EmailCampaigns: CollectionConfig = {
         ],
       }),
       admin: {
-        condition: (data) => data.type === 'manual',
+        description:
+          'Required for Manual campaigns. Optional for New Job / New Post — leave empty to use the default template. Available tokens: {{post.title}}, {{post.url}}, {{post.excerpt}}, {{job.title}}, {{job.url}}, {{subscriber.name}}',
       },
     },
     {

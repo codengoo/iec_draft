@@ -21,7 +21,7 @@ export const SendButton: React.FC = () => {
     setLoading(true)
 
     try {
-      const res = await fetch('/api/email-campaigns/send', {
+      const res = await fetch('/api/send-campaign', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

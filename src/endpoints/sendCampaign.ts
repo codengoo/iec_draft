@@ -4,7 +4,7 @@ import { sendCampaign } from '../utilities/email/sendCampaign'
 
 export const sendCampaignEndpoint: Endpoint = {
   method: 'post',
-  path: '/email-campaigns/send',
+  path: '/send-campaign',
   handler: async (req) => {
     // Auth check
     if (!req.user) {

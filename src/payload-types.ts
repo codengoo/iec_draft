@@ -1714,6 +1714,9 @@ export interface EmailCampaign {
    */
   previewText?: string | null;
   type: 'manual' | 'new_job' | 'new_post';
+  /**
+   * Required for Manual campaigns. Optional for New Job / New Post — leave empty to use the default template. Available tokens: {{post.title}}, {{post.url}}, {{post.excerpt}}, {{job.title}}, {{job.url}}, {{subscriber.name}}
+   */
   body?: {
     root: {
       type: string;

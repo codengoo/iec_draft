@@ -2,6 +2,7 @@ import { convertLexicalToHTML } from '@payloadcms/richtext-lexical/html'
 import type { PayloadRequest } from 'payload'
 
 import { getUnsubscribeUrl } from './getUnsubscribeUrl'
+import { baseTemplate } from './templates/base'
 import { manualTemplate } from './templates/manual'
 import { newJobTemplate } from './templates/newJob'
 import { newPostTemplate } from './templates/newPost'
@@ -104,16 +105,48 @@ export async function sendCampaign({
     page++
   }
 
-  // 6. Convert Lexical body to HTML for manual campaigns
-  let manualBodyHtml = ''
-  if (campaign.type === 'manual' && campaign.body) {
+  // 6. Convert Lexical body to HTML (all types — admin can override auto templates with a custom body)
+  let prerenderedBodyHtml = ''
+  if (campaign.body) {
     try {
-      manualBodyHtml = convertLexicalToHTML({
+      prerenderedBodyHtml = convertLexicalToHTML({
         data: campaign.body as Parameters<typeof convertLexicalToHTML>[0]['data'],
         disableContainer: true,
       })
     } catch {
-      manualBodyHtml = ''
+      prerenderedBodyHtml = ''
+    }
+  }
+
+  // Replace global (non-subscriber) tokens in custom body before the batch loop
+  if (prerenderedBodyHtml) {
+    if (
+      campaign.type === 'new_post' &&
+      campaign.relatedPost &&
+      typeof campaign.relatedPost === 'object'
+    ) {
+      const post = campaign.relatedPost as {
+        title?: string
+        excerpt?: string | null
+        slug?: string
+      }
+      const postUrl = `${siteUrl}/posts/${post.slug ?? ''}`
+      prerenderedBodyHtml = resolveSubjectTokens(prerenderedBodyHtml, {
+        'post.title': String(post.title ?? ''),
+        'post.url': postUrl,
+        'post.excerpt': String(post.excerpt ?? ''),
+      })
+    } else if (
+      campaign.type === 'new_job' &&
+      campaign.relatedJob &&
+      typeof campaign.relatedJob === 'object'
+    ) {
+      const job = campaign.relatedJob as { id: string | number; title?: string }
+      const jobUrl = `${siteUrl}/career/${job.id}`
+      prerenderedBodyHtml = resolveSubjectTokens(prerenderedBodyHtml, {
+        'job.title': String(job.title ?? ''),
+        'job.url': jobUrl,
+      })
     }
   }
 
@@ -137,46 +170,62 @@ export async function sendCampaign({
           campaign.relatedJob &&
           typeof campaign.relatedJob === 'object'
         ) {
-          const job = campaign.relatedJob as {
-            id: string | number
-            title?: string
-            description?: string
+          if (prerenderedBodyHtml) {
+            // Admin-supplied custom body — replace per-subscriber tokens and wrap in base template
+            const subscriberBody = resolveSubjectTokens(prerenderedBodyHtml, {
+              'subscriber.name': subscriber.name ?? '',
+            })
+            html = baseTemplate({ bodyHtml: subscriberBody, unsubscribeUrl, siteUrl })
+          } else {
+            const job = campaign.relatedJob as {
+              id: string | number
+              title?: string
+              description?: string
+            }
+            const result = newJobTemplate({
+              job: { id: job.id, title: String(job.title ?? ''), description: job.description },
+              subscriber,
+              unsubscribeUrl,
+              siteUrl,
+            })
+            html = result.html
+            if (!subject) subject = result.subject
           }
-          const result = newJobTemplate({
-            job: { id: job.id, title: String(job.title ?? ''), description: job.description },
-            subscriber,
-            unsubscribeUrl,
-            siteUrl,
-          })
-          html = result.html
-          if (!subject) subject = result.subject
         } else if (
           campaign.type === 'new_post' &&
           campaign.relatedPost &&
           typeof campaign.relatedPost === 'object'
         ) {
-          const post = campaign.relatedPost as {
-            title?: string
-            excerpt?: string | null
-            slug?: string
+          if (prerenderedBodyHtml) {
+            // Admin-supplied custom body — replace per-subscriber tokens and wrap in base template
+            const subscriberBody = resolveSubjectTokens(prerenderedBodyHtml, {
+              'subscriber.name': subscriber.name ?? '',
+            })
+            html = baseTemplate({ bodyHtml: subscriberBody, unsubscribeUrl, siteUrl })
+          } else {
+            const post = campaign.relatedPost as {
+              title?: string
+              excerpt?: string | null
+              slug?: string
+            }
+            const result = newPostTemplate({
+              post: {
+                title: String(post.title ?? ''),
+                excerpt: post.excerpt,
+                slug: String(post.slug ?? ''),
+              },
+              subscriber,
+              unsubscribeUrl,
+              siteUrl,
+            })
+            html = result.html
+            if (!subject) subject = result.subject
           }
-          const result = newPostTemplate({
-            post: {
-              title: String(post.title ?? ''),
-              excerpt: post.excerpt,
-              slug: String(post.slug ?? ''),
-            },
-            subscriber,
-            unsubscribeUrl,
-            siteUrl,
-          })
-          html = result.html
-          if (!subject) subject = result.subject
         } else {
           // manual
           const result = manualTemplate({
             subject,
-            bodyHtml: manualBodyHtml,
+            bodyHtml: prerenderedBodyHtml,
             subscriber,
             unsubscribeUrl,
             siteUrl,
