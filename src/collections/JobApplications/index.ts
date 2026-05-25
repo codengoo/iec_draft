@@ -77,6 +77,14 @@ export const JobApplications: CollectionConfig = {
       maxLength: 4000,
     },
     {
+      name: 'additionalLink',
+      type: 'text',
+      label: 'Additional Link',
+      admin: {
+        description: 'Portfolio, product showcase, GitHub, Behance, or other relevant link.',
+      },
+    },
+    {
       name: 'cv',
       type: 'upload',
       relationTo: 'media',

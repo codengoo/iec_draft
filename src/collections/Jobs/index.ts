@@ -56,6 +56,19 @@ export const Jobs: CollectionConfig = {
       },
     },
     {
+      name: 'relatedJobs',
+      type: 'relationship',
+      relationTo: 'jobs',
+      hasMany: true,
+      maxRows: 3,
+      label: 'Related Jobs',
+      admin: {
+        position: 'sidebar',
+        description:
+          'Manually pin up to 3 related jobs shown at the bottom of this posting. Leave empty to auto-suggest jobs from the same department.',
+      },
+    },
+    {
       type: 'tabs',
       tabs: [
         {

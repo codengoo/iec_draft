@@ -31,6 +31,7 @@ type FormValues = {
   phone: string
   position?: string
   experience: string
+  additionalLink?: string
 }
 
 type Labels = {
@@ -43,6 +44,9 @@ type Labels = {
   position: string
   positionPlaceholder?: string
   experience: string
+  additionalLink: string
+  additionalLinkPlaceholder: string
+  additionalLinkHint: string
   cv: string
   cvHint: string
   cvAttached: string
@@ -65,7 +69,7 @@ type Props = {
 }
 
 const ACCEPT = '.pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-const MAX_BYTES = 5 * 1024 * 1024
+const MAX_BYTES = 10 * 1024 * 1024
 
 export function JobApplyModal({
   jobId,
@@ -138,6 +142,7 @@ export function JobApplyModal({
     formData.set('phone', values.phone)
     formData.set('experience', values.experience ?? '')
     if (isGeneral) formData.set('position', values.position ?? '')
+    if (values.additionalLink) formData.set('additionalLink', values.additionalLink)
     formData.set('cv', cvFile)
 
     startTransition(async () => {
@@ -271,6 +276,24 @@ export function JobApplyModal({
                     rows={4}
                     {...register('experience', { maxLength: 4000 })}
                   />
+                </div>
+
+                <div>
+                  <Label htmlFor="additionalLink">{labels.additionalLink}</Label>
+                  <Input
+                    id="additionalLink"
+                    type="url"
+                    placeholder={labels.additionalLinkPlaceholder}
+                    {...register('additionalLink', {
+                      maxLength: 500,
+                      pattern: {
+                        value: /^https?:\/\//i,
+                        message: labels.additionalLinkHint,
+                      },
+                    })}
+                    aria-invalid={!!errors.additionalLink}
+                  />
+                  <p className="mt-1 text-xs text-gray-500">{labels.additionalLinkHint}</p>
                 </div>
 
                 <div>

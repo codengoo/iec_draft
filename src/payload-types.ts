@@ -1542,6 +1542,10 @@ export interface Job {
    * Show this job in the CareersHighlight block on the home page.
    */
   isFeatured?: boolean | null;
+  /**
+   * Manually pin up to 3 related jobs shown at the bottom of this posting. Leave empty to auto-suggest jobs from the same department.
+   */
+  relatedJobs?: (string | Job)[] | null;
   department: string;
   location: string;
   employmentType?: ('fullTime' | 'partTime' | 'contract' | 'internship') | null;
@@ -1625,6 +1629,10 @@ export interface JobApplication {
    */
   position?: string | null;
   experience?: string | null;
+  /**
+   * Portfolio, product showcase, GitHub, Behance, or other relevant link.
+   */
+  additionalLink?: string | null;
   cv: string | Media;
   status?: ('new' | 'reviewing' | 'contacted' | 'rejected' | 'hired') | null;
   submittedAt?: string | null;
@@ -2659,6 +2667,7 @@ export interface UsersSelect<T extends boolean = true> {
 export interface JobsSelect<T extends boolean = true> {
   title?: T;
   isFeatured?: T;
+  relatedJobs?: T;
   department?: T;
   location?: T;
   employmentType?: T;
@@ -2684,6 +2693,7 @@ export interface JobApplicationsSelect<T extends boolean = true> {
   job?: T;
   position?: T;
   experience?: T;
+  additionalLink?: T;
   cv?: T;
   status?: T;
   submittedAt?: T;
@@ -3485,8 +3495,7 @@ export interface Career {
         | SendUsCVBlock
         | AboutWithStatsBlock
         | GamesPortfolioBlock
-        | VisionMissionBlock
-        | CoreValuesBlock
+        | CoreValuesShowcaseBlock
         | CareersHighlightBlock
         | FeatureTabsBlock
         | IECLifeBlock
@@ -3768,8 +3777,7 @@ export interface CareerSelect<T extends boolean = true> {
         sendUsCV?: T | SendUsCVBlockSelect<T>;
         aboutWithStats?: T | AboutWithStatsBlockSelect<T>;
         gamesPortfolio?: T | GamesPortfolioBlockSelect<T>;
-        visionMission?: T | VisionMissionBlockSelect<T>;
-        coreValues?: T | CoreValuesBlockSelect<T>;
+        coreValuesShowcase?: T | CoreValuesShowcaseBlockSelect<T>;
         careersHighlight?: T | CareersHighlightBlockSelect<T>;
         featureTabs?: T | FeatureTabsBlockSelect<T>;
         iecLife?: T | IECLifeBlockSelect<T>;

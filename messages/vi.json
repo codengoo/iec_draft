@@ -77,6 +77,7 @@
     "applyNow": "Ứng tuyển ngay",
     "viewLinkedIn": "Xem trên LinkedIn",
     "shareJob": "Chia sẻ vị trí",
+    "relatedJobs": "Vị trí liên quan",
     "type": {
       "fullTime": "Toàn thời gian",
       "partTime": "Bán thời gian",
@@ -92,7 +93,7 @@
       "position": "Vị trí ứng tuyển",
       "experience": "Tóm tắt kinh nghiệm",
       "cv": "Đính kèm CV (PDF hoặc Word)",
-      "cvHint": "PDF, DOC hoặc DOCX — tối đa 5 MB.",
+      "cvHint": "PDF, DOC hoặc DOCX — tối đa 10 MB.",
       "cvAttached": "Đã đính kèm",
       "cvChange": "Đổi file",
       "submit": "Gửi ứng tuyển",
@@ -100,7 +101,10 @@
       "successTitle": "Đã nhận hồ sơ",
       "successBody": "Cảm ơn bạn đã ứng tuyển. Bộ phận HR sẽ xem xét CV và phản hồi trong vòng 5 ngày làm việc.",
       "close": "Đóng",
-      "required": "bắt buộc"
+      "required": "bắt buộc",
+      "additionalLink": "Link bổ sung",
+      "additionalLinkPlaceholder": "VD: Portfolio, Behance, GitHub, showcase sản phẩm...",
+      "additionalLinkHint": "Tùy chọn — portfolio, showcase sản phẩm, hoặc link liên quan khác"
     },
     "sendCV": {
       "trigger": "Gửi CV cho chúng tôi",

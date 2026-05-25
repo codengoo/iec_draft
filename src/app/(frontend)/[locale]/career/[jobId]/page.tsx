@@ -1,28 +1,31 @@
 import type { Metadata } from 'next'
 
 import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { getTranslations } from 'next-intl/server'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { cache } from 'react'
 import {
   IconArrowLeft,
+  IconArrowRight,
   IconBrandLinkedin,
   IconBriefcase,
+  IconBrush,
   IconCalendarClock,
   IconCash,
   IconClock,
+  IconCode,
   IconMapPin,
   IconStack2,
 } from '@tabler/icons-react'
+import { getTranslations } from 'next-intl/server'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
+import { cache } from 'react'
 
-import RichText from '@/components/RichText'
-import { Button } from '@/components/ui/button'
+import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
 import { JobApplyModal } from '@/components/JobApplyModal'
 import { Reveal, RevealGroup, RevealItem } from '@/components/Reveal'
+import RichText from '@/components/RichText'
 import { ShareButtonOutline } from '@/components/ShareWidget/ShareButtonOutline'
-import { SendUsCVBlock } from '@/blocks/SendUsCV/Component'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/utilities/ui'
 
 const SECTION_ACCENTS: Record<
@@ -83,9 +86,14 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
 
   const t = await getTranslations('JobDetail')
 
-  const employmentTypeLabel = job.employmentType
-    ? t(`type.${job.employmentType}` as const)
-    : null
+  const employmentTypeLabel = job.employmentType ? t(`type.${job.employmentType}` as const) : null
+
+  // Extract admin-pinned related jobs (depth=1 populates them as Job objects)
+  const rawRelated = (job as Job & { relatedJobs?: unknown[] }).relatedJobs
+  const pinnedRelatedJobs: RelatedJobItem[] | null =
+    Array.isArray(rawRelated) && rawRelated.length > 0
+      ? (rawRelated as (string | Job[])[]).filter((r): r is Job => typeof r === 'object' && r !== null).slice(0, 3).map((r) => ({ id: String((r as Job).id), title: (r as Job).title, department: (r as Job).department, location: (r as Job).location, salaryLabel: (r as Job).salaryLabel ?? null, linkedinUrl: (r as Job).linkedinUrl ?? null }))
+      : null
 
   return (
     <article className="pt-24 pb-16">
@@ -211,6 +219,9 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
                     phone: t('apply.phone'),
                     position: t('apply.position'),
                     experience: t('apply.experience'),
+                    additionalLink: t('apply.additionalLink'),
+                    additionalLinkPlaceholder: t('apply.additionalLinkPlaceholder'),
+                    additionalLinkHint: t('apply.additionalLinkHint'),
                     cv: t('apply.cv'),
                     cvHint: t('apply.cvHint'),
                     cvAttached: t('apply.cvAttached'),
@@ -237,6 +248,13 @@ export default async function JobDetailPage({ params: paramsPromise }: Args) {
           </Reveal>
         </div>
       </div>
+
+      <RelatedJobsSection
+        currentJobId={jobId}
+        department={job.department}
+        locale={locale}
+        pinnedJobs={pinnedRelatedJobs}
+      />
 
       <Reveal direction="up" distance={32} duration={0.7} className="mt-20">
         <CareerSendUsCVSection />
@@ -383,6 +401,127 @@ function Section({
         />
       </div>
     </section>
+  )
+}
+
+function relatedDeptIcon(dept: string) {
+  const d = dept.toLowerCase()
+  if (d.includes('engineer') || d.includes('dev') || d.includes('tech')) return <IconCode size={14} />
+  if (d.includes('art') || d.includes('design') || d.includes('ui') || d.includes('ux')) return <IconBrush size={14} />
+  return <IconStack2 size={14} />
+}
+
+type RelatedJobItem = {
+  id: string
+  title: string
+  department: string
+  location: string
+  salaryLabel?: string | null
+  linkedinUrl?: string | null
+}
+
+async function RelatedJobsSection({
+  currentJobId,
+  department,
+  locale,
+  pinnedJobs,
+}: {
+  currentJobId: string
+  department: string
+  locale: string
+  pinnedJobs: RelatedJobItem[] | null
+}) {
+  const t = await getTranslations('JobDetail')
+
+  let docs: RelatedJobItem[]
+
+  if (pinnedJobs && pinnedJobs.length > 0) {
+    docs = pinnedJobs
+  } else {
+    const payload = await getPayload({ config: configPromise })
+    const result = await payload.find({
+      collection: 'jobs',
+      limit: 3,
+      depth: 0,
+      overrideAccess: false,
+      locale: locale as 'en' | 'vi',
+      where: {
+        and: [
+          { department: { equals: department } },
+          { id: { not_equals: currentJobId } },
+        ],
+      },
+    })
+    docs = result.docs.map((j) => ({
+      id: String(j.id),
+      title: j.title,
+      department: j.department,
+      location: j.location,
+      salaryLabel: j.salaryLabel ?? null,
+      linkedinUrl: j.linkedinUrl ?? null,
+    }))
+  }
+
+  if (docs.length === 0) return null
+
+  return (
+    <div className="container mt-16">
+      <Reveal direction="up" distance={24} duration={0.6}>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-6">{t('relatedJobs')}</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {docs.map((job) => (
+            <div
+              key={job.id}
+              className="bg-white border border-gray-200 rounded-xl px-5 py-4 flex items-center justify-between gap-4 hover:border-blue-300 hover:shadow-sm transition-all duration-200"
+            >
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 text-sm mb-2 truncate">
+                  <Link href={`/career/${job.id}`} className="hover:text-primary transition-colors">
+                    {job.title}
+                  </Link>
+                </h3>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    {relatedDeptIcon(job.department)}
+                    {job.department}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <IconMapPin size={14} />
+                    {job.location}
+                  </span>
+                  {job.salaryLabel && (
+                    <span className="flex items-center gap-1 text-blue-600 font-medium">
+                      <span className="inline-block w-3.5 h-3.5 text-center leading-none">💼</span>
+                      {job.salaryLabel}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {job.linkedinUrl && (
+                  <a
+                    href={job.linkedinUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="View on LinkedIn"
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-200 text-gray-400 hover:text-blue-600 hover:border-blue-300 transition-colors"
+                  >
+                    <IconBrandLinkedin size={16} />
+                  </a>
+                )}
+                <Link
+                  href={`/career/${job.id}`}
+                  aria-label="View job details"
+                  className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-gray-600 hover:bg-blue-600 hover:text-white transition-colors"
+                >
+                  <IconArrowRight size={16} />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Reveal>
+    </div>
   )
 }
 

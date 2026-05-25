@@ -8,7 +8,7 @@ const ALLOWED_MIME_TYPES = new Set([
   'application/msword',
   'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 ])
-const MAX_FILE_BYTES = 5 * 1024 * 1024 // 5 MB
+const MAX_FILE_BYTES = 10 * 1024 * 1024 // 10 MB
 
 export type SubmitResult =
   | { ok: true }
@@ -21,6 +21,7 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
   const phone = String(formData.get('phone') ?? '').trim()
   const experience = String(formData.get('experience') ?? '').trim()
   const positionInput = String(formData.get('position') ?? '').trim()
+  const additionalLink = String(formData.get('additionalLink') ?? '').trim()
   const cv = formData.get('cv')
 
   const isGeneral = !rawJobId
@@ -40,7 +41,7 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
     return { ok: false, error: 'Please attach your CV.', field: 'cv' }
   }
   if (cv.size > MAX_FILE_BYTES) {
-    return { ok: false, error: 'CV file must be 5 MB or smaller.', field: 'cv' }
+    return { ok: false, error: 'CV file must be 10 MB or smaller.', field: 'cv' }
   }
   if (!ALLOWED_MIME_TYPES.has(cv.type)) {
     return { ok: false, error: 'CV must be a PDF or Word document.', field: 'cv' }
@@ -57,6 +58,14 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
       ok: false,
       error: 'Position is too long (max 200 characters).',
       field: 'position',
+    }
+  }
+  if (additionalLink.length > 0) {
+    if (additionalLink.length > 500) {
+      return { ok: false, error: 'Additional link is too long (max 500 characters).', field: 'additionalLink' }
+    }
+    if (!/^https?:\/\//i.test(additionalLink)) {
+      return { ok: false, error: 'Additional link must be a valid URL (starting with http:// or https://).', field: 'additionalLink' }
     }
   }
 
@@ -100,6 +109,7 @@ export async function submitJobApplication(formData: FormData): Promise<SubmitRe
         email,
         phone,
         experience: experience || undefined,
+        additionalLink: additionalLink || undefined,
         cv: media.id,
         status: 'new',
       },

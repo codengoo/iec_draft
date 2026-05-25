@@ -31,6 +31,9 @@ export type ApplyLabels = {
   position: string
   positionPlaceholder?: string
   experience: string
+  additionalLink: string
+  additionalLinkPlaceholder: string
+  additionalLinkHint: string
   cv: string
   cvHint: string
   cvAttached: string
