@@ -121,7 +121,7 @@ export const Card: React.FC<{
           <h3
             className={cn(
               'font-bold leading-snug line-clamp-3 text-foreground transition-colors duration-300 group-hover:text-primary',
-              compact ? 'text-sm' : 'text-lg',
+              compact ? 'text-sm' : 'text-xl',
             )}
           >
             <Link href={href} ref={link.ref} className="relative inline">

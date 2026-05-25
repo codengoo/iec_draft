@@ -1,6 +1,6 @@
 'use client'
 
-import { IconArrowUpRight } from '@tabler/icons-react'
+import { IconArrowUpRight, IconPlayerPlay } from '@tabler/icons-react'
 import {
   animate,
   motion,
@@ -199,6 +199,151 @@ const StatCard: React.FC<StatProps> = ({ value, suffix, label }) => {
   )
 }
 
+/* ------------------- Support Media (image or video) ------------------- */
+
+const SupportMedia: React.FC<{ media: MediaType; reduced: boolean | null }> = ({
+  media,
+  reduced,
+}) => {
+  const isVideo = media.mimeType?.startsWith('video/')
+  const [hovered, setHovered] = React.useState(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
+
+  useEffect(() => {
+    if (!isVideo || !videoRef.current) return
+    if (hovered) {
+      videoRef.current.play().catch(() => {})
+    } else {
+      videoRef.current.pause()
+      videoRef.current.currentTime = 0
+    }
+  }, [hovered, isVideo])
+
+  return (
+    <motion.div
+      className="group relative -rotate-3 cursor-pointer transition-transform duration-500 ease-out hover:rotate-0 hover:scale-[1.03]"
+      animate={reduced ? undefined : { y: [0, -10, 0] }}
+      transition={reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+    >
+      <div className="overflow-hidden rounded-[28px] shadow-[0_25px_50px_-12px_rgba(0,111,238,0.25),0_10px_24px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
+        {isVideo ? (
+          <>
+            <video
+              ref={videoRef}
+              src={media.url ?? ''}
+              className="block aspect-4/5 w-full select-none object-cover"
+              muted
+              loop
+              playsInline
+            />
+            <div
+              className={`pointer-events-none absolute inset-0 flex items-center justify-center bg-black/25 transition-opacity duration-300 ${hovered ? 'opacity-0' : 'opacity-100'}`}
+            >
+              <div className="flex size-14 items-center justify-center rounded-full bg-white/90 shadow-lg">
+                <IconPlayerPlay className="ml-0.5 size-6 text-slate-900" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <Media
+            resource={media}
+            imgClassName="block aspect-[4/5] w-full h-full object-cover select-none"
+          />
+        )}
+      </div>
+    </motion.div>
+  )
+}
+
+/* ------------------- Feature Video (right column, autoplay) ----------- */
+
+function extractYouTubeId(url: string): string | null {
+  const match = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([^&?/\s]{11})/,
+  )
+  return match?.[1] ?? null
+}
+
+const FeatureVideoCard: React.FC<{ media?: MediaType; youtubeUrl?: string | null }> = ({
+  media,
+  youtubeUrl,
+}) => {
+  const wrapRef = useRef<HTMLDivElement>(null)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const inView = useInView(wrapRef, { margin: '-10%' })
+  const [ytMounted, setYtMounted] = React.useState(false)
+
+  const ytId = youtubeUrl ? extractYouTubeId(youtubeUrl) : null
+  const isYoutube = Boolean(ytId)
+  const isVideo = !isYoutube && media?.mimeType?.startsWith('video/')
+
+  // Lazy-mount the iframe on first in-view, then use postMessage to play/pause
+  useEffect(() => {
+    if (!isYoutube) return
+    if (inView && !ytMounted) setYtMounted(true)
+    if (ytMounted && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: 'command', func: inView ? 'playVideo' : 'pauseVideo', args: '' }),
+        '*',
+      )
+    }
+  }, [inView, isYoutube, ytMounted])
+
+  // Native video play/pause on scroll
+  useEffect(() => {
+    if (!isVideo || !videoRef.current) return
+    if (inView) {
+      videoRef.current.play().catch(() => {})
+    } else {
+      videoRef.current.pause()
+    }
+  }, [inView, isVideo])
+
+  return (
+    <motion.div ref={wrapRef} variants={statItem}>
+      <motion.div className="-rotate-1 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-[1.02]">
+        <div className="overflow-hidden rounded-3xl shadow-[0_20px_45px_-12px_rgba(0,111,238,0.22),0_8px_20px_-8px_rgba(0,0,0,0.15)] ring-1 ring-black/5">
+          {isYoutube ? (
+            ytMounted ? (
+              <iframe
+                ref={iframeRef}
+                src={`https://www.youtube.com/embed/${ytId}?autoplay=1&mute=1&loop=1&playlist=${ytId}&controls=0&enablejsapi=1&rel=0&modestbranding=1`}
+                className="block aspect-video w-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Feature video"
+              />
+            ) : (
+              /* Thumbnail placeholder until first scroll-into-view */
+              <div className="relative aspect-video w-full bg-slate-100">
+                <img
+                  src={`https://img.youtube.com/vi/${ytId}/hqdefault.jpg`}
+                  alt=""
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )
+          ) : isVideo ? (
+            <video
+              ref={videoRef}
+              src={media!.url ?? ''}
+              className="block aspect-video w-full object-cover"
+              muted
+              loop
+              playsInline
+            />
+          ) : media ? (
+            <Media resource={media} imgClassName="block aspect-video w-full object-cover" />
+          ) : null}
+        </div>
+      </motion.div>
+    </motion.div>
+  )
+}
+
 /* ------------------------- AboutWithStatsBlock ------------------------ */
 
 export const AboutWithStatsBlock: React.FC<Props> = ({
@@ -208,6 +353,9 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
   heading,
   description,
   supportImage,
+  featureVideoSource,
+  featureVideo,
+  featureVideoYoutubeUrl,
   flyingMascot,
   cta,
   stats,
@@ -406,20 +554,7 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
             <div className="flex flex-col gap-10 md:flex-row md:items-center md:gap-10 lg:gap-12">
               {supportImage && typeof supportImage === 'object' && (
                 <motion.div variants={item} className="w-56 shrink-0 self-center md:w-64 lg:w-72">
-                  <motion.div
-                    className="group relative -rotate-3 transition-transform duration-500 ease-out hover:rotate-0 hover:scale-[1.03]"
-                    animate={reduced ? undefined : { y: [0, -10, 0] }}
-                    transition={
-                      reduced ? undefined : { duration: 5, repeat: Infinity, ease: 'easeInOut' }
-                    }
-                  >
-                    <div className="overflow-hidden rounded-[28px] shadow-[0_25px_50px_-12px_rgba(0,111,238,0.25),0_10px_24px_-8px_rgba(0,0,0,0.18)] ring-1 ring-black/5">
-                      <Media
-                        resource={supportImage}
-                        imgClassName="block aspect-[4/5] w-full h-full object-cover select-none"
-                      />
-                    </div>
-                  </motion.div>
+                  <SupportMedia media={supportImage as MediaType} reduced={reduced} />
                 </motion.div>
               )}
 
@@ -455,22 +590,44 @@ export const AboutWithStatsBlock: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* RIGHT COLUMN — Stats */}
-          {Array.isArray(stats) && stats.length > 0 && (
-            <motion.dl
-              variants={container}
-              className="flex flex-col gap-10 lg:col-span-5 lg:gap-12 lg:pl-8 lg:pt-4"
-            >
-              {stats.map((stat, i) => (
-                <StatCard
-                  key={stat.id ?? i}
-                  value={stat.value ?? 0}
-                  suffix={stat.suffix}
-                  label={stat.label}
-                />
-              ))}
-            </motion.dl>
-          )}
+          {/* RIGHT COLUMN — Feature video + Stats */}
+          {(() => {
+            const hasVideo =
+              featureVideoSource === 'upload'
+                ? !!featureVideo
+                : featureVideoSource === 'youtube'
+                  ? !!featureVideoYoutubeUrl
+                  : !!(featureVideo || featureVideoYoutubeUrl)
+            const resolvedMedia =
+              featureVideoSource === 'youtube'
+                ? undefined
+                : typeof featureVideo === 'object' && featureVideo
+                  ? (featureVideo as MediaType)
+                  : undefined
+            const resolvedYtUrl =
+              featureVideoSource === 'upload' ? null : (featureVideoYoutubeUrl ?? null)
+            return hasVideo || (Array.isArray(stats) && stats.length > 0) ? (
+              <motion.div
+                variants={container}
+                className="flex flex-col gap-8 lg:col-span-5 lg:gap-10 lg:pl-8 lg:pt-4"
+              >
+                {hasVideo && <FeatureVideoCard media={resolvedMedia} youtubeUrl={resolvedYtUrl} />}
+
+                {Array.isArray(stats) && stats.length > 0 && (
+                  <motion.dl variants={container} className="flex flex-col gap-10 lg:gap-12">
+                    {stats.map((stat, i) => (
+                      <StatCard
+                        key={stat.id ?? i}
+                        value={stat.value ?? 0}
+                        suffix={stat.suffix}
+                        label={stat.label}
+                      />
+                    ))}
+                  </motion.dl>
+                )}
+              </motion.div>
+            ) : null
+          })()}
         </div>
       </motion.div>
     </section>

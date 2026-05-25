@@ -1099,9 +1099,21 @@ export interface AboutWithStatsBlock {
     [k: string]: unknown;
   } | null;
   /**
-   * Image displayed beside the description (e.g. a team / event photo). Rendered with rounded corners, soft shadow, and a slight tilt for a casual feel.
+   * Image or video displayed beside the description. If a video is uploaded, it will not autoplay — a play button appears on hover.
    */
   supportImage?: (string | null) | Media;
+  /**
+   * Select whether to upload a video file or paste a YouTube link for the right column.
+   */
+  featureVideoSource?: ('upload' | 'youtube') | null;
+  /**
+   * Upload a video or image file to display in the right column.
+   */
+  featureVideo?: (string | null) | Media;
+  /**
+   * Paste any YouTube URL (watch, share, or embed). Autoplays muted when scrolled into view.
+   */
+  featureVideoYoutubeUrl?: string | null;
   /**
    * Optional second mascot (e.g. a mascot in an airplane) that flies across the section as the user scrolls — enters from one side, arcs through the middle, exits on the other side.
    */
@@ -2282,6 +2294,9 @@ export interface AboutWithStatsBlockSelect<T extends boolean = true> {
   heading?: T;
   description?: T;
   supportImage?: T;
+  featureVideoSource?: T;
+  featureVideo?: T;
+  featureVideoYoutubeUrl?: T;
   flyingMascot?: T;
   cta?:
     | T

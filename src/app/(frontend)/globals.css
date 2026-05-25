@@ -43,6 +43,7 @@
   h6 {
     font-weight: unset;
     font-size: unset;
+    font-family: var(--font-space-grotesk, system-ui, sans-serif);
   }
 }
 
